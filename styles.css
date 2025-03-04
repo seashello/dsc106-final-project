@@ -1,0 +1,38 @@
+.tooltip {
+    position: fixed;
+    left: 1em;
+}
+
+dl.info {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 10px;
+    margin: 0;
+    padding: 0;
+    background-color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    padding: 1em;
+    transition-duration: 500ms;
+    transition-property: opacity, visibility;
+    width: fit-content;
+}
+
+dl.info[hidden]:not(:hover, :focus-within) {
+    opacity: 0;
+    visibility: hidden;
+}
+
+dl.info dt {
+    display: flex;
+    margin: 0;
+    font-weight: normal;
+    color: #666;
+}
+
+dl.info dd {
+    display: flex;
+    margin: 0;
+    font-weight: bold;
+    color: #333;
+}
