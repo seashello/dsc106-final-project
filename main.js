@@ -40,7 +40,7 @@ function createBarPlots() {
         .append("svg")
         .attr("viewBox", `0 0 ${width} ${height}`)
         .style("overflow", "visible")
-        .style("width", "100%")
+        .style("width", "370%")
         .style("height", "auto");
 
     // Create a group for the HR chart (left side)

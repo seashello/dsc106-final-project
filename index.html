@@ -1,56 +1,30 @@
-<!-- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-    <script src="tests.js" type="module"></script>
+    <script src="main.js" type="module"></script>
     <link rel="stylesheet" href="styles.css" />
     <script src="https://d3js.org/d3.v7.min.js"></script>
   </head>
   <body>
-    <h1>Test treadmill visualization</h1>
-    <div id="buttons"></div>
-    <h1 id="chart-title"></h1>
-    <div id="test_viz"></div>
-
     <div id="graph-container">
-      <div id="graphs">
-        
+      <h1>Now analyze the data!</h1>
+      <div id="container">
+        <div id="graphs"></div>
+        <div id="chatbox">
+          <h3>Scoreboard</h3>
+        </div>
       </div>
+        <dl id="tooltip" class="info tooltip" hidden>
+          <dt id="agerange">Age Range</dt>
+          <dd id="agerange_value"></dd>
+          <dt id="measurement_name"></dt>
+          <dd id="measurement_value"></dd>
+          <dt id="time">Time to Completion</dt>
+          <dd id="time_value"></dd>
+        </dl>
     </div>
   </body>
-</html> -->
-
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Document</title>
-  <script src="main.js" type="module"></script>
-  <link rel="stylesheet" href="styles.css" />
-  <script src="https://d3js.org/d3.v7.min.js"></script>
-</head>
-
-<body>
-  <div id="graph-container">
-    <h1>Now analyze the data!</h1>
-
-    <div id="graphs"></div>
-
-    <dl id="tooltip" class="info tooltip" hidden>
-      <dt id="agerange">Age Range</dt>
-      <dd id="agerange_value"></dd>
-
-      <dt id="measurement_name"></dt>
-      <dd id="measurement_value"></dd>
-
-      <dt id="time">Time to Completion</dt>
-      <dd id="time_value"></dd>
-    </dl>
-  </div>
-</body>
-
 </html>

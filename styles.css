@@ -36,3 +36,26 @@ dl.info dd {
     font-weight: bold;
     color: #333;
 }
+
+.container {
+    align-items: flex-start;
+    display: flex;
+}
+
+#graphs {
+    float:left;
+    flex: 3; 
+}
+
+#chatbox {
+    float:right;
+    width: 280px;
+    height: 400px;
+    padding: 20px;
+    background-color: #f0f0f0;                              
+    border: 1px solid #ccc;
+    margin-left: 200px;
+    margin-right: 40px;
+    flex: 1;
+    border-radius: 8px;
+}
