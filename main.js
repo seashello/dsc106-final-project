@@ -40,7 +40,7 @@ function createBarPlots() {
         .append("svg")
         .attr("viewBox", `0 0 ${width} ${height}`)
         .style("overflow", "visible")
-        .style("width", "370%")
+        .style("width", "100%")
         .style("height", "auto");
 
     // Create a group for the HR chart (left side)
@@ -252,3 +252,4 @@ function updateTooltipPosition(event) {
     tooltip.style.left = `${tooltipX}px`;
     tooltip.style.top = `${tooltipY}px`;
 }
+
