@@ -11,8 +11,26 @@
   <body>
     <h1>dis our title for da project</h1>
     <div id="container">
-      <div id="checkbox">
-        <h3>placeholder for the checkboxes i think</h3>
+      <div id="contestants">
+        <h3>Contestant Lineup</h3>
+        <!-- Checkbox to toggle color -->
+        <label>
+          <input type="checkbox" id="toggleColor" />
+        </label>
+
+        <!-- Input to name the silhouette -->
+        <label>
+          <input type="text" id="figureName" placeholder="Enter Contestant Name" />
+        </label>
+
+        <!-- Body container -->
+        <div class="body-container">
+          <img class="silhouette" src="silhouette.png" alt="Body silhouette" />
+          <div class="overlay"></div>
+        </div>
+
+        <!-- Display the silhouette name -->
+        <p id="nameDisplay">Contestant #1</p>
       </div>
       <div id="chatbox">
         <h3>Scoreboard</h3>
