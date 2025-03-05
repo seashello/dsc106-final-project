@@ -5,13 +5,33 @@ let hrData;
 let o2Data;
 let svg;
 
-
 async function loadData() {
     // Load CSV data and convert numeric fields as needed
     meanData = await d3.csv("data/mean_max_df.csv");
     hrData = meanData.map(d => ({ age_grp: d.age_grp, HR: +d.HR, time: +d.time }));
     o2Data = meanData.map(d => ({ age_grp: d.age_grp, VO2: +d.VO2, time: +d.time }));
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+  const toggle = document.getElementById("toggleColor");
+  const overlay = document.querySelector(".overlay");
+  const figureNameInput = document.getElementById("figureName");
+  const nameDisplay = document.getElementById("nameDisplay");
+
+  // Toggle overlay color when checkbox changes
+  toggle.addEventListener("change", () => {
+    if (toggle.checked) {
+      overlay.style.backgroundColor = "blue";
+    } else {
+      overlay.style.backgroundColor = "gray";
+    }
+  });
+
+  // Update the displayed silhouette name as user types
+  figureNameInput.addEventListener("input", () => {
+    nameDisplay.textContent = figureNameInput.value || "Contestant #1";
+  });
+});
 
 function createBarPlots() {
     // Define overall dimensions and margins
@@ -252,4 +272,3 @@ function updateTooltipPosition(event) {
     tooltip.style.left = `${tooltipX}px`;
     tooltip.style.top = `${tooltipY}px`;
 }
-

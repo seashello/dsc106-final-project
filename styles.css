@@ -42,7 +42,7 @@ body {
   }
   
   #container {
-    height: 400px;
+    height: 800px;
     align-items: flex-start;
     display: flex;
   }   
@@ -58,9 +58,14 @@ body {
     padding: 20px;
     background-color: #f0f0f0;                              
     border: 1px solid #ccc;
-    margin-left: 200px;
+    margin-left: 40px;
     margin-right: 40px;
     border-radius: 8px; 
+  }
+  
+  #contestant {
+    margin-left: 10px;
+    margin-right: 10px;
   }
   
   .body-container {
