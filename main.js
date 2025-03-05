@@ -15,6 +15,9 @@ async function loadData() {
 document.addEventListener("DOMContentLoaded", () => {
     const contestants = document.querySelectorAll(".contestant");
     const checkedContestantsList = document.getElementById("checked-contestants");
+    const alertBox = document.getElementById("alert-box");
+    const alertMessage = document.getElementById("alert-message");
+
   
     contestants.forEach((contestant, index) => {
       const toggle = contestant.querySelector(".toggleColor");
@@ -30,10 +33,19 @@ document.addEventListener("DOMContentLoaded", () => {
   
       // Update the displayed name for this contestant
       figureNameInput.addEventListener("input", () => {
+        // if (figureNameInput.value.length == 24) {
+        //     alert("Max characters.");
+        //     figureNameInput.value = figureNameInput.value.substring(0, 24);
+        //   }
+        if (figureNameInput.value.length == 24) {
+            showAlert("Name cannot exceed 24 characters.");
+            figureNameInput.value = figureNameInput.value.substring(0, 24);
+          }
         nameDisplay.textContent = figureNameInput.value || `Contestant #${index + 1}`;
         updateCheckedContestants();
       });
     });
+
     function updateCheckedContestants() {
         checkedContestantsList.innerHTML = "";
         contestants.forEach((contestant, index) => {
@@ -45,6 +57,13 @@ document.addEventListener("DOMContentLoaded", () => {
             checkedContestantsList.appendChild(listItem);
           }
         });
+      }
+      function showAlert(message) {
+        alertMessage.textContent = message;
+        alertBox.style.display = "block";
+        setTimeout(() => {
+          alertBox.style.display = "none";
+        }, 2000);
       }
   });
 
