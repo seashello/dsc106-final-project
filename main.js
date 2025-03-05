@@ -14,6 +14,7 @@ async function loadData() {
 
 document.addEventListener("DOMContentLoaded", () => {
     const contestants = document.querySelectorAll(".contestant");
+    const checkedContestantsList = document.getElementById("checked-contestants");
   
     contestants.forEach((contestant, index) => {
       const toggle = contestant.querySelector(".toggleColor");
@@ -24,13 +25,27 @@ document.addEventListener("DOMContentLoaded", () => {
       // Toggle overlay color for this contestant
       toggle.addEventListener("change", () => {
         overlay.style.backgroundColor = toggle.checked ? "blue" : "gray";
+        updateCheckedContestants();
       });
   
       // Update the displayed name for this contestant
       figureNameInput.addEventListener("input", () => {
         nameDisplay.textContent = figureNameInput.value || `Contestant #${index + 1}`;
+        updateCheckedContestants();
       });
     });
+    function updateCheckedContestants() {
+        checkedContestantsList.innerHTML = "";
+        contestants.forEach((contestant, index) => {
+          const toggle = contestant.querySelector(".toggleColor");
+          const figureNameInput = contestant.querySelector(".figureName");
+          if (toggle.checked) {
+            const listItem = document.createElement("li");
+            listItem.textContent = figureNameInput.value || `Contestant #${index + 1}`;
+            checkedContestantsList.appendChild(listItem);
+          }
+        });
+      }
   });
 
 function createBarPlots() {
@@ -272,3 +287,16 @@ function updateTooltipPosition(event) {
     tooltip.style.left = `${tooltipX}px`;
     tooltip.style.top = `${tooltipY}px`;
 }
+
+function updateCheckedContestants() {
+    checkedContestantsList.innerHTML = "";
+    contestants.forEach((contestant, index) => {
+      const toggle = contestant.querySelector(".toggleColor");
+      const figureNameInput = contestant.querySelector(".figureName");
+      if (toggle.checked) {
+        const listItem = document.createElement("li");
+        listItem.textContent = figureNameInput.value || `Contestant #${index + 1}`;
+        checkedContestantsList.appendChild(listItem);
+      }
+    });
+  }
