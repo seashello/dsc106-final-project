@@ -1,6 +1,14 @@
 body {
     font: 100%/1.5 system-ui;
   }
+
+h1 {
+    margin-left: 30px;
+}
+
+h3 {
+    margin-left: 30px;
+}
   
   .tooltip {
     position: fixed;
@@ -115,3 +123,6 @@ body {
       mask-size: contain;
     }
 
+.nameDisplay {
+    text-align: center;
+}
