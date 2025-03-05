@@ -13,25 +13,25 @@ async function loadData() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  const toggle = document.getElementById("toggleColor");
-  const overlay = document.querySelector(".overlay");
-  const figureNameInput = document.getElementById("figureName");
-  const nameDisplay = document.getElementById("nameDisplay");
-
-  // Toggle overlay color when checkbox changes
-  toggle.addEventListener("change", () => {
-    if (toggle.checked) {
-      overlay.style.backgroundColor = "blue";
-    } else {
-      overlay.style.backgroundColor = "gray";
-    }
+    const contestants = document.querySelectorAll(".contestant");
+  
+    contestants.forEach((contestant, index) => {
+      const toggle = contestant.querySelector(".toggleColor");
+      const overlay = contestant.querySelector(".overlay");
+      const figureNameInput = contestant.querySelector(".figureName");
+      const nameDisplay = contestant.querySelector(".nameDisplay");
+  
+      // Toggle overlay color for this contestant
+      toggle.addEventListener("change", () => {
+        overlay.style.backgroundColor = toggle.checked ? "blue" : "gray";
+      });
+  
+      // Update the displayed name for this contestant
+      figureNameInput.addEventListener("input", () => {
+        nameDisplay.textContent = figureNameInput.value || `Contestant #${index + 1}`;
+      });
+    });
   });
-
-  // Update the displayed silhouette name as user types
-  figureNameInput.addEventListener("input", () => {
-    nameDisplay.textContent = figureNameInput.value || "Contestant #1";
-  });
-});
 
 function createBarPlots() {
     // Define overall dimensions and margins

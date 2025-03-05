@@ -42,9 +42,10 @@ body {
   }
   
   #container {
-    height: 800px;
+    height: 1000px;
     align-items: flex-start;
     display: flex;
+    margin-left: 2em;
   }   
   
   #checkbox {
@@ -62,20 +63,28 @@ body {
     margin-right: 40px;
     border-radius: 8px; 
   }
+
+  #contestants {
+    display: flex;
+    flex-wrap: wrap;       /* Allows items to wrap to a new line */
+    justify-content: center; /* Optional, center the rows */
+    gap: 20px;             /* Space between items */
+  }
   
-  #contestant {
-    margin-left: 10px;
-    margin-right: 10px;
+  /* Each contestant takes up about one-third of the container */
+  .contestant {
+    flex: 1 0 calc(33.333% - 40px);
+    box-sizing: border-box; /* So padding/border don't affect width */
+    min-width: 200px;       /* Prevents columns from getting too narrow on small screens */
   }
   
   .body-container {
-      flex-direction: column;
-      align-items: center;
-      position: relative;
-      width: 175px;
-      height: 396px;
-      margin-top: 50px; /* Just for demo spacing */
-    }
+    position: relative;
+    width: 140px;  /* was 175px */
+    height: 320px; /* was 396px */
+    margin-top: 20px; /* optional, to reduce space above */
+    /* any other existing properties remain */
+  }
     
     .silhouette {
       width: 100%;
@@ -105,4 +114,4 @@ body {
       mask-position: center;
       mask-size: contain;
     }
-  
+
