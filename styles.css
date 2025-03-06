@@ -3,11 +3,21 @@ body {
 }
 
 h1 {
-  margin-left: 30px;
+  text-align: left;
+  margin-left: 100px;
+  margin-top: 30px;
+  font-size: 2.5em;
+}
+
+h2 {
+  text-align: left;
+  margin-left: 100px;
+  margin-top: 60px;
+  font-size: 1.8em;
 }
 
 h3 {
-  margin-left: 30px;
+  text-align: center;
 }
 
 .tooltip {
@@ -50,11 +60,16 @@ dl.info dd {
 }
 
 #container {
-  height: 1000px;
+  /* height: 1000px; */
   align-items: flex-start;
   display: flex;
   margin-left: 2em;
 }   
+
+h3.rep-name {
+  text-align: center;
+  margin-left: 0;
+}
 
 #checkbox {
   flex:auto;
@@ -62,8 +77,8 @@ dl.info dd {
 
 #chatbox {
   /* flex: 1 0 0; */
-  width: 280px;
-  height: 400px;
+  width: 400px;
+  height: 500px;
   padding: 20px;
   background-color: #f0f0f0;                              
   border: 1px solid #ccc;
@@ -74,15 +89,24 @@ dl.info dd {
 
 #contestants {
   display: flex;
-  flex-wrap: wrap;     
-  justify-content: center; 
-  gap: 20px;           
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;        
 }
 
 .contestant {
-  flex: 1 0 calc(33.333% - 40px);
+  flex: 0 1 calc(33.333% - 20px);
   box-sizing: border-box; 
-  min-width: 200px;     
+  min-width: 150px;    
+  align-items: center; 
+}
+
+.contestant-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;                  /* space between checkbox & input */
+  margin-bottom: 10px;        /* some space below the controls */
 }
 
 .body-and-bar {
@@ -93,34 +117,33 @@ dl.info dd {
 }
 
 .energy-bar-container {
-  width: 20px;            
-  height: 320px;          
-  background-color: #ccc; 
-  position: relative;   
+  width: 12px;     /* slightly wider than before */
+  height: 200px;   /* match the body container height */
+  background-color: #ccc;
+  position: relative;
 }
 
 .energy-bar {
   position: absolute;
   bottom: 0;
   width: 100%;
-  height: 50%;        
-  background-color: green;
+  height: 50%;
+  background-color: green;  
 }
 
 .body-container {
+  width: 100px;    /* increased width */
+  height: 200px;   /* increased height */
+  margin-top: 10px;
   position: relative;
-  width: 140px;  /* was 175px */
-  height: 320px; /* was 396px */
-  margin-top: 20px; /* optional, to reduce space above */
-  /* any other existing properties remain */
 }
   
   .silhouette {
     width: 100%;
     height: 100%;
     position: absolute;
+    object-fit: contain;
     z-index: 1;
-    object-fit: contain; /* or cover/none depending on your needs */
   }
   
   .overlay {
