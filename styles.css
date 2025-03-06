@@ -1,142 +1,163 @@
 body {
-    font: 100%/1.5 system-ui;
-  }
+  font: 100%/1.5 system-ui;
+}
 
 h1 {
-    margin-left: 30px;
+  margin-left: 30px;
 }
 
 h3 {
-    margin-left: 30px;
+  margin-left: 30px;
+}
+
+.tooltip {
+  position: fixed;
+  left: 1em;
+}
+
+dl.info {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  background-color: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  padding: 1em;
+  transition-duration: 500ms;
+  transition-property: opacity, visibility;
+  width: fit-content;
+}
+
+dl.info[hidden]:not(:hover, :focus-within) {
+  opacity: 0;
+  visibility: hidden;
+}
+
+dl.info dt {
+  display: flex;
+  margin: 0;
+  font-weight: normal;
+  color: #666;
+}
+
+dl.info dd {
+  display: flex;
+  margin: 0;
+  font-weight: bold;
+  color: #333;
+}
+
+#container {
+  height: 1000px;
+  align-items: flex-start;
+  display: flex;
+  margin-left: 2em;
+}   
+
+#checkbox {
+  flex:auto;
+}
+
+#chatbox {
+  /* flex: 1 0 0; */
+  width: 280px;
+  height: 400px;
+  padding: 20px;
+  background-color: #f0f0f0;                              
+  border: 1px solid #ccc;
+  margin-left: 40px;
+  margin-right: 40px;
+  border-radius: 8px; 
+}
+
+#contestants {
+  display: flex;
+  flex-wrap: wrap;     
+  justify-content: center; 
+  gap: 20px;           
+}
+
+.contestant {
+  flex: 1 0 calc(33.333% - 40px);
+  box-sizing: border-box; 
+  min-width: 200px;     
+}
+
+.body-and-bar {
+  display: flex;
+  align-items: flex-end;  
+  justify-content: center;
+  gap: 10px;              
+}
+
+.energy-bar-container {
+  width: 20px;            
+  height: 320px;          
+  background-color: #ccc; 
+  position: relative;   
+}
+
+.energy-bar {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 50%;        
+  background-color: green;
+}
+
+.body-container {
+  position: relative;
+  width: 140px;  /* was 175px */
+  height: 320px; /* was 396px */
+  margin-top: 20px; /* optional, to reduce space above */
+  /* any other existing properties remain */
 }
   
-  .tooltip {
-    position: fixed;
-    left: 1em;
+  .silhouette {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    z-index: 1;
+    object-fit: contain; /* or cover/none depending on your needs */
   }
   
-  dl.info {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    gap: 10px;
-    margin: 0;
-    padding: 0;
-    background-color: white;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    border-radius: 8px;
-    padding: 1em;
-    transition-duration: 500ms;
-    transition-property: opacity, visibility;
-    width: fit-content;
-  }
+  .overlay {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: gray; /* Default is gray when unchecked */
+    opacity: 100%;
+    z-index: 2;
+    transition: background-color 0.3s ease;
   
-  dl.info[hidden]:not(:hover, :focus-within) {
-    opacity: 0;
-    visibility: hidden;
-  }
+    /* Mask the overlay so it only appears on the non-transparent part of the silhouette */
+    -webkit-mask-image: url("silhouette.png");
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    -webkit-mask-size: contain;
   
-  dl.info dt {
-    display: flex;
-    margin: 0;
-    font-weight: normal;
-    color: #666;
+    mask-image: url("silhouette.png");
+    mask-repeat: no-repeat;
+    mask-position: center;
+    mask-size: contain;
   }
-  
-  dl.info dd {
-    display: flex;
-    margin: 0;
-    font-weight: bold;
-    color: #333;
-  }
-  
-  #container {
-    height: 1000px;
-    align-items: flex-start;
-    display: flex;
-    margin-left: 2em;
-  }   
-  
-  #checkbox {
-    flex:auto;
-  }
-  
-  #chatbox {
-    /* flex: 1 0 0; */
-    width: 280px;
-    height: 400px;
-    padding: 20px;
-    background-color: #f0f0f0;                              
-    border: 1px solid #ccc;
-    margin-left: 40px;
-    margin-right: 40px;
-    border-radius: 8px; 
-  }
-
-  #contestants {
-    display: flex;
-    flex-wrap: wrap;       /* Allows items to wrap to a new line */
-    justify-content: center; /* Optional, center the rows */
-    gap: 20px;             /* Space between items */
-  }
-  
-  /* Each contestant takes up about one-third of the container */
-  .contestant {
-    flex: 1 0 calc(33.333% - 40px);
-    box-sizing: border-box; /* So padding/border don't affect width */
-    min-width: 200px;       /* Prevents columns from getting too narrow on small screens */
-  }
-  
-  .body-container {
-    position: relative;
-    width: 140px;  /* was 175px */
-    height: 320px; /* was 396px */
-    margin-top: 20px; /* optional, to reduce space above */
-    /* any other existing properties remain */
-  }
-    
-    .silhouette {
-      width: 100%;
-      height: 100%;
-      position: absolute;
-      z-index: 1;
-      object-fit: contain; /* or cover/none depending on your needs */
-    }
-    
-    .overlay {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      background-color: gray; /* Default is gray when unchecked */
-      opacity: 100%;
-      z-index: 2;
-      transition: background-color 0.3s ease;
-    
-      /* Mask the overlay so it only appears on the non-transparent part of the silhouette */
-      -webkit-mask-image: url("silhouette.png");
-      -webkit-mask-repeat: no-repeat;
-      -webkit-mask-position: center;
-      -webkit-mask-size: contain;
-    
-      mask-image: url("silhouette.png");
-      mask-repeat: no-repeat;
-      mask-position: center;
-      mask-size: contain;
-    }
 
 .nameDisplay {
-    text-align: center;
+  text-align: center;
 }
 
 .alert-box {
-    position: fixed;
-    top: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: #a0504b;
-    color: white;
-    padding: 6px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    z-index: 1000;
-    display: none;
-  }
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #a0504b;
+  color: white;
+  padding: 6px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  display: none;
+}
