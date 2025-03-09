@@ -104,114 +104,158 @@ document.addEventListener("DOMContentLoaded", () => {
   
     // --- Start Button: Animate and build leaderboard ---
     startButton.addEventListener("click", () => {
-      if (startButton.disabled) return;
-      startButton.disabled = true;
-  
-      // Build an array of checked contestants with their original index.
-      const checkedContestants = [];
-      contestants.forEach((contestant, index) => {
-        const checkbox = contestant.querySelector("input[type='checkbox']");
-        if (checkbox.checked) {
-          checkedContestants.push({ element: contestant, origIndex: index });
-        }
-      });
-  
-      // Calculate a delay for each checked contestant.
-      const delays = checkedContestants.map(({ origIndex }) => {
-        return 14000 - Math.pow(hrData[2].time - hrData[origIndex].time, 1/3) * 2000;
-      });
-  
-      // For each checked contestant, start the "run" animation and schedule a switch to "walk".
-      checkedContestants.forEach(({ element, origIndex }, idx) => {
-        const silhouette = element.querySelector(".silhouette");
-        silhouette.classList.add("run");
-        const delay = delays[idx];
-  
-        // Find the corresponding <li> using the data-index attribute.
-        const listItem = checkedContestantsList.querySelector(`li[data-index="${origIndex}"]`);
-        if (listItem) {
-          const loadingAnimation = listItem.querySelector(".loading-animation");
-          const timeText = listItem.querySelector(".time-text");
-          loadingAnimation.textContent = "Currently Running...";
-          setTimeout(() => {
-            loadingAnimation.style.display = "none";
-            timeText.style.display = "inline";
+        if (startButton.disabled) return;
+        startButton.disabled = true;
+      
+        // Build an array of checked contestants with their original index.
+        const checkedContestants = [];
+        contestants.forEach((contestant, index) => {
+          const checkbox = contestant.querySelector("input[type='checkbox']");
+          if (checkbox.checked) {
+            checkedContestants.push({ element: contestant, origIndex: index });
+          }
+        });
+      
+        // Calculate a delay for each checked contestant.
+        const delays = checkedContestants.map(({ origIndex }) => {
+          return 14000 - Math.pow(hrData[2].time - hrData[origIndex].time, 1/3) * 2000;
+        });
+      
+        // For each checked contestant, start animations and energy depletion.
+        checkedContestants.forEach(({ element, origIndex }, idx) => {
+          const silhouette = element.querySelector(".silhouette");
+          silhouette.classList.add("run");
+          const delay = delays[idx];
+      
+          // Animate the energy bar depletion.
+          const energyBar = element.querySelector(".energy-bar");
+          // Set energy bar to full initially.
+          energyBar.style.height = "100%";
+          // Store the start time.
+          const startTime = Date.now();
+          // Start interval to update the energy bar.
+          energyBar.energyIntervalID = setInterval(() => {
+            const elapsed = Date.now() - startTime;
+            const percentRemaining = Math.max(0, ((delay - elapsed) / delay) * 100);
+            energyBar.style.height = percentRemaining + "%";
+            if (elapsed >= delay) {
+              clearInterval(energyBar.energyIntervalID);
+              delete energyBar.energyIntervalID;
+            }
+          }, 50);
+      
+          // Update the corresponding <li> in the active list (using data-index).
+          const listItem = checkedContestantsList.querySelector(`li[data-index="${origIndex}"]`);
+          if (listItem) {
+            const loadingAnimation = listItem.querySelector(".loading-animation");
+            const timeText = listItem.querySelector(".time-text");
+            loadingAnimation.textContent = "Currently Running...";
+            // Save the timeout ID for later clearing if needed.
+            listItem.runningTimeoutID = setTimeout(() => {
+              loadingAnimation.style.display = "none";
+              timeText.style.display = "inline";
+            }, delay);
+          }
+      
+          // After delay, switch the animation from run to walk.
+          // Save this timeout ID as well.
+          silhouette.switchTimeoutID = setTimeout(() => {
+            silhouette.classList.remove("run");
+            silhouette.classList.add("walk");
           }, delay);
-        }
+        });
+      
+        // Build leaderboard after all delays finish.
+        const leaderboardPromises = Array.from(checkedContestantsList.querySelectorAll("li")).map((listItem) => {
+          const idx = parseInt(listItem.getAttribute("data-index"));
+          const delay = 14000 - Math.pow(hrData[2].time - hrData[idx].time, 1/3) * 2000;
+          return new Promise((resolve) => setTimeout(resolve, delay));
+        });
+      
+        Promise.all(leaderboardPromises).then(() => {
+          const leaderboardData = [];
+          const liElements = checkedContestantsList.querySelectorAll("li");
+          liElements.forEach(li => {
+            const idx = parseInt(li.getAttribute("data-index"));
+            const timeText = li.querySelector(".time-text").textContent;
+            const timeVal = parseFloat(timeText);
+            const name = li.querySelector(".name-container").textContent;
+            leaderboardData.push({ time: timeVal, name });
+          });
+          leaderboardData.sort((a, b) => b.time - a.time);
+          const top3 = leaderboardData.slice(0, 3);
+      
+          // Remove any existing leaderboard.
+          const existingLeaderboard = checkedContestantsList.querySelector(".additional-text");
+          if (existingLeaderboard) {
+            existingLeaderboard.remove();
+          }
+      
+          const additionalText = document.createElement("div");
+          additionalText.className = "additional-text";
+          additionalText.style.textAlign = "center";
+          additionalText.innerHTML = `
+            <h3>Leaderboard</h3>
+            <ol style="list-style: none; padding: 0;">
+              ${top3.map((item, idx) => {
+                let color;
+                if (idx === 0) color = "gold";
+                else if (idx === 1) color = "silver";
+                else if (idx === 2) color = "#cd7f32"; // bronze color
+                return `<li style="color: ${color}; font-weight: bold; margin: 5px 0;">
+                          ${item.name}: ${item.time.toFixed(2)} seconds
+                        </li>`;
+              }).join('')}
+            </ol>
+          `;
+          checkedContestantsList.appendChild(additionalText);
+        });
+      });      
   
-        setTimeout(() => {
-          silhouette.classList.remove("run");
-          silhouette.classList.add("walk");
-        }, delay);
-      });
-  
-      // Create an array of promises that resolve after each contestant's delay.
-      const leaderboardPromises = Array.from(checkedContestantsList.querySelectorAll("li")).map((listItem) => {
-        const idx = parseInt(listItem.getAttribute("data-index"));
-        const delay = 14000 - Math.pow(hrData[2].time - hrData[idx].time, 1/3) * 2000;
-        return new Promise((resolve) => setTimeout(resolve, delay));
-      });
-  
-      // Once all delays have finished, build the leaderboard.
-      Promise.all(leaderboardPromises).then(() => {
-        const leaderboardData = [];
+      resetButton.addEventListener("click", () => {
+        console.log("Reset button clicked");
+        contestants.forEach((contestant, index) => {
+          const checkbox = contestant.querySelector("input[type='checkbox']");
+          checkbox.checked = false;
+      
+          const silhouette = contestant.querySelector(".silhouette");
+          // Clear any pending animation switch timeout.
+          if (silhouette.switchTimeoutID) {
+            clearTimeout(silhouette.switchTimeoutID);
+            delete silhouette.switchTimeoutID;
+          }
+          silhouette.style.backgroundPosition = "-24px -12px";
+          silhouette.classList.remove("run", "walk");
+      
+          // Clear any energy depletion intervals.
+          const energyBar = contestant.querySelector(".energy-bar");
+          if (energyBar.energyIntervalID) {
+            clearInterval(energyBar.energyIntervalID);
+            delete energyBar.energyIntervalID;
+          }
+          // Reset energy bar height.
+          energyBar.style.height = "100%";
+      
+          // Do not reset the name input so the name remains.
+          const figureNameInput = contestant.querySelector(".figureName");
+          const nameDisplay = contestant.querySelector(".nameDisplay");
+          nameDisplay.textContent = figureNameInput.value || `Contestant #${index + 1}`;
+        });
+      
+        // Clear any pending timeouts in the active contestants list.
         const liElements = checkedContestantsList.querySelectorAll("li");
         liElements.forEach(li => {
-          const idx = parseInt(li.getAttribute("data-index"));
-          const timeText = li.querySelector(".time-text").textContent;
-          const timeVal = parseFloat(timeText);
-          const name = li.querySelector(".name-container").textContent;
-          leaderboardData.push({ time: timeVal, name });
+          if (li.runningTimeoutID) {
+            clearTimeout(li.runningTimeoutID);
+            delete li.runningTimeoutID;
+          }
         });
-        leaderboardData.sort((a, b) => b.time - a.time);
-        const top3 = leaderboardData.slice(0, 3);
-  
-        // Remove any existing leaderboard.
-        const existingLeaderboard = checkedContestantsList.querySelector(".additional-text");
-        if (existingLeaderboard) {
-          existingLeaderboard.remove();
-        }
-  
-        // Create and append the leaderboard (centered with medal colors).
-        const additionalText = document.createElement("div");
-        additionalText.className = "additional-text";
-        additionalText.style.textAlign = "center";
-        additionalText.innerHTML = `
-          <h3>Leaderboard</h3>
-          <ol style="list-style: none; padding: 0;">
-            ${top3.map((item, idx) => {
-              let color;
-              if (idx === 0) color = "gold";
-              else if (idx === 1) color = "silver";
-              else if (idx === 2) color = "#cd7f32"; // bronze
-              return `<li style="color: ${color}; font-weight: bold; margin: 5px 0;">
-                        ${item.name}: ${item.time.toFixed(2)} seconds
-                      </li>`;
-            }).join('')}
-          </ol>
-        `;
-        checkedContestantsList.appendChild(additionalText);
-      });
-    });
-  
-    // --- Reset Button: Clear all data and re-enable start ---
-    resetButton.addEventListener("click", () => {
-      contestants.forEach((contestant, index) => {
-        const checkbox = contestant.querySelector("input[type='checkbox']");
-        checkbox.checked = false;
-  
-        const silhouette = contestant.querySelector(".silhouette");
-        silhouette.style.backgroundPosition = "-24px -12px";
-        silhouette.classList.remove("run", "walk");
-  
-        const figureNameInput = contestant.querySelector(".figureName");
-        figureNameInput.value = "";
-        const nameDisplay = contestant.querySelector(".nameDisplay");
-        nameDisplay.textContent = `Contestant #${index + 1}`;
-      });
-      checkedContestantsList.innerHTML = "";
-      startButton.disabled = false;
-    });
+      
+        // Clear the active contestants list.
+        checkedContestantsList.innerHTML = "";
+        // Re-enable the start button.
+        startButton.disabled = false;
+      });            
   });  
 
 function createBarPlots() {
