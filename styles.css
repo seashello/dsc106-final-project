@@ -129,10 +129,11 @@ h3.rep-name {
 }
 
 .energy-bar-container {
-  width: 12px;     /* slightly wider than before */
-  height: 200px;   /* match the body container height */
+  width: 12px;   
+  height: 200px;  
   background-color: #ccc;
   position: relative;
+  margin-left: 30px;
 }
 
 .energy-bar {
@@ -144,9 +145,9 @@ h3.rep-name {
 }
 
 .body-container {
-  width: 100px;    /* increased width */
-  height: 200px;   /* increased height */
-  margin-top: 10px;
+  /* 16 wide × 5 scale = 80; 32 tall × 5 scale = 160 */
+  width: 80px;
+  height: 160px;
   position: relative;
 }
 
@@ -171,67 +172,75 @@ h3.rep-name {
 }
 
 .silhouette.run {
-  width: 64px;
-  height: 64px;
+  width: 18px;
+  height: 36px;
   background: url('sprites.png') no-repeat;
-  /* Start at frame 1 of row 5: 0px horizontally, -256px vertically */
   background-position: 0 -256px;
+  /* Start at frame 1 of row 5: 0px horizontally, -256px vertically */
   animation: runAnim 0.6s infinite;
   /* Force discrete jumps between keyframes */
   animation-timing-function: steps(1, end);
+  position: relative;
+  top: -20px;
+  right: 10px;
 }
 
 @keyframes runAnim {
-  0%   { background-position: 0 -256px; }      /* Frame 1 */
-  8%   { background-position: -64px -256px; }    /* Frame 2 */
-  16%  { background-position: -128px -256px; }   /* Frame 3 */
-  24%  { background-position: -384px -256px; }   /* Frame 7 */
-  32%  { background-position: -384px -256px; }   /* Hold Frame 7 */
-  40%  { background-position: -128px -256px; }   /* Frame 3 (again) */
-  48%  { background-position: -192px -256px; }   /* Frame 4 */
-  56%  { background-position: -256px -256px; }   /* Frame 5 */
-  64%  { background-position: -320px -256px; }   /* Frame 6 */
-  72%  { background-position: -448px -256px; }   /* Frame 8 */
-  80%  { background-position: -448px -256px; }   /* Hold Frame 8 */
-  88%  { background-position: -320px -256px; }   /* Frame 6 (again) */
-  100% { background-position: 0 -256px; }        /* Reset to Frame 1 */
-}
+  /* Frame 1 (tile at x=0, y=256) */
+  0%   { background-position: -23px -268px; }
 
+  /* Frame 2 (tile at x=64, y=256) */
+  8%   { background-position: -87px -268px; }
+
+  /* Frame 3 (tile at x=128, y=256) */
+  16%  { background-position: -151px -268px; }
+
+  /* Frame 7 (tile at x=384, y=256) */
+  24%  { background-position: -407px -268px; }
+  32%  { background-position: -407px -268px; } /* hold Frame 7 */
+
+  /* Back to Frame 3 */
+  40%  { background-position: -151px -268px; }
+
+  /* Frame 4 (tile at x=192, y=256) */
+  48%  { background-position: -215px -268px; }
+
+  /* Frame 5 (tile at x=256, y=256) */
+  56%  { background-position: -279px -268px; }
+
+  /* Frame 6 (tile at x=320, y=256) */
+  64%  { background-position: -343px -268px; }
+
+  /* Frame 8 (tile at x=448, y=256) */
+  72%  { background-position: -471px -268px; }
+  80%  { background-position: -471px -268px; } /* hold Frame 8 */
+
+  /* Frame 6 again */
+  88%  { background-position: -343px -268px; }
+
+  /* Reset to Frame 1 */
+  100% { background-position: -23px -268px; }
+}
 
 .silhouette {
-  width: 64px;
-  height: 64px;
+  width: 16px;
+  height: 32px;
   background: url('sprites.png') no-repeat;
-  background-position: 0 0;
+  background-position: -24px -14px;
+  transform-origin: top left;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  position: relative;
+  top: -10px;
 }
-  
-  /* .silhouette {
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    object-fit: contain;
-    z-index: 1;
-  } */
-  
-  /* .overlay {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background-color: gray;
-    opacity: 100%;
-    z-index: 2;
-    transition: background-color 0.3s ease;
-  
-    -webkit-mask-image: url("silhouette.png");
-    -webkit-mask-repeat: no-repeat;
-    -webkit-mask-position: center;
-    -webkit-mask-size: contain;
-  
-    mask-image: url("silhouette.png");
-    mask-repeat: no-repeat;
-    mask-position: center;
-    mask-size: contain;
-  } */
+
+.silhouette, .silhouette.walk, .silhouette.run {
+  transform: scale(5);
+  transform-origin: top left;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  -ms-interpolation-mode: nearest-neighbor; /* for older IE */
+}
 
 .nameDisplay {
   text-align: center;
