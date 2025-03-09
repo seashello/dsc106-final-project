@@ -222,6 +222,31 @@ h3.rep-name {
   100% { background-position: -23px -264px; }
 }
 
+.silhouette.walk {
+  width: 18px;
+  height: 40px;
+  background: url('sprites_male.png') no-repeat;
+  background-position: 0 -256px;
+  /* Start at frame 1 of row 5: 0px horizontally, -256px vertically */
+  animation: runAnim 0.6s infinite;
+  /* Force discrete jumps between keyframes */
+  animation-timing-function: steps(1, end);
+  position: relative;
+  top: -35px;
+  right: 5px;
+}
+
+@keyframes walkAnim {
+  0%    { background-position: -23px -264px; }   /* Frame 1 */
+  16.67% { background-position: -87px -264px; }   /* Frame 2 */
+  33.33% { background-position: -151px -264px; }  /* Frame 3 */
+  50%   { background-position: -215px -264px; }   /* Frame 4 */
+  66.67% { background-position: -279px -264px; }   /* Frame 5 */
+  83.33% { background-position: -343px -264px; }   /* Frame 6 */
+  100%  { background-position: -23px -264px; }     /* Reset to Frame 1 */
+}
+
+
 .silhouette {
   width: 16px;
   height: 32px;

@@ -261,3 +261,30 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 });
+
+document.addEventListener("DOMContentLoaded", () => {
+    const resetButton = document.getElementById("resetButton");
+    resetButton.addEventListener("click", () => {
+      const contestants = document.querySelectorAll(".contestant");
+      contestants.forEach((contestant, index) => {
+        // Reset checkbox
+        const checkbox = contestant.querySelector("input[type='checkbox']");
+        checkbox.checked = false;
+        
+        // Reset silhouette to default state
+        const silhouette = contestant.querySelector(".silhouette");
+        silhouette.style.backgroundPosition = "-24px -12px";
+        silhouette.classList.remove("run");
+        
+        // Clear the name input and reset the display text
+        const figureNameInput = contestant.querySelector(".figureName");
+        figureNameInput.value = "";
+        const nameDisplay = contestant.querySelector(".nameDisplay");
+        nameDisplay.textContent = `Contestant #${index + 1}`;
+      });
+      
+      // Clear the checked contestants list
+      const checkedContestantsList = document.getElementById("checked-contestants");
+      checkedContestantsList.innerHTML = "";
+    });
+  });
