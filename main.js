@@ -21,13 +21,13 @@ document.addEventListener("DOMContentLoaded", () => {
   
     contestants.forEach((contestant, index) => {
       const toggle = contestant.querySelector(".toggleColor");
-      const overlay = contestant.querySelector(".overlay");
+    //   const overlay = contestant.querySelector(".overlay");
       const figureNameInput = contestant.querySelector(".figureName");
       const nameDisplay = contestant.querySelector(".nameDisplay");
   
       // Toggle overlay color for this contestant
       toggle.addEventListener("change", () => {
-        overlay.style.backgroundColor = toggle.checked ? "blue" : "gray";
+        // overlay.style.backgroundColor = toggle.checked ? "blue" : "gray";
         updateCheckedContestants();
       });
   
@@ -319,3 +319,11 @@ function updateCheckedContestants() {
       }
     });
   }
+
+document.addEventListener("DOMContentLoaded", () => {
+    const startButton = document.getElementById("startButton");
+    startButton.addEventListener("click", () => {
+      const silhouettes = document.querySelectorAll(".silhouette");
+      silhouettes.forEach(sil => sil.classList.add("run"));
+    });
+  });   

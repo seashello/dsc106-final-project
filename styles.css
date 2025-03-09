@@ -75,16 +75,28 @@ h3.rep-name {
   flex:auto;
 }
 
-#chatbox {
-  /* flex: 1 0 0; */
-  width: 400px;
-  height: 500px;
-  padding: 20px;
-  background-color: #f0f0f0;                              
-  border: 1px solid #ccc;
+#comp-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;   /* center them horizontally, optional */
   margin-left: 40px;
   margin-right: 40px;
-  border-radius: 8px; 
+}
+
+#chatbox {
+  width: 400px;
+  height: 500px;         /* keeps it 500px tall */
+  padding: 20px;
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  /* If you want the height to auto-expand with content, remove the `height` property */
+}
+
+#buttons-container {
+  margin-top: 20px;      /* spacing from the chat box */
+  width: 400px;
+  text-align: center;
 }
 
 #contestants {
@@ -137,25 +149,79 @@ h3.rep-name {
   margin-top: 10px;
   position: relative;
 }
+
+/* Walking animation using first 6 sprites of row 5 */
+.silhouette.walk {
+  width: 64px;
+  height: 64px;
+  background: url('sprites.png') no-repeat;
+  /* Start with the first frame of row 5 */
+  background-position: 0 -256px;
+  /* Animate over 0.6s using 6 steps (one per frame) */
+  animation: walkAnim 0.6s steps(6) infinite;
+}
+
+@keyframes walkAnim {
+  from {
+    background-position: 0 -256px;
+  }
+  to {
+    background-position: -384px -256px;
+  }
+}
+
+.silhouette.run {
+  width: 64px;
+  height: 64px;
+  background: url('sprites.png') no-repeat;
+  /* Start at frame 1 of row 5: 0px horizontally, -256px vertically */
+  background-position: 0 -256px;
+  animation: runAnim 0.6s infinite;
+  /* Force discrete jumps between keyframes */
+  animation-timing-function: steps(1, end);
+}
+
+@keyframes runAnim {
+  0%   { background-position: 0 -256px; }      /* Frame 1 */
+  8%   { background-position: -64px -256px; }    /* Frame 2 */
+  16%  { background-position: -128px -256px; }   /* Frame 3 */
+  24%  { background-position: -384px -256px; }   /* Frame 7 */
+  32%  { background-position: -384px -256px; }   /* Hold Frame 7 */
+  40%  { background-position: -128px -256px; }   /* Frame 3 (again) */
+  48%  { background-position: -192px -256px; }   /* Frame 4 */
+  56%  { background-position: -256px -256px; }   /* Frame 5 */
+  64%  { background-position: -320px -256px; }   /* Frame 6 */
+  72%  { background-position: -448px -256px; }   /* Frame 8 */
+  80%  { background-position: -448px -256px; }   /* Hold Frame 8 */
+  88%  { background-position: -320px -256px; }   /* Frame 6 (again) */
+  100% { background-position: 0 -256px; }        /* Reset to Frame 1 */
+}
+
+
+.silhouette {
+  width: 64px;
+  height: 64px;
+  background: url('sprites.png') no-repeat;
+  background-position: 0 0;
+}
   
-  .silhouette {
+  /* .silhouette {
     width: 100%;
     height: 100%;
     position: absolute;
     object-fit: contain;
     z-index: 1;
-  }
+  } */
   
-  .overlay {
+  /* .overlay {
     position: absolute;
     width: 100%;
     height: 100%;
-    background-color: gray; /* Default is gray when unchecked */
+    background-color: gray;
     opacity: 100%;
     z-index: 2;
     transition: background-color 0.3s ease;
   
-    /* Mask the overlay so it only appears on the non-transparent part of the silhouette */
     -webkit-mask-image: url("silhouette.png");
     -webkit-mask-repeat: no-repeat;
     -webkit-mask-position: center;
@@ -165,7 +231,7 @@ h3.rep-name {
     mask-repeat: no-repeat;
     mask-position: center;
     mask-size: contain;
-  }
+  } */
 
 .nameDisplay {
   text-align: center;
