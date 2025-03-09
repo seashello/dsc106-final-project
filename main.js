@@ -167,7 +167,7 @@ function createBarPlots() {
 
 document.addEventListener("DOMContentLoaded", async () => {
     await loadData();
-    createBarPlots();
+    // createBarPlots();
 });
 
 function updateTooltipVisibility(isVisible) {
@@ -189,9 +189,21 @@ function updateTooltipContent(event, data, measurement_name) {
     if (measurement_name === "VO2") {
         measurement_txt.textContent = "VO₂";
         measurement.textContent = `${data.VO2.toFixed(3)}`;
-    } else {
+    } else if (measurement_name === "HR"){
         measurement_txt.textContent = "Heart Rate";
         measurement.textContent = `${data.HR.toFixed(3)}`;
+    } else if (measurement_name === "VCO2"){
+        measurement_txt.textContent = "VCO₂";
+        measurement.textContent = `${data.VCO2.toFixed(3)}`;
+    } else if (measurement_name === "Speed"){
+        measurement_txt.textContent = "Speed";
+        measurement.textContent = `${data.Speed.toFixed(3)}`;
+    } else if (measurement_name === "RR"){
+        measurement_txt.textContent = "RR";
+        measurement.textContent = `${data.RR.toFixed(3)}`;
+    } else {
+        measurement_txt.textContent = "VE";
+        measurement.textContent = `${data.VE.toFixed(3)}`;
     }
 
     time.textContent = `${data.time.toFixed(3)}`;
