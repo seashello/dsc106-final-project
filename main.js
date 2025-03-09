@@ -101,18 +101,46 @@ document.addEventListener("DOMContentLoaded", () => {
 
   startButton.addEventListener("click", () => {
     const listItems = checkedContestantsList.querySelectorAll("li");
-    listItems.forEach((listItem, index) => {
-      const loadingAnimation = listItem.querySelector(".loading-animation");
-      const timeText = listItem.querySelector(".time-text");
-      loadingAnimation.textContent="Currently Running...";
-      console.log(14000 - (hrData[2].time - hrData[index].time) ** (1/3) * 2000);
-      // Show the time text after the specified time
-      setTimeout(() => {
-        loadingAnimation.style.display = "none";
-        timeText.style.display = "inline";
-      }, 14000 - (hrData[2].time - hrData[index].time) ** (1/3) * 2000); // Convert time to milliseconds
+    const promises = Array.from(listItems).map((listItem, index) => {
+      return new Promise((resolve) => {
+        const loadingAnimation = listItem.querySelector(".loading-animation");
+        const timeText = listItem.querySelector(".time-text");
+        loadingAnimation.textContent = "Currently Running...";
+        // Show the time text after the specified time
+        setTimeout(() => {
+          loadingAnimation.style.display = "none";
+          timeText.style.display = "inline";
+          resolve();
+        }, 14000 - (hrData[2].time - hrData[index].time) ** (1/3) * 2000); // Convert time to milliseconds
+      });
     });
-  });
+
+    // Add additional text after all timeouts have completed
+    Promise.all(promises).then(() => {
+        // Get the top 3 biggest times
+        const checkedTimes = Array.from(listItems).map((listItem, index) => {
+          const timeText = listItem.querySelector(".time-text");
+          return {
+            time: parseFloat(timeText.textContent),
+            name: listItem.querySelector(".name-container").textContent
+          };
+        });
+  
+        checkedTimes.sort((a, b) => b.time - a.time);
+        const top3 = checkedTimes.slice(0, 3);
+  
+        // Create and append the additional text
+        const additionalText = document.createElement("div");
+        additionalText.className = "additional-text";
+        additionalText.innerHTML = `
+          <h3>Leaderboard</h3>
+          <ol>
+            ${top3.map(item => `<li>${item.name}: ${item.time.toFixed(2)} seconds</li>`).join('')}
+          </ol>
+        `;
+        checkedContestantsList.appendChild(additionalText);
+      });
+    });
 });
 
 function createBarPlots() {

@@ -108,11 +108,16 @@ h3.rep-name {
 
 #chatbox {
   width: 400px;
-  height: 500px;         /* keeps it 500px tall */
-  background-color: #f0f0f0;
+  height: 670px; 
+  background-color: #ffffff;
   border: 1px solid #ccc;
   border-radius: 8px;
-  /* If you want the height to auto-expand with content, remove the `height` property */
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.additional-text {
+  margin-left: 10px;
+  margin-top: 20px;
 }
 
 #buttons-container {
