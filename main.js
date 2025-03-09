@@ -56,11 +56,35 @@ document.addEventListener("DOMContentLoaded", () => {
   function updateCheckedContestants() {
     checkedContestantsList.innerHTML = "";
     contestants.forEach((contestant, index) => {
-      const checkbox = contestant.querySelector("input[type='checkbox']");
+      const toggle = contestant.querySelector(".toggleColor");
       const figureNameInput = contestant.querySelector(".figureName");
-      if (checkbox.checked) {
+      if (toggle.checked) {
         const listItem = document.createElement("li");
-        listItem.textContent = figureNameInput.value || `Contestant #${index + 1}`;
+
+        // Create a container for the name
+        const nameContainer = document.createElement("div");
+        nameContainer.className = "name-container";
+        nameContainer.textContent = (figureNameInput.value || `Contestant #${index + 1}`) + ` (Aged ${index + 1}0-${index + 2}0 Range)`;
+        listItem.appendChild(nameContainer);
+
+        // Create a container for the loading animation and time text
+        const timeContainer = document.createElement("div");
+        timeContainer.className = "time-container";
+
+        // Create loading animation
+        const loadingAnimation = document.createElement("span");
+        loadingAnimation.className = "loading-animation";
+        loadingAnimation.textContent = "...";
+        timeContainer.appendChild(loadingAnimation);
+
+        // Create text element for time
+        const timeText = document.createElement("span");
+        timeText.className = "time-text";
+        timeText.textContent = `${hrData[index].time.toFixed(2)} seconds`;
+        timeText.style.display = "none"; // Hide initially
+        timeContainer.appendChild(timeText);
+
+        listItem.appendChild(timeContainer);
         checkedContestantsList.appendChild(listItem);
       }
     });
@@ -74,6 +98,21 @@ document.addEventListener("DOMContentLoaded", () => {
       alertBox.style.display = "none";
     }, 2000);
   }
+
+  startButton.addEventListener("click", () => {
+    const listItems = checkedContestantsList.querySelectorAll("li");
+    listItems.forEach((listItem, index) => {
+      const loadingAnimation = listItem.querySelector(".loading-animation");
+      const timeText = listItem.querySelector(".time-text");
+      loadingAnimation.textContent="Currently Running...";
+      console.log(14000 - (hrData[2].time - hrData[index].time) ** (1/3) * 2000);
+      // Show the time text after the specified time
+      setTimeout(() => {
+        loadingAnimation.style.display = "none";
+        timeText.style.display = "inline";
+      }, 14000 - (hrData[2].time - hrData[index].time) ** (1/3) * 2000); // Convert time to milliseconds
+    });
+  });
 });
 
 function createBarPlots() {
