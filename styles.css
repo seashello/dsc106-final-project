@@ -1,4 +1,9 @@
 /* Overall page styling */
+html{
+  padding-left: 3em;
+  padding-right: 3em;
+}
+
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   line-height: 1.6;
