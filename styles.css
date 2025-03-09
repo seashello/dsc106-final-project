@@ -155,7 +155,7 @@ h3.rep-name {
 .silhouette.walk {
   width: 64px;
   height: 64px;
-  background: url('sprites.png') no-repeat;
+  background: url('sprites_male.png') no-repeat;
   /* Start with the first frame of row 5 */
   background-position: 0 -256px;
   /* Animate over 0.6s using 6 steps (one per frame) */
@@ -173,65 +173,65 @@ h3.rep-name {
 
 .silhouette.run {
   width: 18px;
-  height: 36px;
-  background: url('sprites.png') no-repeat;
+  height: 40px;
+  background: url('sprites_male.png') no-repeat;
   background-position: 0 -256px;
   /* Start at frame 1 of row 5: 0px horizontally, -256px vertically */
   animation: runAnim 0.6s infinite;
   /* Force discrete jumps between keyframes */
   animation-timing-function: steps(1, end);
   position: relative;
-  top: -20px;
-  right: 10px;
+  top: -35px;
+  right: 5px;
 }
 
 @keyframes runAnim {
   /* Frame 1 (tile at x=0, y=256) */
-  0%   { background-position: -23px -268px; }
+  0%   { background-position: -23px -264px; }
 
   /* Frame 2 (tile at x=64, y=256) */
-  8%   { background-position: -87px -268px; }
+  8%   { background-position: -87px -264px; }
 
   /* Frame 3 (tile at x=128, y=256) */
-  16%  { background-position: -151px -268px; }
+  16%  { background-position: -151px -264px; }
 
   /* Frame 7 (tile at x=384, y=256) */
-  24%  { background-position: -407px -268px; }
-  32%  { background-position: -407px -268px; } /* hold Frame 7 */
+  24%  { background-position: -407px -264px; }
+  32%  { background-position: -407px -264px; } /* hold Frame 7 */
 
   /* Back to Frame 3 */
-  40%  { background-position: -151px -268px; }
+  40%  { background-position: -151px -264px; }
 
   /* Frame 4 (tile at x=192, y=256) */
-  48%  { background-position: -215px -268px; }
+  48%  { background-position: -215px -264px; }
 
   /* Frame 5 (tile at x=256, y=256) */
-  56%  { background-position: -279px -268px; }
+  56%  { background-position: -279px -264px; }
 
   /* Frame 6 (tile at x=320, y=256) */
-  64%  { background-position: -343px -268px; }
+  64%  { background-position: -343px -264px; }
 
   /* Frame 8 (tile at x=448, y=256) */
-  72%  { background-position: -471px -268px; }
-  80%  { background-position: -471px -268px; } /* hold Frame 8 */
+  72%  { background-position: -471px -264px; }
+  80%  { background-position: -471px -264px; } /* hold Frame 8 */
 
   /* Frame 6 again */
-  88%  { background-position: -343px -268px; }
+  88%  { background-position: -343px -264px; }
 
   /* Reset to Frame 1 */
-  100% { background-position: -23px -268px; }
+  100% { background-position: -23px -264px; }
 }
 
 .silhouette {
   width: 16px;
   height: 32px;
-  background: url('sprites.png') no-repeat;
-  background-position: -24px -14px;
+  background: url('sprites_male.png') no-repeat;
+  background-position: -24px -12px;
   transform-origin: top left;
   image-rendering: pixelated;
   image-rendering: crisp-edges;
   position: relative;
-  top: -10px;
+  top: -15px;
 }
 
 .silhouette, .silhouette.walk, .silhouette.run {
