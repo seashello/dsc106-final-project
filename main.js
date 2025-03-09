@@ -17,175 +17,202 @@ async function loadData() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  const contestants = document.querySelectorAll(".contestant");
-  const checkedContestantsList = document.getElementById("checked-contestants");
-  const alertBox = document.getElementById("alert-box");
-  const alertMessage = document.getElementById("alert-message");
-
-  contestants.forEach((contestant, index) => {
-    // Use the checkbox input directly (no .toggleColor anymore)
-    const checkbox = contestant.querySelector("input[type='checkbox']");
-    const figureNameInput = contestant.querySelector(".figureName");
-    const nameDisplay = contestant.querySelector(".nameDisplay");
-
-    // When checkbox changes, update the still silhouette and the checked contestants list.
-    checkbox.addEventListener("change", () => {
-        const silhouette = contestant.querySelector(".silhouette");
-        // When unchecked, remove both "run" and "walk" classes.
+    const contestants = document.querySelectorAll(".contestant");
+    const checkedContestantsList = document.getElementById("checked-contestants");
+    const alertBox = document.getElementById("alert-box");
+    const alertMessage = document.getElementById("alert-message");
+    const startButton = document.getElementById("startButton");
+    const resetButton = document.getElementById("resetButton");
+  
+    // --- Set up each contestant's listeners ---
+    contestants.forEach((contestant, index) => {
+      const checkbox = contestant.querySelector("input[type='checkbox']");
+      const figureNameInput = contestant.querySelector(".figureName");
+      const nameDisplay = contestant.querySelector(".nameDisplay");
+      const silhouette = contestant.querySelector(".silhouette");
+  
+      // When checkbox changes, update the silhouette and active list.
+      checkbox.addEventListener("change", () => {
         if (!checkbox.checked) {
           silhouette.classList.remove("run", "walk");
           silhouette.style.backgroundPosition = "-24px -12px"; // still image
         } else {
-          // If checked, set to running image (before start)
-          silhouette.style.backgroundPosition = "-215px -14px";
+          silhouette.style.backgroundPosition = "-215px -14px"; // pre-run image
         }
         updateCheckedContestants();
       });
-
-    // Update the displayed name for this contestant.
-    figureNameInput.addEventListener("input", () => {
-      if (figureNameInput.value.length == 24) {
-        showAlert("Name cannot exceed 24 characters.");
-        figureNameInput.value = figureNameInput.value.substring(0, 24);
-      }
-      nameDisplay.textContent = figureNameInput.value || `Contestant #${index + 1}`;
-      updateCheckedContestants();
-    });
-  });
-
-  function updateCheckedContestants() {
-    checkedContestantsList.innerHTML = "";
-    contestants.forEach((contestant, index) => {
-      const toggle = contestant.querySelector(".toggleColor");
-      const figureNameInput = contestant.querySelector(".figureName");
-      if (toggle.checked) {
-        const listItem = document.createElement("li");
-
-        // Create a container for the name
-        const nameContainer = document.createElement("div");
-        nameContainer.className = "name-container";
-        nameContainer.textContent = (figureNameInput.value || `Contestant #${index + 1}`) + ` (Aged ${index + 1}0-${index + 2}0 Range)`;
-        listItem.appendChild(nameContainer);
-
-        // Create a container for the loading animation and time text
-        const timeContainer = document.createElement("div");
-        timeContainer.className = "time-container";
-
-        // Create loading animation
-        const loadingAnimation = document.createElement("span");
-        loadingAnimation.className = "loading-animation";
-        loadingAnimation.textContent = "...";
-        timeContainer.appendChild(loadingAnimation);
-
-        // Create text element for time
-        const timeText = document.createElement("span");
-        timeText.className = "time-text";
-        timeText.textContent = `${hrData[index].time.toFixed(2)} seconds`;
-        timeText.style.display = "none"; // Hide initially
-        timeContainer.appendChild(timeText);
-
-        listItem.appendChild(timeContainer);
-        checkedContestantsList.appendChild(listItem);
-      }
-    });
-  }
   
-
-  function showAlert(message) {
-    alertMessage.textContent = message;
-    alertBox.style.display = "block";
-    setTimeout(() => {
-      alertBox.style.display = "none";
-    }, 2000);
-  }
-
-  startButton.addEventListener("click", () => {
-    // Get all checked contestants.
-    const checkedContestants = Array.from(contestants).filter(contestant => {
-      return contestant.querySelector("input[type='checkbox']").checked;
+      // Update the displayed name when the user types.
+      figureNameInput.addEventListener("input", () => {
+        if (figureNameInput.value.length == 24) {
+          showAlert("Name cannot exceed 24 characters.");
+          figureNameInput.value = figureNameInput.value.substring(0, 24);
+        }
+        nameDisplay.textContent = figureNameInput.value || `Contestant #${index + 1}`;
+        updateCheckedContestants();
+      });
     });
   
-    // For each checked contestant, start the run animation and schedule the switch to walk.
-    checkedContestants.forEach((contestant, index) => {
-      const silhouette = contestant.querySelector(".silhouette");
-      // Start the running animation.
-      silhouette.classList.add("run");
-      // Calculate the delay (in ms) based on your logic.
-      const delay = 14000 - Math.pow(hrData[2].time - hrData[index].time, 1/3) * 2000;
-      // After the delay, switch from "run" to "walk".
+    // --- Update the active contestants list ---
+    // We tag each <li> with a data-index attribute corresponding to the contestant’s original index.
+    function updateCheckedContestants() {
+      checkedContestantsList.innerHTML = "";
+      contestants.forEach((contestant, index) => {
+        const checkbox = contestant.querySelector("input[type='checkbox']");
+        const figureNameInput = contestant.querySelector(".figureName");
+        if (checkbox.checked) {
+          const listItem = document.createElement("li");
+          listItem.setAttribute("data-index", index); // tag with original index
+  
+          // Name container.
+          const nameContainer = document.createElement("div");
+          nameContainer.className = "name-container";
+          nameContainer.textContent =
+            (figureNameInput.value || `Contestant #${index + 1}`) +
+            ` (Aged ${index + 1}0-${index + 2}0 Range)`;
+          listItem.appendChild(nameContainer);
+  
+          // Time container (loading animation + time text).
+          const timeContainer = document.createElement("div");
+          timeContainer.className = "time-container";
+  
+          const loadingAnimation = document.createElement("span");
+          loadingAnimation.className = "loading-animation";
+          loadingAnimation.textContent = "...";
+          timeContainer.appendChild(loadingAnimation);
+  
+          const timeText = document.createElement("span");
+          timeText.className = "time-text";
+          timeText.textContent = `${hrData[index].time.toFixed(2)} seconds`;
+          timeText.style.display = "none"; // Hide initially.
+          timeContainer.appendChild(timeText);
+  
+          listItem.appendChild(timeContainer);
+          checkedContestantsList.appendChild(listItem);
+        }
+      });
+    }
+  
+    // --- Show alert message ---
+    function showAlert(message) {
+      alertMessage.textContent = message;
+      alertBox.style.display = "block";
       setTimeout(() => {
-        silhouette.classList.remove("run");
-        silhouette.classList.add("walk");
-      }, delay);
-    });
+        alertBox.style.display = "none";
+      }, 2000);
+    }
   
-    // Update the chat box entries using promises.
-    const listItems = checkedContestantsList.querySelectorAll("li");
-    const promises = Array.from(listItems).map((listItem, index) => {
-      return new Promise((resolve) => {
-        const loadingAnimation = listItem.querySelector(".loading-animation");
-        const timeText = listItem.querySelector(".time-text");
-        loadingAnimation.textContent = "Currently Running...";
-        // After the delay, update the chat box.
+    // --- Start Button: Animate and build leaderboard ---
+    startButton.addEventListener("click", () => {
+      if (startButton.disabled) return;
+      startButton.disabled = true;
+  
+      // Build an array of checked contestants with their original index.
+      const checkedContestants = [];
+      contestants.forEach((contestant, index) => {
+        const checkbox = contestant.querySelector("input[type='checkbox']");
+        if (checkbox.checked) {
+          checkedContestants.push({ element: contestant, origIndex: index });
+        }
+      });
+  
+      // Calculate a delay for each checked contestant.
+      const delays = checkedContestants.map(({ origIndex }) => {
+        return 14000 - Math.pow(hrData[2].time - hrData[origIndex].time, 1/3) * 2000;
+      });
+  
+      // For each checked contestant, start the "run" animation and schedule a switch to "walk".
+      checkedContestants.forEach(({ element, origIndex }, idx) => {
+        const silhouette = element.querySelector(".silhouette");
+        silhouette.classList.add("run");
+        const delay = delays[idx];
+  
+        // Find the corresponding <li> using the data-index attribute.
+        const listItem = checkedContestantsList.querySelector(`li[data-index="${origIndex}"]`);
+        if (listItem) {
+          const loadingAnimation = listItem.querySelector(".loading-animation");
+          const timeText = listItem.querySelector(".time-text");
+          loadingAnimation.textContent = "Currently Running...";
+          setTimeout(() => {
+            loadingAnimation.style.display = "none";
+            timeText.style.display = "inline";
+          }, delay);
+        }
+  
         setTimeout(() => {
-          loadingAnimation.style.display = "none";
-          timeText.style.display = "inline";
-          resolve();
-        }, 14000 - Math.pow(hrData[2].time - hrData[index].time, 1/3) * 2000);
+          silhouette.classList.remove("run");
+          silhouette.classList.add("walk");
+        }, delay);
+      });
+  
+      // Create an array of promises that resolve after each contestant's delay.
+      const leaderboardPromises = Array.from(checkedContestantsList.querySelectorAll("li")).map((listItem) => {
+        const idx = parseInt(listItem.getAttribute("data-index"));
+        const delay = 14000 - Math.pow(hrData[2].time - hrData[idx].time, 1/3) * 2000;
+        return new Promise((resolve) => setTimeout(resolve, delay));
+      });
+  
+      // Once all delays have finished, build the leaderboard.
+      Promise.all(leaderboardPromises).then(() => {
+        const leaderboardData = [];
+        const liElements = checkedContestantsList.querySelectorAll("li");
+        liElements.forEach(li => {
+          const idx = parseInt(li.getAttribute("data-index"));
+          const timeText = li.querySelector(".time-text").textContent;
+          const timeVal = parseFloat(timeText);
+          const name = li.querySelector(".name-container").textContent;
+          leaderboardData.push({ time: timeVal, name });
+        });
+        leaderboardData.sort((a, b) => b.time - a.time);
+        const top3 = leaderboardData.slice(0, 3);
+  
+        // Remove any existing leaderboard.
+        const existingLeaderboard = checkedContestantsList.querySelector(".additional-text");
+        if (existingLeaderboard) {
+          existingLeaderboard.remove();
+        }
+  
+        // Create and append the leaderboard (centered with medal colors).
+        const additionalText = document.createElement("div");
+        additionalText.className = "additional-text";
+        additionalText.style.textAlign = "center";
+        additionalText.innerHTML = `
+          <h3>Leaderboard</h3>
+          <ol style="list-style: none; padding: 0;">
+            ${top3.map((item, idx) => {
+              let color;
+              if (idx === 0) color = "gold";
+              else if (idx === 1) color = "silver";
+              else if (idx === 2) color = "#cd7f32"; // bronze
+              return `<li style="color: ${color}; font-weight: bold; margin: 5px 0;">
+                        ${item.name}: ${item.time.toFixed(2)} seconds
+                      </li>`;
+            }).join('')}
+          </ol>
+        `;
+        checkedContestantsList.appendChild(additionalText);
       });
     });
   
-    Promise.all(promises).then(() => {
-      // After all timeouts are complete, create a leaderboard.
-      const checkedTimes = Array.from(listItems).map((listItem, index) => {
-        const timeText = listItem.querySelector(".time-text");
-        return {
-          time: parseFloat(timeText.textContent),
-          name: listItem.querySelector(".name-container").textContent
-        };
+    // --- Reset Button: Clear all data and re-enable start ---
+    resetButton.addEventListener("click", () => {
+      contestants.forEach((contestant, index) => {
+        const checkbox = contestant.querySelector("input[type='checkbox']");
+        checkbox.checked = false;
+  
+        const silhouette = contestant.querySelector(".silhouette");
+        silhouette.style.backgroundPosition = "-24px -12px";
+        silhouette.classList.remove("run", "walk");
+  
+        const figureNameInput = contestant.querySelector(".figureName");
+        figureNameInput.value = "";
+        const nameDisplay = contestant.querySelector(".nameDisplay");
+        nameDisplay.textContent = `Contestant #${index + 1}`;
       });
-  
-      checkedTimes.sort((a, b) => b.time - a.time);
-      const top3 = checkedTimes.slice(0, 3);
-  
-      const additionalText = document.createElement("div");
-      additionalText.className = "additional-text";
-      additionalText.innerHTML = `
-        <h3>Leaderboard</h3>
-        <ol>
-          ${top3.map(item => `<li>${item.name}: ${item.time.toFixed(2)} seconds</li>`).join('')}
-        </ol>
-      `;
-      checkedContestantsList.appendChild(additionalText);
+      checkedContestantsList.innerHTML = "";
+      startButton.disabled = false;
     });
-  });
-
-  // --- Reset Button: reset all contestant data ---
-  resetButton.addEventListener("click", () => {
-    console.log("Reset button clicked"); // Debug log
-  
-    contestants.forEach((contestant, index) => {
-      // Reset checkbox state
-      const checkbox = contestant.querySelector("input[type='checkbox']");
-      checkbox.checked = false;
-  
-      // Reset silhouette image and remove any animation classes
-      const silhouette = contestant.querySelector(".silhouette");
-      silhouette.style.backgroundPosition = "-24px -12px";
-      silhouette.classList.remove("run", "walk");
-  
-      // Reset the name input and displayed name
-      const figureNameInput = contestant.querySelector(".figureName");
-      figureNameInput.value = "";
-      const nameDisplay = contestant.querySelector(".nameDisplay");
-      nameDisplay.textContent = `Contestant #${index + 1}`;
-    });
-  
-    // Clear the active contestants list (including any leaderboard info)
-    checkedContestantsList.innerHTML = "";
-  });
-  
-});
+  });  
 
 function createBarPlots() {
   const width = 800, height = 250;
