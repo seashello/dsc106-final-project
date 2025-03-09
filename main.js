@@ -6,7 +6,7 @@ let svg;
 
 async function loadData() {
     // Load CSV data and convert numeric fields as needed
-    meanData = await d3.csv("../dsc106-final-project/data/mean_max_df.csv");
+    meanData = await d3.csv("data/mean_max_df.csv");
     hrData = meanData.map(d => ({ age_grp: d.age_grp, HR: +d.HR, time: +d.time }));
     o2Data = meanData.map(d => ({ age_grp: d.age_grp, VO2: +d.VO2, time: +d.time }));
     speedData = meanData.map(d => ({ age_grp: d.age_grp, Speed: +d.Speed, time: +d.time }));
