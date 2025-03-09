@@ -1,18 +1,26 @@
+/* Overall page styling */
 body {
-  font: 100%/1.5 system-ui;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  line-height: 1.6;
+  margin: 0;
+  background: linear-gradient(135deg, #f0f4f8, #d9e2ec);
+  color: #333;
+  padding-bottom: 40px;
+}
+
+/* Headings */
+h1, h2 {
+  margin: 20px auto;
+  text-align: center;
+  font-weight: 600;
+  color: #2F4F4F;
 }
 
 h1 {
-  text-align: left;
-  margin-left: 100px;
-  margin-top: 30px;
   font-size: 2.5em;
 }
 
 h2 {
-  text-align: left;
-  margin-left: 100px;
-  margin-top: 60px;
   font-size: 1.8em;
 }
 
@@ -60,15 +68,25 @@ dl.info dd {
 }
 
 #container {
-  /* height: 1000px; */
-  align-items: flex-start;
-  display: flex;
-  margin-left: 2em;
-}   
+  /* Constrain the container’s max width so it doesn’t stretch too wide */
+  max-width: 1200px;     
+  margin: 0 auto;         /* centers #container horizontally in the page */
+  
+  display: flex;          /* so we can place #contestants on the left, 
+                             #comp-controls on the right */
+  justify-content: center;/* centers them horizontally within #container */
+  align-items: flex-start; /* keep items aligned at the top */
+
+  gap: 20px;              /* space between the grid and chat box */
+  padding: 20px;          /* optional padding inside #container */
+}
 
 h3.rep-name {
   text-align: center;
-  margin-left: 0;
+  margin: 0;
+  margin-bottom: 10px;
+  font-size: 1.1em;
+  color: #555;
 }
 
 #checkbox {
@@ -86,7 +104,6 @@ h3.rep-name {
 #chatbox {
   width: 400px;
   height: 500px;         /* keeps it 500px tall */
-  padding: 20px;
   background-color: #f0f0f0;
   border: 1px solid #ccc;
   border-radius: 8px;
@@ -100,25 +117,41 @@ h3.rep-name {
 }
 
 #contestants {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 20px;        
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: auto auto;
+  gap: 20px;
 }
 
 .contestant {
-  flex: 0 1 calc(33.333% - 20px);
-  box-sizing: border-box; 
-  min-width: 150px;    
-  align-items: center; 
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.2s ease;
+}
+
+.contestant:hover {
+  transform: translateY(-5px);
 }
 
 .contestant-controls {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;                  /* space between checkbox & input */
-  margin-bottom: 10px;        /* some space below the controls */
+  gap: 10px;
+  margin: 0;
+  margin-bottom: 10px;
+}
+
+.contestant-controls input[type="text"] {
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 6px;
+  font-size: 0.9em;
 }
 
 .body-and-bar {
@@ -129,11 +162,12 @@ h3.rep-name {
 }
 
 .energy-bar-container {
-  width: 12px;   
-  height: 200px;  
-  background-color: #ccc;
+  width: 12px;
+  height: 180px;
+  background-color: #e0e0e0;
+  border-radius: 6px;
   position: relative;
-  margin-left: 30px;
+  margin-left: 20px;
 }
 
 .energy-bar {
@@ -141,11 +175,11 @@ h3.rep-name {
   bottom: 0;
   width: 100%;
   height: 50%;
-  background-color: green;  
+  background-color: #3cb371;
+  border-radius: 6px;
 }
 
 .body-container {
-  /* 16 wide × 5 scale = 80; 32 tall × 5 scale = 160 */
   width: 80px;
   height: 160px;
   position: relative;
@@ -181,7 +215,7 @@ h3.rep-name {
   /* Force discrete jumps between keyframes */
   animation-timing-function: steps(1, end);
   position: relative;
-  top: -35px;
+  top: -25px;
   right: 5px;
 }
 
@@ -232,7 +266,7 @@ h3.rep-name {
   /* Force discrete jumps between keyframes */
   animation-timing-function: steps(1, end);
   position: relative;
-  top: -35px;
+  top: -25px;
   right: 5px;
 }
 
@@ -256,7 +290,7 @@ h3.rep-name {
   image-rendering: pixelated;
   image-rendering: crisp-edges;
   position: relative;
-  top: -15px;
+  top: -5px;
 }
 
 .silhouette, .silhouette.walk, .silhouette.run {
@@ -269,6 +303,8 @@ h3.rep-name {
 
 .nameDisplay {
   text-align: center;
+  margin: 0;
+  margin-top: 8px;
 }
 
 .alert-box {
