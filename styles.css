@@ -1,4 +1,3 @@
-/* Overall page styling */
 html{
   padding-left: 3em;
   padding-right: 3em;
@@ -13,7 +12,6 @@ body {
   padding-bottom: 40px;
 }
 
-/* Headings */
 h1, h2 {
   margin: 20px auto;
   text-align: center;
@@ -73,17 +71,13 @@ dl.info dd {
 }
 
 #container {
-  /* Constrain the container’s max width so it doesn’t stretch too wide */
   max-width: 1200px;     
-  margin: 0 auto;         /* centers #container horizontally in the page */
-  
-  display: flex;          /* so we can place #contestants on the left, 
-                             #comp-controls on the right */
-  justify-content: center;/* centers them horizontally within #container */
-  align-items: flex-start; /* keep items aligned at the top */
-
-  gap: 20px;              /* space between the grid and chat box */
-  padding: 20px;          /* optional padding inside #container */
+  margin: 0 auto;      
+  display: flex;         
+  justify-content: center;
+  align-items: flex-start; 
+  gap: 20px;            
+  padding: 20px;        
 }
 
 h3.rep-name {
@@ -101,29 +95,47 @@ h3.rep-name {
 #comp-controls {
   display: flex;
   flex-direction: column;
-  align-items: center;   /* center them horizontally, optional */
-  margin-left: 40px;
-  margin-right: 40px;
+  align-items: center;
+  gap: 20px;
+  margin: 20px;
 }
 
 #chatbox {
   width: 400px;
-  height: 670px; 
-  background-color: #ffffff;
+  height: 500px;
+  overflow-y: auto;
+  padding: 20px;
+  background-color: #f0f0f0;
   border: 1px solid #ccc;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
-.additional-text {
-  margin-left: 10px;
-  margin-top: 20px;
+#chatbox h3 {
+  margin-top: 0;
+  font-size: 1.2em;
+  text-align: center;
 }
 
 #buttons-container {
   margin-top: 20px;      /* spacing from the chat box */
   width: 400px;
   text-align: center;
+}
+
+button {
+  background-color: #3cb371;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  font-size: 1em;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #2e8b57;
 }
 
 #contestants {
@@ -329,4 +341,23 @@ h3.rep-name {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   z-index: 1000;
   display: none;
+}
+
+#graph-container {
+  padding: 20px;
+  margin: 20px;
+  background-color: #fff;
+  border-top: 4px solid #3cb371;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  width: 90%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#graph-container h1 {
+  margin-top: 0;
+  color: #2F4F4F;
+  font-size: 2em;
+  text-align: center;
 }
