@@ -4,12 +4,9 @@ html{
 }
 
 body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  line-height: 1.6;
-  margin: 0;
+  font-family: 'Roboto', sans-serif;
   background: linear-gradient(135deg, #f0f4f8, #d9e2ec);
   color: #333;
-  padding-bottom: 40px;
 }
 
 h1, h2 {
@@ -20,7 +17,12 @@ h1, h2 {
 }
 
 h1 {
-  font-size: 2.5em;
+  font-size: 3.5em;
+  font-weight: bold;
+  margin-bottom: 80px;
+  margin-top: 1.5em;
+  padding-left: 1em;
+  padding-right: 1em;
 }
 
 h2 {
@@ -40,14 +42,11 @@ dl.info {
   display: grid;
   grid-template-columns: auto 1fr;
   gap: 10px;
-  margin: 0;
-  padding: 0;
-  background-color: white;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  background-color: #fff;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
   border-radius: 8px;
   padding: 1em;
-  transition-duration: 500ms;
-  transition-property: opacity, visibility;
+  transition: opacity 0.5s ease, visibility 0.5s ease;
   width: fit-content;
 }
 
@@ -57,15 +56,11 @@ dl.info[hidden]:not(:hover, :focus-within) {
 }
 
 dl.info dt {
-  display: flex;
-  margin: 0;
   font-weight: normal;
   color: #666;
 }
 
 dl.info dd {
-  display: flex;
-  margin: 0;
   font-weight: bold;
   color: #333;
 }
@@ -102,7 +97,7 @@ h3.rep-name {
 
 #chatbox {
   width: 400px;
-  height: 600px;
+  height: 500px;
   overflow-y: auto;
   padding: 20px;
   background-color: #f0f0f0;
@@ -207,30 +202,10 @@ button:hover {
   position: relative;
 }
 
-/* Walking animation using first 6 sprites of row 5 */
-.silhouette.walk {
-  width: 64px;
-  height: 64px;
-  background: url('sprites_male.png') no-repeat;
-  /* Start with the first frame of row 5 */
-  background-position: 0 -256px;
-  /* Animate over 0.6s using 6 steps (one per frame) */
-  animation: walkAnim 0.6s steps(6) infinite;
-}
-
-@keyframes walkAnim {
-  from {
-    background-position: 0 -256px;
-  }
-  to {
-    background-position: -384px -256px;
-  }
-}
-
 .silhouette.run {
   width: 18px;
   height: 40px;
-  background: url('sprites_male.png') no-repeat;
+  background: url('sprites_male_run.png') no-repeat;
   background-position: 0 -256px;
   /* Start at frame 1 of row 5: 0px horizontally, -256px vertically */
   animation: runAnim 0.6s infinite;
@@ -281,10 +256,10 @@ button:hover {
 .silhouette.walk {
   width: 18px;
   height: 40px;
-  background: url('sprites_male.png') no-repeat;
+  background: url('sprites_male_walk.png') no-repeat;
   background-position: 0 -256px;
   /* Start at frame 1 of row 5: 0px horizontally, -256px vertically */
-  animation: runAnim 0.6s infinite;
+  animation: walkAnim 1.5s infinite;
   /* Force discrete jumps between keyframes */
   animation-timing-function: steps(1, end);
   position: relative;
@@ -306,7 +281,7 @@ button:hover {
 .silhouette {
   width: 16px;
   height: 32px;
-  background: url('sprites_male.png') no-repeat;
+  background: url('sprites_male_run.png') no-repeat;
   background-position: -24px -12px;
   transform-origin: top left;
   image-rendering: pixelated;
@@ -353,6 +328,7 @@ button:hover {
   width: 90%;
   margin-left: auto;
   margin-right: auto;
+  margin-bottom: 50px;
 }
 
 #graph-container h1 {
@@ -360,4 +336,39 @@ button:hover {
   color: #2F4F4F;
   font-size: 2em;
   text-align: center;
+}
+
+#dataset-description {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  padding: 20px;
+  margin: 20px auto;
+  max-width: 1000px; /* adjust as needed */
+  line-height: 1.6;
+  font-size: 1.1em;
+  color: #333;
+  margin-bottom: 80px;
+}
+
+#dataset-description p {
+  margin-bottom: 1em;
+}
+
+/* Optional: a different font style for the description text */
+#dataset-description {
+  font-family: 'Roboto', sans-serif;
+}
+
+@media (max-width: 768px) {
+  #container {
+    flex-direction: column;
+    align-items: center;
+  }
+  #contestants {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  #comp-controls {
+    width: 100%;
+  }
 }

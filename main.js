@@ -30,17 +30,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // When checkbox changes, update the still silhouette and the checked contestants list.
     checkbox.addEventListener("change", () => {
-      const silhouette = contestant.querySelector(".silhouette");
-      // Remove the running animation class if present so the still image takes effect.
-      silhouette.classList.remove("run");
-      if (checkbox.checked) {
-        // Switch to the 4th sprite in the first row.
-        silhouette.style.backgroundPosition = "-215px -14px";
-      } else {
-        silhouette.style.backgroundPosition = "-24px -12px";
-      }
-      updateCheckedContestants();
-    });
+        const silhouette = contestant.querySelector(".silhouette");
+        // When unchecked, remove both "run" and "walk" classes.
+        if (!checkbox.checked) {
+          silhouette.classList.remove("run", "walk");
+          silhouette.style.backgroundPosition = "-24px -12px"; // still image
+        } else {
+          // If checked, set to running image (before start)
+          silhouette.style.backgroundPosition = "-215px -14px";
+        }
+        updateCheckedContestants();
+      });
 
     // Update the displayed name for this contestant.
     figureNameInput.addEventListener("input", () => {
@@ -100,47 +100,91 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   startButton.addEventListener("click", () => {
+    // Get all checked contestants.
+    const checkedContestants = Array.from(contestants).filter(contestant => {
+      return contestant.querySelector("input[type='checkbox']").checked;
+    });
+  
+    // For each checked contestant, start the run animation and schedule the switch to walk.
+    checkedContestants.forEach((contestant, index) => {
+      const silhouette = contestant.querySelector(".silhouette");
+      // Start the running animation.
+      silhouette.classList.add("run");
+      // Calculate the delay (in ms) based on your logic.
+      const delay = 14000 - Math.pow(hrData[2].time - hrData[index].time, 1/3) * 2000;
+      // After the delay, switch from "run" to "walk".
+      setTimeout(() => {
+        silhouette.classList.remove("run");
+        silhouette.classList.add("walk");
+      }, delay);
+    });
+  
+    // Update the chat box entries using promises.
     const listItems = checkedContestantsList.querySelectorAll("li");
     const promises = Array.from(listItems).map((listItem, index) => {
       return new Promise((resolve) => {
         const loadingAnimation = listItem.querySelector(".loading-animation");
         const timeText = listItem.querySelector(".time-text");
         loadingAnimation.textContent = "Currently Running...";
-        // Show the time text after the specified time
+        // After the delay, update the chat box.
         setTimeout(() => {
           loadingAnimation.style.display = "none";
           timeText.style.display = "inline";
           resolve();
-        }, 14000 - (hrData[2].time - hrData[index].time) ** (1/3) * 2000); // Convert time to milliseconds
+        }, 14000 - Math.pow(hrData[2].time - hrData[index].time, 1/3) * 2000);
       });
     });
-
-    // Add additional text after all timeouts have completed
+  
     Promise.all(promises).then(() => {
-        // Get the top 3 biggest times
-        const checkedTimes = Array.from(listItems).map((listItem, index) => {
-          const timeText = listItem.querySelector(".time-text");
-          return {
-            time: parseFloat(timeText.textContent),
-            name: listItem.querySelector(".name-container").textContent
-          };
-        });
-  
-        checkedTimes.sort((a, b) => b.time - a.time);
-        const top3 = checkedTimes.slice(0, 3);
-  
-        // Create and append the additional text
-        const additionalText = document.createElement("div");
-        additionalText.className = "additional-text";
-        additionalText.innerHTML = `
-          <h3>Leaderboard</h3>
-          <ol>
-            ${top3.map(item => `<li>${item.name}: ${item.time.toFixed(2)} seconds</li>`).join('')}
-          </ol>
-        `;
-        checkedContestantsList.appendChild(additionalText);
+      // After all timeouts are complete, create a leaderboard.
+      const checkedTimes = Array.from(listItems).map((listItem, index) => {
+        const timeText = listItem.querySelector(".time-text");
+        return {
+          time: parseFloat(timeText.textContent),
+          name: listItem.querySelector(".name-container").textContent
+        };
       });
+  
+      checkedTimes.sort((a, b) => b.time - a.time);
+      const top3 = checkedTimes.slice(0, 3);
+  
+      const additionalText = document.createElement("div");
+      additionalText.className = "additional-text";
+      additionalText.innerHTML = `
+        <h3>Leaderboard</h3>
+        <ol>
+          ${top3.map(item => `<li>${item.name}: ${item.time.toFixed(2)} seconds</li>`).join('')}
+        </ol>
+      `;
+      checkedContestantsList.appendChild(additionalText);
     });
+  });
+
+  // --- Reset Button: reset all contestant data ---
+  resetButton.addEventListener("click", () => {
+    console.log("Reset button clicked"); // Debug log
+  
+    contestants.forEach((contestant, index) => {
+      // Reset checkbox state
+      const checkbox = contestant.querySelector("input[type='checkbox']");
+      checkbox.checked = false;
+  
+      // Reset silhouette image and remove any animation classes
+      const silhouette = contestant.querySelector(".silhouette");
+      silhouette.style.backgroundPosition = "-24px -12px";
+      silhouette.classList.remove("run", "walk");
+  
+      // Reset the name input and displayed name
+      const figureNameInput = contestant.querySelector(".figureName");
+      figureNameInput.value = "";
+      const nameDisplay = contestant.querySelector(".nameDisplay");
+      nameDisplay.textContent = `Contestant #${index + 1}`;
+    });
+  
+    // Clear the active contestants list (including any leaderboard info)
+    checkedContestantsList.innerHTML = "";
+  });
+  
 });
 
 function createBarPlots() {
@@ -311,47 +355,3 @@ function updateTooltipPosition(event) {
   tooltip.style.left = `${tooltipX}px`;
   tooltip.style.top = `${tooltipY}px`;
 }
-
-document.addEventListener("DOMContentLoaded", () => {
-  const startButton = document.getElementById("startButton");
-  startButton.addEventListener("click", () => {
-    const contestants = document.querySelectorAll(".contestant");
-    contestants.forEach(contestant => {
-      const checkbox = contestant.querySelector("input[type='checkbox']");
-      const silhouette = contestant.querySelector(".silhouette");
-      // Only add the "run" class to silhouettes of contestants whose checkbox is checked
-      if (checkbox.checked) {
-        silhouette.classList.add("run");
-      } else {
-        silhouette.classList.remove("run");
-      }
-    });
-  });
-});
-
-document.addEventListener("DOMContentLoaded", () => {
-    const resetButton = document.getElementById("resetButton");
-    resetButton.addEventListener("click", () => {
-      const contestants = document.querySelectorAll(".contestant");
-      contestants.forEach((contestant, index) => {
-        // Reset checkbox
-        const checkbox = contestant.querySelector("input[type='checkbox']");
-        checkbox.checked = false;
-        
-        // Reset silhouette to default state
-        const silhouette = contestant.querySelector(".silhouette");
-        silhouette.style.backgroundPosition = "-24px -12px";
-        silhouette.classList.remove("run");
-        
-        // Clear the name input and reset the display text
-        const figureNameInput = contestant.querySelector(".figureName");
-        figureNameInput.value = "";
-        const nameDisplay = contestant.querySelector(".nameDisplay");
-        nameDisplay.textContent = `Contestant #${index + 1}`;
-      });
-      
-      // Clear the checked contestants list
-      const checkedContestantsList = document.getElementById("checked-contestants");
-      checkedContestantsList.innerHTML = "";
-    });
-  });
