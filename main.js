@@ -1,15 +1,19 @@
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
 
 let meanData;
-let hrData;
-let o2Data;
+let hrData, o2Data, speedData, co2Data, rrData, veData;
 let svg;
 
 async function loadData() {
     // Load CSV data and convert numeric fields as needed
-    meanData = await d3.csv("data/mean_max_df.csv");
+    meanData = await d3.csv("../dsc106-final-project/data/mean_max_df.csv");
     hrData = meanData.map(d => ({ age_grp: d.age_grp, HR: +d.HR, time: +d.time }));
     o2Data = meanData.map(d => ({ age_grp: d.age_grp, VO2: +d.VO2, time: +d.time }));
+    speedData = meanData.map(d => ({ age_grp: d.age_grp, Speed: +d.Speed, time: +d.time }));
+    co2Data = meanData.map(d => ({ age_grp: d.age_grp, VCO2: +d.VCO2, time: +d.time }));
+    rrData = meanData.map(d => ({ age_grp: d.age_grp, RR: +d.RR, time: +d.time }));
+    veData = meanData.map(d => ({ age_grp: d.age_grp, VE: +d.VE, time: +d.time }));
+    createBarPlots();
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -67,180 +71,272 @@ document.addEventListener("DOMContentLoaded", () => {
       }
   });
 
+// function createBarPlots() {
+//     // Define overall dimensions and margins
+//     const width = 500;
+//     const height = 225;
+//     const margin = { top: 20, right: 20, bottom: 40, left: 50 };
+//     const separation = 50;
+
+//     // Set svg dimensions (assumed to be equal to the overall width/height)
+//     const svgWidth = width;
+//     const svgHeight = height;
+//     const horizontalSpace = svgWidth - margin.left - margin.right - separation;
+
+//     // Each chart takes half of the width minus margins
+//     const totalChartArea = width - margin.left - margin.right;
+//     const chartHeight = height - margin.top - margin.bottom;
+//     const chartWidth = (totalChartArea - separation) / 2;
+
+//     // Remove previous svg if exists
+//     if (svg) {
+//         svg.remove();
+//     }
+
+//     // Create the main svg element
+//     svg = d3.select("#graphs")
+//         .append("svg")
+//         .attr("viewBox", `0 0 ${width} ${height}`)
+//         .style("overflow", "visible")
+//         .style("width", "100%")
+//         .style("height", "auto");
+
+//     // Create a group for the HR chart (left side)
+//     const hrChartGroup = svg.append("g")
+//         .attr("transform", `translate(${margin.left}, ${margin.top})`);
+
+//     // Create a group for the VO2 chart (right side)
+//     const o2ChartGroup = svg.append("g")
+//         .attr("transform", `translate(${margin.left + chartWidth + separation}, ${margin.top})`);
+
+//     // HR Chart
+//     const xScaleHR = d3.scaleBand()
+//         .domain(hrData.map(d => d.age_grp))
+//         .range([0, chartWidth])
+//         .padding(0.1);
+
+//     const yScaleHR = d3.scaleLinear()
+//         .domain([0, d3.max(hrData, d => d.HR)])
+//         .nice()
+//         .range([chartHeight, 0]);
+
+//     // Create bars
+//     hrChartGroup.selectAll(".bar")
+//         .data(hrData)
+//         .enter().append("rect")
+//         .attr("class", "bar")
+//         .attr("x", d => xScaleHR(d.age_grp))
+//         .attr("y", d => yScaleHR(d.HR))
+//         .attr("width", xScaleHR.bandwidth())
+//         .attr("height", d => chartHeight - yScaleHR(d.HR))
+//         .attr("fill", "steelblue")
+//         .on("mouseenter", function (event, d) {
+//             d3.select(event.currentTarget).style("fill-opacity", 0.8);
+//             updateTooltipContent(event, d, "HR");
+//             updateTooltipVisibility(true);
+//             updateTooltipPosition(event);
+//         })
+//         .on("mouseleave", function (event, d) {
+//             d3.select(event.currentTarget).style("fill-opacity", 1);
+//             updateTooltipVisibility(false);
+//         });;
+
+//     // x-axis
+//     hrChartGroup.append("g")
+//         .attr("transform", `translate(0, ${chartHeight})`)
+//         .style("font-size", "50%")
+//         .call(d3.axisBottom(xScaleHR));
+
+//     // x-axis title
+//     hrChartGroup.append("text")
+//         .attr("x", chartWidth / 2)
+//         .attr("y", chartHeight + 30)
+//         .attr("text-anchor", "middle")
+//         .style("font-size", "9px")
+//         .text("Age Group");
+
+//     // y-axis
+//     hrChartGroup.append("g")
+//         .style("font-size", "8px")
+//         .call(d3.axisLeft(yScaleHR));
+
+//     // y-axis title
+//     hrChartGroup.append("text")
+//         .attr("transform", "rotate(-90)")
+//         .attr("y", -30)
+//         .attr("x", -chartHeight / 2)
+//         .attr("text-anchor", "middle")
+//         .style("font-size", "9px")
+//         .text("Heart Rate");
+
+//     // title
+//     hrChartGroup.append("text")
+//         .attr("x", chartWidth / 2)
+//         .attr("y", -5)
+//         .attr("text-anchor", "middle")
+//         .style("font-size", "10px")
+//         .text("Heart Rate");
+
+//     // VO2 Chart
+//     const xScaleO2 = d3.scaleBand()
+//         .domain(o2Data.map(d => d.age_grp))
+//         .range([0, chartWidth])
+//         .padding(0.1);
+
+//     const yScaleO2 = d3.scaleLinear()
+//         .domain([0, d3.max(o2Data, d => d.VO2)])
+//         .nice()
+//         .range([chartHeight, 0]);
+
+//     // Create bars
+//     o2ChartGroup.selectAll(".bar")
+//         .data(o2Data)
+//         .enter().append("rect")
+//         .attr("class", "bar")
+//         .attr("x", d => xScaleO2(d.age_grp))
+//         .attr("y", d => yScaleO2(d.VO2))
+//         .attr("width", xScaleO2.bandwidth())
+//         .attr("height", d => chartHeight - yScaleO2(d.VO2))
+//         .attr("fill", "plum")
+//         .on("mouseenter", function (event, d) {
+//             d3.select(event.currentTarget).style("fill-opacity", 0.8);
+//             updateTooltipContent(event, d, "VO2");
+//             updateTooltipVisibility(true);
+//             updateTooltipPosition(event);
+//         })
+//         .on("mouseleave", function (event, d) {
+//             d3.select(event.currentTarget).style("fill-opacity", 1);
+//             updateTooltipVisibility(false);
+//         });
+
+//     // x-axis
+//     o2ChartGroup.append("g")
+//         .attr("transform", `translate(0, ${chartHeight})`)
+//         .style("font-size", "8px")
+//         .call(d3.axisBottom(xScaleO2));
+
+//     // x-axis title
+//     o2ChartGroup.append("text")
+//         .attr("x", chartWidth / 2)
+//         .attr("y", chartHeight + 30)
+//         .attr("text-anchor", "middle")
+//         .style("font-size", "9px")
+//         .text("Age Group");
+
+//     // y-axis
+//     o2ChartGroup.append("g")
+//         .style("font-size", "8px")
+//         .call(d3.axisLeft(yScaleO2));
+
+//     // y-axis title
+//     o2ChartGroup.append("text")
+//         .attr("transform", "rotate(-90)")
+//         .attr("y", -35)
+//         .attr("x", -chartHeight / 2)
+//         .attr("text-anchor", "middle")
+//         .style("font-size", "9px")
+//         .text("VO₂");
+
+//     // title
+//     o2ChartGroup.append("text")
+//         .attr("x", chartWidth / 2)
+//         .attr("y", -5)
+//         .attr("text-anchor", "middle")
+//         .style("font-size", "10px")
+//         .text("VO₂");
+// }
 function createBarPlots() {
-    // Define overall dimensions and margins
-    const width = 500;
-    const height = 225;
-    const margin = { top: 20, right: 20, bottom: 40, left: 50 };
-    const separation = 50;
-
-    // Set svg dimensions (assumed to be equal to the overall width/height)
-    const svgWidth = width;
-    const svgHeight = height;
-    const horizontalSpace = svgWidth - margin.left - margin.right - separation;
-
-    // Each chart takes half of the width minus margins
-    const totalChartArea = width - margin.left - margin.right;
+    const width = 800, height = 250;
+    const margin = { top: 20, right: 30, bottom: 50, left: 60 };
+    const separation = 60;
+    const chartWidth = (width - margin.left - margin.right - 2 * separation) / 3;
     const chartHeight = height - margin.top - margin.bottom;
-    const chartWidth = (totalChartArea - separation) / 2;
+    
+    if (svg) svg.remove();
 
-    // Remove previous svg if exists
-    if (svg) {
-        svg.remove();
-    }
-
-    // Create the main svg element
     svg = d3.select("#graphs")
         .append("svg")
-        .attr("viewBox", `0 0 ${width} ${height}`)
-        .style("overflow", "visible")
+        .attr("viewBox", `0 0 ${width} ${height * 2}`)
         .style("width", "100%")
         .style("height", "auto");
 
-    // Create a group for the HR chart (left side)
-    const hrChartGroup = svg.append("g")
-        .attr("transform", `translate(${margin.left}, ${margin.top})`);
+    const datasets = [
+        { data: hrData, yKey: "HR", color: "steelblue", title: "Heart Rate", ytitle: "HR (bpm)"},
+        { data: o2Data, yKey: "VO2", color: "plum", title: "Oxygen consumption", ytitle: "VO₂ (mL/min)" },
+        { data: co2Data, yKey: "VCO2", color: "orange", title: "Carbon dioxide production", ytitle: "VCO₂ (mL/min)" },
+        { data: speedData, yKey: "Speed", color: "green", title: "Speed", ytitle: "Speed (km/h)" },
+        { data: rrData, yKey: "RR", color: "red", title: "Respiratory Rate", ytitle: "RR (respiration/min)" },
+        { data: veData, yKey: "VE", color: "purple", title: "Pulmonary ventilation", ytitle: "VE (L/min)" }
+    ];
 
-    // Create a group for the VO2 chart (right side)
-    const o2ChartGroup = svg.append("g")
-        .attr("transform", `translate(${margin.left + chartWidth + separation}, ${margin.top})`);
-
-    // HR Chart
-    const xScaleHR = d3.scaleBand()
-        .domain(hrData.map(d => d.age_grp))
-        .range([0, chartWidth])
-        .padding(0.1);
-
-    const yScaleHR = d3.scaleLinear()
-        .domain([0, d3.max(hrData, d => d.HR)])
-        .nice()
-        .range([chartHeight, 0]);
-
-    // Create bars
-    hrChartGroup.selectAll(".bar")
-        .data(hrData)
-        .enter().append("rect")
-        .attr("class", "bar")
-        .attr("x", d => xScaleHR(d.age_grp))
-        .attr("y", d => yScaleHR(d.HR))
-        .attr("width", xScaleHR.bandwidth())
-        .attr("height", d => chartHeight - yScaleHR(d.HR))
-        .attr("fill", "steelblue")
-        .on("mouseenter", function (event, d) {
-            d3.select(event.currentTarget).style("fill-opacity", 0.8);
-            updateTooltipContent(event, d, "HR");
-            updateTooltipVisibility(true);
-            updateTooltipPosition(event);
-        })
-        .on("mouseleave", function (event, d) {
-            d3.select(event.currentTarget).style("fill-opacity", 1);
-            updateTooltipVisibility(false);
-        });;
-
-    // x-axis
-    hrChartGroup.append("g")
-        .attr("transform", `translate(0, ${chartHeight})`)
-        .style("font-size", "50%")
-        .call(d3.axisBottom(xScaleHR));
-
-    // x-axis title
-    hrChartGroup.append("text")
-        .attr("x", chartWidth / 2)
-        .attr("y", chartHeight + 30)
-        .attr("text-anchor", "middle")
-        .style("font-size", "9px")
-        .text("Age Group");
-
-    // y-axis
-    hrChartGroup.append("g")
-        .style("font-size", "8px")
-        .call(d3.axisLeft(yScaleHR));
-
-    // y-axis title
-    hrChartGroup.append("text")
-        .attr("transform", "rotate(-90)")
-        .attr("y", -30)
-        .attr("x", -chartHeight / 2)
-        .attr("text-anchor", "middle")
-        .style("font-size", "9px")
-        .text("Heart Rate");
-
-    // title
-    hrChartGroup.append("text")
-        .attr("x", chartWidth / 2)
-        .attr("y", -5)
-        .attr("text-anchor", "middle")
-        .style("font-size", "10px")
-        .text("Heart Rate");
-
-    // VO2 Chart
-    const xScaleO2 = d3.scaleBand()
-        .domain(o2Data.map(d => d.age_grp))
-        .range([0, chartWidth])
-        .padding(0.1);
-
-    const yScaleO2 = d3.scaleLinear()
-        .domain([0, d3.max(o2Data, d => d.VO2)])
-        .nice()
-        .range([chartHeight, 0]);
-
-    // Create bars
-    o2ChartGroup.selectAll(".bar")
-        .data(o2Data)
-        .enter().append("rect")
-        .attr("class", "bar")
-        .attr("x", d => xScaleO2(d.age_grp))
-        .attr("y", d => yScaleO2(d.VO2))
-        .attr("width", xScaleO2.bandwidth())
-        .attr("height", d => chartHeight - yScaleO2(d.VO2))
-        .attr("fill", "plum")
-        .on("mouseenter", function (event, d) {
-            d3.select(event.currentTarget).style("fill-opacity", 0.8);
-            updateTooltipContent(event, d, "VO2");
-            updateTooltipVisibility(true);
-            updateTooltipPosition(event);
-        })
-        .on("mouseleave", function (event, d) {
-            d3.select(event.currentTarget).style("fill-opacity", 1);
-            updateTooltipVisibility(false);
-        });
-
-    // x-axis
-    o2ChartGroup.append("g")
-        .attr("transform", `translate(0, ${chartHeight})`)
-        .style("font-size", "8px")
-        .call(d3.axisBottom(xScaleO2));
-
-    // x-axis title
-    o2ChartGroup.append("text")
-        .attr("x", chartWidth / 2)
-        .attr("y", chartHeight + 30)
-        .attr("text-anchor", "middle")
-        .style("font-size", "9px")
-        .text("Age Group");
-
-    // y-axis
-    o2ChartGroup.append("g")
-        .style("font-size", "8px")
-        .call(d3.axisLeft(yScaleO2));
-
-    // y-axis title
-    o2ChartGroup.append("text")
-        .attr("transform", "rotate(-90)")
-        .attr("y", -35)
-        .attr("x", -chartHeight / 2)
-        .attr("text-anchor", "middle")
-        .style("font-size", "9px")
-        .text("VO₂");
-
-    // title
-    o2ChartGroup.append("text")
-        .attr("x", chartWidth / 2)
-        .attr("y", -5)
-        .attr("text-anchor", "middle")
-        .style("font-size", "10px")
-        .text("VO₂");
-}
+    datasets.forEach((dataset, i) => {
+        const row = Math.floor(i / 3), col = i % 3;
+        const group = svg.append("g")
+            .attr("transform", `translate(${margin.left + col * (chartWidth + separation)}, ${margin.top + row * height})`);
+        
+        const xScale = d3.scaleBand()
+            .domain(dataset.data.map(d => d.age_grp))
+            .range([0, chartWidth])
+            .padding(0.1);
+        
+        const yScale = d3.scaleLinear()
+            .domain([0, d3.max(dataset.data, d => d[dataset.yKey])])
+            .nice()
+            .range([chartHeight, 0]);
+        
+        group.selectAll(".bar")
+            .data(dataset.data)
+            .enter().append("rect")
+            .attr("class", "bar")
+            .attr("x", d => xScale(d.age_grp))
+            .attr("y", d => yScale(d[dataset.yKey]))
+            .attr("width", xScale.bandwidth())
+            .attr("height", d => chartHeight - yScale(d[dataset.yKey]))
+            .attr("fill", dataset.color)
+            .on("mouseenter", function (event, d) {
+                d3.select(event.currentTarget).style("fill-opacity", 0.8);
+                updateTooltipContent(event, d, dataset.yKey);
+                updateTooltipVisibility(true);
+                updateTooltipPosition(event);
+            })
+            .on("mouseleave", function (event, d) {
+                d3.select(event.currentTarget).style("fill-opacity", 1);
+                updateTooltipVisibility(false);
+            });
+        
+        group.append("g")
+            .attr("transform", `translate(0, ${chartHeight})`)
+            .style("font-size", "8px")
+            .call(d3.axisBottom(xScale));
+        
+        group.append("text")
+            .attr("x", chartWidth / 2)
+            .attr("y", chartHeight + 40)
+            .attr("text-anchor", "middle")
+            .style("font-size", "9px")
+            .text("Age Group");
+        
+        group.append("g")
+            .attr("transform", `translate(-10, 0)`) 
+            .style("font-size", "8px")
+            .call(d3.axisLeft(yScale));
+        
+        group.append("text")
+            .attr("transform", "rotate(-90)")
+            .attr("y", -45)
+            .attr("x", -chartHeight / 2)
+            .attr("text-anchor", "middle")
+            .style("font-size", "9px")
+            .text(dataset.ytitle);
+        
+        group.append("text")
+            .attr("x", chartWidth / 2)
+            .attr("y", -5)
+            .attr("text-anchor", "middle")
+            .style("font-size", "10px")
+            .text(dataset.title);
+    });
+  }
 
 document.addEventListener("DOMContentLoaded", async () => {
     await loadData();
