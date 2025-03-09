@@ -9,21 +9,23 @@
     <script src="https://d3js.org/d3.v7.min.js"></script>
   </head>
   <body>
-    <h1><i>How does aging affect our body's ability to perform during exercise?</i></h1>
+    <h1 id="main-title"><i>How does aging affect our body's ability to perform during exercise?</i></h1>
 
     <h2>Data</h2>
-    <p>
-      Our data was extracted from the <i><b>Treadmill Maximal Exercise Tests from the Exercise 
-      Physiology and Human Performance Lab of the University of Malaga</b></i> dataset from PhysioNet's
-      Open Databases. In this dataset, each athlete performed a maximal Graded Exercise Testing (GET) 
-      on a PowerJog J series treadmill connected to a CPX MedGraphics gas analyzer system with breath-by-breath 
-      measurements of key cardiac and respiratory parameters used in sport science and medicine and heart rate was
-      collected by a Mortara 12-lead ECG device. The athletes were asked to run on a continuous (ramping) or 
-      step-by-step incremental effort on the treadmill until beyond exhaustion. Most of the exercise phases are 
-      preceded by a warmup period of walking at 5 km/h. The test was considered maximal if the oxygen consumption
-      of the participant was saturated (VO2 starts plateauing). Ou visualizations will group participants into 6 age
-      groups as seen below and aggregates their average measurements across each age group.
-    </p>
+    <section id="dataset-description">
+      <p>
+        Our data was extracted from the <strong>Treadmill Maximal Exercise Tests</strong> conducted by the Exercise Physiology and Human Performance Lab of the University of Malaga, available through PhysioNet's Open Databases.
+      </p>
+      <p>
+        In these tests, each athlete performed a maximal Graded Exercise Test (GET) on a PowerJog J series treadmill connected to a CPX MedGraphics gas analyzer system. The device recorded breath-by-breath measurements of key cardiac and respiratory parameters, while heart rate was collected using a Mortara 12-lead ECG device.
+      </p>
+      <p>
+        Athletes ran on the treadmill using either a continuous (ramping) or a step-by-step incremental protocol until exhaustion. Most exercise phases were preceded by a warm-up period of walking at 5 km/h. A test was considered maximal when the participant’s oxygen consumption (VO₂) plateaued.
+      </p>
+      <p>
+        Our visualizations group participants into six age groups and aggregate their average measurements across each group.
+      </p>
+    </section>
     
     <h2>Contestant Lineup</h2>
     <div id="container">
