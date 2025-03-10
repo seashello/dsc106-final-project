@@ -185,7 +185,6 @@ document.addEventListener("DOMContentLoaded", () => {
             leaderboardData.push({ time: timeVal, name });
           });
           leaderboardData.sort((a, b) => b.time - a.time);
-          const top3 = leaderboardData.slice(0, 3);
       
           // Remove any existing leaderboard.
           const existingLeaderboard = checkedContestantsList.querySelector(".additional-text");
@@ -199,7 +198,7 @@ document.addEventListener("DOMContentLoaded", () => {
           additionalText.innerHTML = `
             <h3>Leaderboard</h3>
             <ol style="list-style: none; padding: 0;">
-              ${top3.map((item, idx) => {
+              ${leaderboardData.map((item, idx) => {
                 let color;
                 if (idx === 0) color = "#ffbf00";
                 else if (idx === 1) color = "silver";
