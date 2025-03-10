@@ -84,6 +84,7 @@ document.addEventListener("DOMContentLoaded", () => {
           const timeText = document.createElement("span");
           timeText.className = "time-text";
           timeText.textContent = `${hrData[index].time.toFixed(2)} seconds`;
+          timeText.style.color = "#3d5fa8";
           timeText.style.display = "none"; // Hide initially.
           timeContainer.appendChild(timeText);
   
@@ -150,6 +151,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const loadingAnimation = listItem.querySelector(".loading-animation");
             const timeText = listItem.querySelector(".time-text");
             loadingAnimation.textContent = "Currently Running...";
+            loadingAnimation.style.color = "#a32a2a";
             // Save the timeout ID for later clearing if needed.
             listItem.runningTimeoutID = setTimeout(() => {
               loadingAnimation.style.display = "none";
