@@ -7,6 +7,29 @@ body {
   font-family: 'Roboto', sans-serif;
   background: linear-gradient(135deg, #f0f4f8, #d9e2ec);
   color: #333;
+  cursor: url('images/cursor-pixel.png'), auto;
+}
+
+body, h1, h2, h3, p {
+  font-family: 'Roboto Mono', monospace;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  top: 0; 
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none; 
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.03),
+    rgba(255, 255, 255, 0.03) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  z-index: 9999;
 }
 
 h1, h2 {
@@ -32,6 +55,8 @@ h2 {
 h3 {
   text-align: center;
 }
+
+
 
 .tooltip {
   position: fixed;
@@ -79,7 +104,7 @@ h3.rep-name {
   text-align: center;
   margin: 0;
   margin-bottom: 10px;
-  font-size: 1.1em;
+  font-size: 1em;
   color: #555;
 }
 
@@ -136,6 +161,15 @@ button:hover {
   background-color: #2e8b57;
 }
 
+@keyframes blinkText {
+  0% { opacity: 1; }
+  50% { opacity: 0; }
+  100% { opacity: 1; }
+}
+.blink {
+  animation: blinkText 1s steps(1, start) infinite;
+}
+
 #contestants {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -160,8 +194,8 @@ button:hover {
 
 .contestant-controls {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
   gap: 10px;
   margin: 0;
   margin-bottom: 10px;
@@ -172,6 +206,13 @@ button:hover {
   border-radius: 6px;
   padding: 6px;
   font-size: 0.9em;
+}
+
+.input-group {
+  display: flex;        
+  flex-direction: row;
+  gap: 10px;
+  align-items: center;
 }
 
 .body-and-bar {
@@ -281,7 +322,7 @@ button:hover {
 }
 
 
-.silhouette {
+.silhouette:not(.run):not(.walk) {
   width: 16px;
   height: 32px;
   background: url('sprites_male_run.png') no-repeat;
@@ -341,6 +382,10 @@ button:hover {
   text-align: center;
 }
 
+p.desc {
+  font-family: 'Roboto', sans-serif;
+}
+
 #dataset-description {
   background: #fff;
   border-radius: 8px;
@@ -351,7 +396,7 @@ button:hover {
   line-height: 1.6;
   font-size: 1.1em;
   color: #333;
-  margin-bottom: 80px;
+  margin-bottom: 80px
 }
 
 #dataset-description p {
@@ -375,3 +420,38 @@ button:hover {
     width: 100%;
   }
 }
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.modal-content {
+  background: #fff;
+  padding: 1em;
+  border-radius: 5px;
+  width: 300px;
+  position: relative;
+}
+.close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  cursor: pointer;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+
+
+
+
+

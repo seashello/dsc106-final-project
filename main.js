@@ -201,7 +201,7 @@ document.addEventListener("DOMContentLoaded", () => {
             <ol style="list-style: none; padding: 0;">
               ${top3.map((item, idx) => {
                 let color;
-                if (idx === 0) color = "gold";
+                if (idx === 0) color = "#ffbf00";
                 else if (idx === 1) color = "silver";
                 else if (idx === 2) color = "#cd7f32"; // bronze color
                 return `<li style="color: ${color}; font-weight: bold; margin: 5px 0;">
@@ -257,7 +257,34 @@ document.addEventListener("DOMContentLoaded", () => {
         checkedContestantsList.innerHTML = "";
         // Re-enable the start button.
         startButton.disabled = false;
-      });            
+      }); 
+
+    // Attach event listeners for all customize buttons
+    document.querySelectorAll(".customize-btn").forEach((button, index) => {
+        button.addEventListener("click", () => {
+        console.log("Customize button clicked for contestant", index);
+        openCustomizationModal(index);
+        });
+    });
+
+    // Function to open the modal
+    function openCustomizationModal(index) {
+        const modal = document.getElementById("customize-modal");
+        if (modal) {
+        // Optionally, update modal content based on the contestant's index
+        modal.hidden = false;
+        } else {
+        console.error("Modal element not found");
+        }
+    }
+
+    // Close modal when the close button is clicked
+    document.getElementById("close-modal").addEventListener("click", () => {
+        const modal = document.getElementById("customize-modal");
+        if (modal) {
+        modal.hidden = true;
+        }
+    });       
   });  
 
 function createBarPlots() {
@@ -428,3 +455,8 @@ function updateTooltipPosition(event) {
   tooltip.style.left = `${tooltipX}px`;
   tooltip.style.top = `${tooltipY}px`;
 }
+
+
+
+
+

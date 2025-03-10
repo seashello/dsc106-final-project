@@ -6,6 +6,7 @@
     <title>Document</title>
     <script src="main.js" type="module"></script>
     <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap">
     <script src="https://d3js.org/d3.v7.min.js"></script>
   </head>
   <body>
@@ -13,16 +14,16 @@
 
     <h2>Data</h2>
     <section id="dataset-description">
-      <p>
+      <p class="desc">
         Our data was extracted from the <strong>Treadmill Maximal Exercise Tests</strong> conducted by the Exercise Physiology and Human Performance Lab of the University of Malaga, available through PhysioNet's Open Databases.
       </p>
-      <p>
+      <p class="desc">
         In these tests, each athlete performed a maximal Graded Exercise Test (GET) on a PowerJog J series treadmill connected to a CPX MedGraphics gas analyzer system. The device recorded breath-by-breath measurements of key cardiac and respiratory parameters, while heart rate was collected using a Mortara 12-lead ECG device.
       </p>
-      <p>
+      <p class="desc">
         Athletes ran on the treadmill using either a continuous (ramping) or a step-by-step incremental protocol until exhaustion. Most exercise phases were preceded by a warm-up period of walking at 5 km/h. A test was considered maximal when the participant’s oxygen consumption (VO₂) plateaued.
       </p>
-      <p>
+      <p class="desc">
         Our visualizations group participants into six age groups and aggregate their average measurements across each group.
       </p>
     </section>
@@ -33,17 +34,20 @@
         <div class="contestant">
           <h3 class="rep-name">(10-20] Representative</h3>
           <div class="contestant-controls">
-            <label>
-              <input type="checkbox" class="toggleColor" />
-            </label>
-            <label>
-              <input
-                type="text"
-                class="figureName"
-                placeholder="Enter Contestant Name"
-                maxlength="24"
-              />
-            </label>
+            <div class="input-group">
+              <label>
+                <input type="checkbox" class="toggleColor" />
+              </label>
+              <label>
+                <input
+                  type="text"
+                  class="figureName"
+                  placeholder="Enter Contestant Name"
+                  maxlength="24"
+                />
+              </label>
+            </div>
+            <button class="customize-btn">Customize</button>
           </div>
           <div class="body-and-bar">
             <div class="body-container">
@@ -61,17 +65,20 @@
         <div class="contestant">
           <h3 class="rep-name">(20-30] Representative</h3>
           <div class="contestant-controls">
-            <label>
-              <input type="checkbox" class="toggleColor" />
-            </label>
-            <label>
-              <input
-                type="text"
-                class="figureName"
-                placeholder="Enter Contestant Name"
-                maxlength="24"
-              />
-            </label>
+            <div class="input-group">
+              <label>
+                <input type="checkbox" class="toggleColor" />
+              </label>
+              <label>
+                <input
+                  type="text"
+                  class="figureName"
+                  placeholder="Enter Contestant Name"
+                  maxlength="24"
+                />
+              </label>
+            </div>
+            <button class="customize-btn">Customize</button>
           </div>
           <div class="body-and-bar">
             <div class="body-container">
@@ -89,17 +96,20 @@
         <div class="contestant">
           <h3 class="rep-name">(30-40] Representative</h3>
           <div class="contestant-controls">
-            <label>
-              <input type="checkbox" class="toggleColor" />
-            </label>
-            <label>
-              <input
-                type="text"
-                class="figureName"
-                placeholder="Enter Contestant Name"
-                maxlength="24"
-              />
-            </label>
+            <div class="input-group">
+              <label>
+                <input type="checkbox" class="toggleColor" />
+              </label>
+              <label>
+                <input
+                  type="text"
+                  class="figureName"
+                  placeholder="Enter Contestant Name"
+                  maxlength="24"
+                />
+              </label>
+            </div>
+            <button class="customize-btn">Customize</button>
           </div>
           <div class="body-and-bar">
             <div class="body-container">
@@ -117,17 +127,20 @@
         <div class="contestant">
           <h3 class="rep-name">(40-50] Representative</h3>
           <div class="contestant-controls">
-            <label>
-              <input type="checkbox" class="toggleColor" />
-            </label>
-            <label>
-              <input
-                type="text"
-                class="figureName"
-                placeholder="Enter Contestant Name"
-                maxlength="24"
-              />
-            </label>
+            <div class="input-group">
+              <label>
+                <input type="checkbox" class="toggleColor" />
+              </label>
+              <label>
+                <input
+                  type="text"
+                  class="figureName"
+                  placeholder="Enter Contestant Name"
+                  maxlength="24"
+                />
+              </label>
+            </div>
+            <button class="customize-btn">Customize</button>
           </div>
           <div class="body-and-bar">
             <div class="body-container">
@@ -145,17 +158,20 @@
         <div class="contestant">
           <h3 class="rep-name">(50-60] Representative</h3>
           <div class="contestant-controls">
-            <label>
-              <input type="checkbox" class="toggleColor" />
-            </label>
-            <label>
-              <input
-                type="text"
-                class="figureName"
-                placeholder="Enter Contestant Name"
-                maxlength="24"
-              />
-            </label>
+            <div class="input-group">
+              <label>
+                <input type="checkbox" class="toggleColor" />
+              </label>
+              <label>
+                <input
+                  type="text"
+                  class="figureName"
+                  placeholder="Enter Contestant Name"
+                  maxlength="24"
+                />
+              </label>
+            </div>
+            <button class="customize-btn">Customize</button>
           </div>
           <div class="body-and-bar">
             <div class="body-container">
@@ -173,17 +189,20 @@
         <div class="contestant">
           <h3 class="rep-name">(60-70] Representative</h3>
           <div class="contestant-controls">
-            <label>
-              <input type="checkbox" class="toggleColor" />
-            </label>
-            <label>
-              <input
-                type="text"
-                class="figureName"
-                placeholder="Enter Contestant Name"
-                maxlength="24"
-              />
-            </label>
+            <div class="input-group">
+              <label>
+                <input type="checkbox" class="toggleColor" />
+              </label>
+              <label>
+                <input
+                  type="text"
+                  class="figureName"
+                  placeholder="Enter Contestant Name"
+                  maxlength="24"
+                />
+              </label>
+            </div>
+            <button class="customize-btn">Customize</button>
           </div>
           <div class="body-and-bar">
             <div class="body-container">
@@ -230,5 +249,17 @@
     <div id="alert-box" class="alert-box" hidden>
       <p id="alert-message"></p>
     </div>
+
+    <div id="customize-modal" class="modal" hidden>
+      <div class="modal-content">
+        <span id="close-modal" class="close">&times;</span>
+        <h2>Customize Contestant</h2>
+        <label for="body-color">Body Color:</label>
+        <input type="color" id="body-color" name="body-color">
+        <!-- Additional customization fields here -->
+        <button id="save-customization">Save</button>
+      </div>
+    </div>
+
   </body>
 </html>
