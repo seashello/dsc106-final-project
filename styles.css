@@ -246,10 +246,23 @@ button:hover {
   position: relative;
 }
 
-.silhouette.run {
+.silhouette.run-male {
   width: 18px;
   height: 40px;
   background: url('sprites_male_run.png') no-repeat;
+  background-position: 0 -256px;
+  /* Start at frame 1 of row 5: 0px horizontally, -256px vertically */
+  animation: runAnim 0.6s infinite;
+  /* Force discrete jumps between keyframes */
+  animation-timing-function: steps(1, end);
+  position: relative;
+  top: -25px;
+  right: 5px;
+}
+.silhouette.run-female {
+  width: 18px;
+  height: 40px;
+  background: url('sprites_female_run.png') no-repeat;
   background-position: 0 -256px;
   /* Start at frame 1 of row 5: 0px horizontally, -256px vertically */
   animation: runAnim 0.6s infinite;
@@ -297,10 +310,24 @@ button:hover {
   100% { background-position: -23px -264px; }
 }
 
-.silhouette.walk {
+.silhouette.walk-male {
   width: 18px;
   height: 40px;
   background: url('sprites_male_walk.png') no-repeat;
+  background-position: 0 -256px;
+  /* Start at frame 1 of row 5: 0px horizontally, -256px vertically */
+  animation: walkAnim 1.5s infinite;
+  /* Force discrete jumps between keyframes */
+  animation-timing-function: steps(1, end);
+  position: relative;
+  top: -25px;
+  right: 5px;
+}
+
+.silhouette.walk-female {
+  width: 18px;
+  height: 40px;
+  background: url('sprites_female_walk.png') no-repeat;
   background-position: 0 -256px;
   /* Start at frame 1 of row 5: 0px horizontally, -256px vertically */
   animation: walkAnim 1.5s infinite;
@@ -322,7 +349,7 @@ button:hover {
 }
 
 
-.silhouette:not(.run):not(.walk) {
+.silhouette:not(.run-male):not(.run-female):not(.walk-male):not(.walk-female) {
   width: 16px;
   height: 32px;
   background: url('sprites_male_run.png') no-repeat;
@@ -334,7 +361,7 @@ button:hover {
   top: -5px;
 }
 
-.silhouette, .silhouette.walk, .silhouette.run {
+.silhouette, .silhouette.walk-male, .silhouette.walk-female, .silhouette.run-male, .silhouette.run-female {
   transform: scale(5);
   transform-origin: top left;
   image-rendering: pixelated;
@@ -450,8 +477,54 @@ p.desc {
   display: none !important;
 }
 
+/* Toggle Switch Styles */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 24px;
+  margin-left: 10px;
+}
 
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
 
+.slider {
+  position: relative;
+  background-color: #ddd;  /* Neutral background */
+  transition: 0.4s;
+  border-radius: 34px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 5px;
+  box-sizing: border-box;
+}
 
+.switch-label-left,
+.switch-label-right {
+  font-size: 12px;
+  color: #333;
+  z-index: 2;
+}
 
+.slider::before {
+  content: "";
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  left: 2px;
+  bottom: 2px;
+  background-color: #fff;
+  transition: 0.4s;
+  border-radius: 50%;
+  z-index: 3;
+}
 
+.switch input:checked + .slider::before {
+  transform: translateX(36px);
+}

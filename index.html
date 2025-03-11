@@ -29,6 +29,17 @@
     </section>
     
     <h2>Contestant Lineup</h2>
+    <!-- Global Gender Toggle Switch -->
+    <div id="global-gender-toggle" style="text-align:center; margin-bottom:20px;">
+      <label class="switch">
+        <input type="checkbox" id="globalToggleSprite" />
+        <span class="slider">
+          <span class="switch-label-left">M</span>
+          <span class="switch-label-right">F</span>
+        </span>
+      </label>
+      <p style="margin:5px 0; font-size:12px;">Toggle Gender for All Contestants</p>
+    </div>
     <div id="container">
       <div id="contestants">
         <div class="contestant">
@@ -39,12 +50,7 @@
                 <input type="checkbox" class="toggleColor" />
               </label>
               <label>
-                <input
-                  type="text"
-                  class="figureName"
-                  placeholder="Enter Contestant Name"
-                  maxlength="24"
-                />
+                <input type="text" class="figureName" placeholder="Enter Contestant Name" maxlength="24" />
               </label>
             </div>
             <button class="customize-btn">Customize</button>

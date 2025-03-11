@@ -4,6 +4,8 @@ let meanData;
 let hrData, o2Data, speedData, co2Data, rrData, veData;
 let svg;
 let chartData = [];
+let leaderboardTimeouts = [];
+
 
 async function loadData() {
   // Load CSV data and convert numeric fields as needed
@@ -35,7 +37,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // When checkbox changes, update the silhouette and active list.
     checkbox.addEventListener("change", () => {
       if (!checkbox.checked) {
-        silhouette.classList.remove("run", "walk");
+        silhouette.classList.remove("run-male", "run-female", "walk-male", "walk-female");
         silhouette.style.backgroundPosition = "-24px -12px"; // still image
       } else {
         silhouette.style.backgroundPosition = "-215px -14px"; // pre-run image
@@ -145,7 +147,11 @@ document.addEventListener("DOMContentLoaded", () => {
     // For each checked contestant, start animations and energy depletion.
     checkedContestants.forEach(({ element, origIndex }, idx) => {
       const silhouette = element.querySelector(".silhouette");
-      silhouette.classList.add("run");
+      if (globalToggle.checked) {
+        silhouette.classList.add("run-female");
+      } else {
+        silhouette.classList.add("run-male");
+      }
       const delay = delays[idx];
 
       // Animate the energy bar depletion.
@@ -182,9 +188,14 @@ document.addEventListener("DOMContentLoaded", () => {
       // After delay, switch the animation from run to walk.
       // Save this timeout ID as well.
       silhouette.switchTimeoutID = setTimeout(() => {
-        silhouette.classList.remove("run");
+        if (globalToggle.checked) {
+          silhouette.classList.remove("run-female");
+          silhouette.classList.add("walk-female");
+        } else {
+          silhouette.classList.remove("run-male");
+          silhouette.classList.add("walk-male");
+        }
         chartData.push(hrData[origIndex].age_grp);
-        silhouette.classList.add("walk");
       }, delay);
     });
 
@@ -234,52 +245,73 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  resetButton.addEventListener("click", () => {
-    console.log("Reset button clicked");
+  const globalToggle = document.getElementById("globalToggleSprite");
+
+  // Helper function to reset everything for all contestants
+  function resetEverything() {
+    const isFemale = globalToggle.checked;
+    // Iterate over each contestant card
     contestants.forEach((contestant, index) => {
-      const checkbox = contestant.querySelector("input[type='checkbox']");
-      checkbox.checked = false;
+      // Uncheck the running checkbox (class "toggleColor")
+      const checkbox = contestant.querySelector("input.toggleColor");
+      if (checkbox) {
+        checkbox.checked = false;
+      }
 
+      // Reset the silhouette
       const silhouette = contestant.querySelector(".silhouette");
-      // Clear any pending animation switch timeout.
-      if (silhouette.switchTimeoutID) {
-        clearTimeout(silhouette.switchTimeoutID);
-        delete silhouette.switchTimeoutID;
+      if (silhouette) {
+        // Clear any pending timeouts for switching animations
+        if (silhouette.switchTimeoutID) {
+          clearTimeout(silhouette.switchTimeoutID);
+          delete silhouette.switchTimeoutID;
+        }
+        // Remove any running or walking classes
+        silhouette.classList.remove("run-male",  "run-female", "walk-male", "walk-female");
+        // Set default sprite image based on global gender state
+        if (isFemale) {
+          // Use female running sprite as the default still image
+          silhouette.style.backgroundImage = "url('sprites_female_run.png')";
+        } else {
+          silhouette.style.backgroundImage = "url('sprites_male_run.png')";
+        }
+        silhouette.style.backgroundPosition = "-24px -12px";
       }
-      silhouette.style.backgroundPosition = "-24px -12px";
-      silhouette.classList.remove("run", "walk");
 
-      // Clear any energy depletion intervals.
+      // Reset the energy bar
       const energyBar = contestant.querySelector(".energy-bar");
-      if (energyBar.energyIntervalID) {
-        clearInterval(energyBar.energyIntervalID);
-        delete energyBar.energyIntervalID;
+      if (energyBar) {
+        if (energyBar.energyIntervalID) {
+          clearInterval(energyBar.energyIntervalID);
+          delete energyBar.energyIntervalID;
+        }
+        energyBar.style.height = "100%";
       }
-      // Reset energy bar height.
-      energyBar.style.height = "100%";
-
-      // Do not reset the name input so the name remains.
-      const figureNameInput = contestant.querySelector(".figureName");
-      const nameDisplay = contestant.querySelector(".nameDisplay");
-      nameDisplay.textContent = figureNameInput.value || `Contestant #${index + 1}`;
     });
 
-    // Clear any pending timeouts in the active contestants list.
-    const liElements = checkedContestantsList.querySelectorAll("li");
-    liElements.forEach(li => {
+    // Clear any pending leaderboard timeouts (if any)
+    checkedContestantsList.querySelectorAll("li").forEach(li => {
       if (li.runningTimeoutID) {
         clearTimeout(li.runningTimeoutID);
         delete li.runningTimeoutID;
       }
     });
-
-    // Clear the active contestants list.
+    // Clear the leaderboard
     checkedContestantsList.innerHTML = "";
-
-    // Re-enable the start button.
+    // Re-enable the start button
     startButton.disabled = false;
+  }
 
-    chartData.splice(0, chartData.length);
+  // Reset button handler calls resetEverything
+  resetButton.addEventListener("click", () => {
+    console.log("Reset button clicked");
+    resetEverything();
+  });
+
+  // Global gender toggle now acts as a full reset.
+  globalToggle.addEventListener("change", function() {
+    console.log("Global gender toggled to:", this.checked ? "female" : "male");
+    resetEverything();
   });
 
   // Attach event listeners for all customize buttons
@@ -490,6 +522,14 @@ function updateTooltipPosition(event) {
 }
 
 
+  
+  
+  
+
+
+
+  
+  
 
 
 
