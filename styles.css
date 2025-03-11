@@ -215,6 +215,11 @@ button:hover {
   align-items: center;
 }
 
+.customize-btn {
+  font-size: small;
+  width: 200px;
+}
+
 .body-and-bar {
   display: flex;
   align-items: flex-end;  
@@ -528,3 +533,7 @@ p.desc {
 .switch input:checked + .slider::before {
   transform: translateX(36px);
 }
+
+
+
+

@@ -188,6 +188,8 @@ document.addEventListener("DOMContentLoaded", () => {
       // After delay, switch the animation from run to walk.
       // Save this timeout ID as well.
       silhouette.switchTimeoutID = setTimeout(() => {
+        // Clear the inline background image so that the walk sprite sheet from CSS is used.
+        silhouette.style.backgroundImage = "";
         if (globalToggle.checked) {
           silhouette.classList.remove("run-female");
           silhouette.classList.add("walk-female");
@@ -201,10 +203,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Build leaderboard after all delays finish.
     const leaderboardPromises = Array.from(checkedContestantsList.querySelectorAll("li")).map((listItem) => {
-      const idx = parseInt(listItem.getAttribute("data-index"));
-      const delay = 14000 - Math.pow(hrData[2].time - hrData[idx].time, 1 / 3) * 2000;
-      return new Promise((resolve) => setTimeout(resolve, delay));
-    });
+        const idx = parseInt(listItem.getAttribute("data-index"));
+        const delay = 14000 - Math.pow(hrData[2].time - hrData[idx].time, 1 / 3) * 2000;
+        return new Promise((resolve) => {
+          const timeoutID = setTimeout(resolve, delay);
+          leaderboardTimeouts.push(timeoutID);
+        });
+      });
 
     Promise.all(leaderboardPromises).then(() => {
       const leaderboardData = [];
@@ -288,6 +293,9 @@ document.addEventListener("DOMContentLoaded", () => {
         energyBar.style.height = "100%";
       }
     });
+
+    leaderboardTimeouts.forEach(timeoutID => clearTimeout(timeoutID));
+    leaderboardTimeouts = [];
 
     // Clear any pending leaderboard timeouts (if any)
     checkedContestantsList.querySelectorAll("li").forEach(li => {
