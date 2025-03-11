@@ -3,6 +3,7 @@ import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
 let meanData;
 let hrData, o2Data, speedData, co2Data, rrData, veData;
 let svg;
+let chartData = [];
 
 async function loadData() {
   // Load CSV data and convert numeric fields as needed
@@ -94,6 +95,25 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // Define a Proxy handler to intercept changes.
+  const chartDataHandler = {
+    set(target, property, value, receiver) {
+      target[property] = value;
+      // Dispatch a custom event every time the array is updated.
+      document.dispatchEvent(new CustomEvent('chartDataUpdated', { detail: target }));
+      return true;
+    }
+  };
+
+  // Wrap chartData with the Proxy.
+  chartData = new Proxy(chartData, chartDataHandler);
+
+  // Add an event listener for the updated event.
+  document.addEventListener('chartDataUpdated', (event) => {
+    // Update your plots or perform any actions with the updated chartData.
+    createBarPlots(chartData);
+  });
+
   // --- Show alert message ---
   function showAlert(message) {
     alertMessage.textContent = message;
@@ -163,6 +183,7 @@ document.addEventListener("DOMContentLoaded", () => {
       // Save this timeout ID as well.
       silhouette.switchTimeoutID = setTimeout(() => {
         silhouette.classList.remove("run");
+        chartData.push(hrData[origIndex].age_grp);
         silhouette.classList.add("walk");
       }, delay);
     });
@@ -254,8 +275,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Clear the active contestants list.
     checkedContestantsList.innerHTML = "";
+
     // Re-enable the start button.
     startButton.disabled = false;
+
+    chartData.splice(0, chartData.length);
   });
 
   // Attach event listeners for all customize buttons
