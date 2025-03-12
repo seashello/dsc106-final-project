@@ -327,7 +327,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Global gender toggle now acts as a full reset.
   globalToggle.addEventListener("change", async function() {
     console.log("Global gender toggled to:", this.checked ? "female" : "male");
-    await loadData;
+    await loadData();
     resetEverything();
   });
 
@@ -537,16 +537,3 @@ function updateTooltipPosition(event) {
   tooltip.style.left = `${tooltipX}px`;
   tooltip.style.top = `${tooltipY}px`;
 }
-
-
-  
-  
-  
-
-
-
-  
-  
-
-
-
