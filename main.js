@@ -6,52 +6,121 @@ let svg;
 let chartData = [];
 let leaderboardTimeouts = [];
 
+// Global leaderboard data array.
+let leaderboardData = [];
+
+// Update the leaderboard with a new result.
+function updateLeaderboard(newResult) {
+  leaderboardData.push(newResult);
+  // For an endurance test, higher time is better.
+  leaderboardData.sort((a, b) => b.time - a.time);
+  renderLeaderboard();
+}
+
+// Render the leaderboard with D3 transitions.
+function renderLeaderboard() {
+  // Select the leaderboard container if it exists.
+  let container = d3.select("#leaderboard");
+  if (container.empty()) {
+    // Create it if not present.
+    container = d3.select("#chatbox")
+      .append("div")
+      .attr("id", "leaderboard")
+      .style("position", "relative")
+      .style("margin-top", "10px")
+      .style("text-align", "center"); // Center content within the container.
+    container.append("h3").text("Leaderboard");
+  }
+  
+  // Get the height of the header so we can offset items.
+  const headerNode = container.select("h3").node();
+  const headerHeight = headerNode ? headerNode.getBoundingClientRect().height : 30;
+  
+  // Bind leaderboardData to divs with class "leaderboard-item".
+  const items = container.selectAll("div.leaderboard-item")
+    .data(leaderboardData, d => d.index);
+  
+  // For new items, create the div and set initial opacity.
+  const itemsEnter = items.enter().append("div")
+    .attr("class", "leaderboard-item")
+    .style("position", "absolute")
+    .style("left", "50%")
+    .style("transform", "translateX(-50%)")
+    .style("width", "100%")
+    .style("opacity", 0)
+    .text(d => `${d.name}: ${d.time.toFixed(2)} seconds`)
+    .on("click", d => showContestantDetails(d));
+  
+  // Merge the enter and update selections and animate positions.
+  itemsEnter.merge(items)
+    .transition()
+    .duration(500)
+    .style("opacity", 1)
+    .style("top", (d, i) => `${i * 30 + headerHeight}px`) // Offset by header height.
+    .style("color", (d, i) => {
+      if (i === 0) return "#ffbf00";
+      else if (i === 1) return "silver";
+      else if (i === 2) return "#cd7f32";
+      else return "#333";
+    });
+  
+  // Remove any exiting items with a fade-out.
+  items.exit()
+    .transition()
+    .duration(500)
+    .style("opacity", 0)
+    .remove();
+}
+
+function showContestantDetails(item) {
+  alert(`Details for ${item.name}:\nTime: ${item.time.toFixed(2)} seconds`);
+}
 
 async function loadData() {
-    // Get the global gender toggle element
-    const globalToggle = document.getElementById("globalToggleSprite");
-    // Determine the gender: checked means female, unchecked means male.
-    const gender = globalToggle && globalToggle.checked ? 'female' : 'male';
-    // Choose the appropriate CSV file based on gender.
-    // Make sure these paths are correct relative to your index.html.
-    const csvFile = gender === 'female' ? "data/f_mean_max_df.csv" : "data/m_mean_max_df.csv";
-    
-    // Load CSV data and convert numeric fields.
-    meanData = await d3.csv(csvFile);
-    hrData = meanData.map(d => ({ age_grp: d.age_grp, HR: +d.HR, time: +d.time }));
-    o2Data = meanData.map(d => ({ age_grp: d.age_grp, VO2: +d.VO2, time: +d.time }));
-    speedData = meanData.map(d => ({ age_grp: d.age_grp, Speed: +d.Speed, time: +d.time }));
-    co2Data = meanData.map(d => ({ age_grp: d.age_grp, VCO2: +d.VCO2, time: +d.time }));
-    rrData = meanData.map(d => ({ age_grp: d.age_grp, RR: +d.RR, time: +d.time }));
-    veData = meanData.map(d => ({ age_grp: d.age_grp, VE: +d.VE, time: +d.time }));
-    
-    // Create the bar plots with the new data.
-    createBarPlots();
-    
-    // If using the female dataset, check for missing data for the 60–70 age group.
-    if (gender === 'female') {
-        const has60_70 = meanData.some(d => d.age_grp.includes("60") && d.age_grp.includes("70"));
-        if (!has60_70) {
-          // Target the 6th contestant card (index 5)
-          const contestantCards = document.querySelectorAll(".contestant");
-          if (contestantCards[5]) {
-            // Remove any previous overlay if it exists.
-            const existingOverlay = contestantCards[5].querySelector(".no-data-overlay");
-            if (existingOverlay) existingOverlay.remove();
-            // Find the container where the sprite is rendered.
-            const bodyContainer = contestantCards[5].querySelector(".body-container");
-            if (bodyContainer) {
-              const overlay = document.createElement("div");
-              overlay.classList.add("no-data-overlay");
-              overlay.textContent = "No available data for this age group";
-              // Ensure the container is positioned relatively so that the overlay is absolute inside it.
-              bodyContainer.style.position = "relative";
-              bodyContainer.appendChild(overlay);
-            }
-          }
+  // Get the global gender toggle element.
+  const globalToggle = document.getElementById("globalToggleSprite");
+  // Determine the gender: checked means female, unchecked means male.
+  const gender = globalToggle && globalToggle.checked ? 'female' : 'male';
+  // Choose the appropriate CSV file.
+  const csvFile = gender === 'female' ? "data/f_mean_max_df.csv" : "data/m_mean_max_df.csv";
+  
+  // Load CSV data and convert numeric fields.
+  meanData = await d3.csv(csvFile);
+  hrData = meanData.map(d => ({ age_grp: d.age_grp, HR: +d.HR, time: +d.time }));
+  o2Data = meanData.map(d => ({ age_grp: d.age_grp, VO2: +d.VO2, time: +d.time }));
+  speedData = meanData.map(d => ({ age_grp: d.age_grp, Speed: +d.Speed, time: +d.time }));
+  co2Data = meanData.map(d => ({ age_grp: d.age_grp, VCO2: +d.VCO2, time: +d.time }));
+  rrData = meanData.map(d => ({ age_grp: d.age_grp, RR: +d.RR, time: +d.time }));
+  veData = meanData.map(d => ({ age_grp: d.age_grp, VE: +d.VE, time: +d.time }));
+  
+  createBarPlots();
+  
+  // For female data, check for missing 60–70 age group.
+  if (gender === 'female') {
+    const has60_70 = meanData.some(d => d.age_grp.includes("60") && d.age_grp.includes("70"));
+    if (!has60_70) {
+      const contestantCards = document.querySelectorAll(".contestant");
+      if (contestantCards[5]) {
+        // Disable the checkbox for the 60-70 representative.
+        const checkbox = contestantCards[5].querySelector("input[type='checkbox']");
+        if (checkbox) {
+          checkbox.disabled = true;
         }
-      }      
-  }    
+        // Add an overlay to indicate no data.
+        const existingOverlay = contestantCards[5].querySelector(".no-data-overlay");
+        if (existingOverlay) existingOverlay.remove();
+        const bodyContainer = contestantCards[5].querySelector(".body-container");
+        if (bodyContainer) {
+          const overlay = document.createElement("div");
+          overlay.classList.add("no-data-overlay");
+          overlay.textContent = "No available data for this age group";
+          bodyContainer.style.position = "relative";
+          bodyContainer.appendChild(overlay);
+        }
+      }
+    }
+  }
+}    
 
 document.addEventListener("DOMContentLoaded", () => {
   const contestants = document.querySelectorAll(".contestant");
@@ -61,25 +130,23 @@ document.addEventListener("DOMContentLoaded", () => {
   const startButton = document.getElementById("startButton");
   const resetButton = document.getElementById("resetButton");
 
-  // --- Set up each contestant's listeners ---
+  // Set up contestant listeners.
   contestants.forEach((contestant, index) => {
     const checkbox = contestant.querySelector("input[type='checkbox']");
     const figureNameInput = contestant.querySelector(".figureName");
     const nameDisplay = contestant.querySelector(".nameDisplay");
     const silhouette = contestant.querySelector(".silhouette");
 
-    // When checkbox changes, update the silhouette and active list.
     checkbox.addEventListener("change", () => {
       if (!checkbox.checked) {
         silhouette.classList.remove("run-male", "run-female", "walk-male", "walk-female");
-        silhouette.style.backgroundPosition = "-24px -12px"; // still image
+        silhouette.style.backgroundPosition = "-24px -12px";
       } else {
-        silhouette.style.backgroundPosition = "-215px -14px"; // pre-run image
+        silhouette.style.backgroundPosition = "-215px -14px";
       }
       updateCheckedContestants();
     });
 
-    // Update the displayed name when the user types.
     figureNameInput.addEventListener("input", () => {
       if (figureNameInput.value.length == 24) {
         showAlert("Name cannot exceed 24 characters.");
@@ -90,8 +157,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // --- Update the active contestants list ---
-  // We tag each <li> with a data-index attribute corresponding to the contestant’s original index.
+  // Update active contestants list.
   function updateCheckedContestants() {
     checkedContestantsList.innerHTML = "";
     contestants.forEach((contestant, index) => {
@@ -99,58 +165,45 @@ document.addEventListener("DOMContentLoaded", () => {
       const figureNameInput = contestant.querySelector(".figureName");
       if (checkbox.checked) {
         const listItem = document.createElement("li");
-        listItem.setAttribute("data-index", index); // tag with original index
-
-        // Name container.
+        listItem.setAttribute("data-index", index);
         const nameContainer = document.createElement("div");
         nameContainer.className = "name-container";
         nameContainer.textContent =
           (figureNameInput.value || `Contestant #${index + 1}`) +
           ` (Aged ${index + 1}0-${index + 2}0 Range)`;
         listItem.appendChild(nameContainer);
-
-        // Time container (loading animation + time text).
         const timeContainer = document.createElement("div");
         timeContainer.className = "time-container";
-
         const loadingAnimation = document.createElement("span");
         loadingAnimation.className = "loading-animation";
-        loadingAnimation.textContent = "...";
         timeContainer.appendChild(loadingAnimation);
-
         const timeText = document.createElement("span");
         timeText.className = "time-text";
         timeText.textContent = `${hrData[index].time.toFixed(2)} seconds`;
         timeText.style.color = "#3d5fa8";
-        timeText.style.display = "none"; // Hide initially.
+        timeText.style.display = "none";
         timeContainer.appendChild(timeText);
-
         listItem.appendChild(timeContainer);
         checkedContestantsList.appendChild(listItem);
       }
     });
   }
 
-  // Define a Proxy handler to intercept changes.
+  // Proxy for chartData.
   const chartDataHandler = {
     set(target, property, value, receiver) {
       target[property] = value;
-      // Dispatch a custom event every time the array is updated.
       document.dispatchEvent(new CustomEvent('chartDataUpdated', { detail: target }));
       return true;
     }
   };
 
-  // Wrap chartData with the Proxy.
   chartData = new Proxy(chartData, chartDataHandler);
 
-  // Add an event listener for the updated event.
   document.addEventListener('chartDataUpdated', (event) => {
-    // Update your plots or perform any actions with the updated chartData.
     createBarPlots(chartData);
   });
 
-  // --- Show alert message ---
   function showAlert(message) {
     alertMessage.textContent = message;
     alertBox.style.display = "block";
@@ -159,12 +212,13 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 2000);
   }
 
-  // --- Start Button: Animate and build leaderboard ---
+  // Start simulation and update leaderboard.
   startButton.addEventListener("click", () => {
     if (startButton.disabled) return;
-    startButton.disabled = true;
-
-    // Build an array of checked contestants with their original index.
+    
+    // Clear previous leaderboard.
+    leaderboardData = [];
+    
     const checkedContestants = [];
     contestants.forEach((contestant, index) => {
       const checkbox = contestant.querySelector("input[type='checkbox']");
@@ -173,11 +227,18 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
 
-    // Calculate a delay for each checked contestant.
+    // If no contestants are checked, simply return without disabling the button.
+    if (checkedContestants.length === 0) {
+      return;
+    }
+    
+    // Now disable the start button as we proceed with the simulation.
+    startButton.disabled = true;
+    
     const delays = checkedContestants.map(({ origIndex }) => {
-        return 14000 - Math.cbrt(hrData[2].time - hrData[origIndex].time) * 2000;
-      });
-    // For each checked contestant, start animations and energy depletion.
+      return 14000 - Math.cbrt(hrData[2].time - hrData[origIndex].time) * 2000;
+    });
+
     checkedContestants.forEach(({ element, origIndex }, idx) => {
       const silhouette = element.querySelector(".silhouette");
       if (globalToggle.checked) {
@@ -187,13 +248,11 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       const delay = delays[idx];
 
-      // Animate the energy bar depletion.
       const energyBar = element.querySelector(".energy-bar");
-      // Set energy bar to full initially.
       energyBar.style.height = "100%";
-      // Store the start time.
       const startTime = Date.now();
-      // Start interval to update the energy bar.
+      energyBar.delay = delay;
+      energyBar.startTime = startTime;
       energyBar.energyIntervalID = setInterval(() => {
         const elapsed = Date.now() - startTime;
         const percentRemaining = Math.max(0, ((delay - elapsed) / delay) * 100);
@@ -204,24 +263,26 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       }, 50);
 
-      // Update the corresponding <li> in the active list (using data-index).
       const listItem = checkedContestantsList.querySelector(`li[data-index="${origIndex}"]`);
       if (listItem) {
         const loadingAnimation = listItem.querySelector(".loading-animation");
         const timeText = listItem.querySelector(".time-text");
-        loadingAnimation.textContent = "Currently Running...";
+        // Start an interval to animate the dots.
+        let dotCount = 0;
         loadingAnimation.style.color = "#a32a2a";
-        // Save the timeout ID for later clearing if needed.
+        const loadingIntervalID = setInterval(() => {
+          dotCount = (dotCount + 1) % 4; // cycles 0-3
+          loadingAnimation.textContent = "Currently Running" + ".".repeat(dotCount);
+        }, 500);
         listItem.runningTimeoutID = setTimeout(() => {
+          clearInterval(loadingIntervalID);
           loadingAnimation.style.display = "none";
           timeText.style.display = "inline";
         }, delay);
       }
 
-      // After delay, switch the animation from run to walk.
-      // Save this timeout ID as well.
+      // When the simulation for this contestant finishes:
       silhouette.switchTimeoutID = setTimeout(() => {
-        // Clear the inline background image so that the walk sprite sheet from CSS is used.
         silhouette.style.backgroundImage = "";
         if (globalToggle.checked) {
           silhouette.classList.remove("run-female");
@@ -231,93 +292,40 @@ document.addEventListener("DOMContentLoaded", () => {
           silhouette.classList.add("walk-male");
         }
         chartData.push(hrData[origIndex].age_grp);
+        const nameDisplay = element.querySelector(".nameDisplay");
+        const contestantName = nameDisplay ? nameDisplay.textContent : `Contestant #${origIndex + 1}`;
+        updateLeaderboard({ index: origIndex, time: hrData[origIndex].time, name: contestantName });
       }, delay);
-    });
-
-    // Build leaderboard after all delays finish.
-    const leaderboardPromises = Array.from(checkedContestantsList.querySelectorAll("li")).map((listItem) => {
-        const idx = parseInt(listItem.getAttribute("data-index"));
-        const delay = 14000 - Math.cbrt(hrData[2].time - hrData[idx].time) * 2000;
-        return new Promise((resolve) => {
-          const timeoutID = setTimeout(resolve, delay);
-          leaderboardTimeouts.push(timeoutID);
-        });
-      });
-
-    Promise.all(leaderboardPromises).then(() => {
-      const leaderboardData = [];
-      const liElements = checkedContestantsList.querySelectorAll("li");
-      liElements.forEach(li => {
-        const idx = parseInt(li.getAttribute("data-index"));
-        const timeText = li.querySelector(".time-text").textContent;
-        const timeVal = parseFloat(timeText);
-        const name = li.querySelector(".name-container").textContent;
-        leaderboardData.push({ time: timeVal, name });
-      });
-      leaderboardData.sort((a, b) => b.time - a.time);
-
-      // Remove any existing leaderboard.
-      const existingLeaderboard = checkedContestantsList.querySelector(".additional-text");
-      if (existingLeaderboard) {
-        existingLeaderboard.remove();
-      }
-
-      const additionalText = document.createElement("div");
-      additionalText.className = "additional-text";
-      additionalText.style.textAlign = "center";
-      additionalText.innerHTML = `
-            <h3>Leaderboard</h3>
-            <ol style="list-style: none; padding: 0;">
-              ${leaderboardData.map((item, idx) => {
-        let color;
-        if (idx === 0) color = "#ffbf00";
-        else if (idx === 1) color = "silver";
-        else if (idx === 2) color = "#cd7f32"; // bronze color
-        return `<li style="color: ${color}; font-weight: bold; margin: 5px 0;">
-                          ${item.name}: ${item.time.toFixed(2)} seconds
-                        </li>`;
-      }).join('')}
-            </ol>
-          `;
-      checkedContestantsList.appendChild(additionalText);
     });
   });
 
   const globalToggle = document.getElementById("globalToggleSprite");
 
-  // Helper function to reset everything for all contestants
+  // Reset function.
   function resetEverything() {
-    // Remove any "No available data" notes from contestant cards.
     const contestants = document.querySelectorAll(".contestant");
     contestants.forEach((contestant) => {
-      const note = contestant.querySelector(".no-data-note");
+      const note = contestant.querySelector(".no-data-overlay");
       if (note) {
         note.remove();
       }
     });
   
     const isFemale = globalToggle.checked;
-    // Iterate over each contestant card.
     contestants.forEach((contestant, index) => {
-      // Uncheck the running checkbox (class "toggleColor").
       const checkbox = contestant.querySelector("input.toggleColor");
       if (checkbox) {
         checkbox.checked = false;
       }
   
-      // Reset the silhouette.
       const silhouette = contestant.querySelector(".silhouette");
       if (silhouette) {
-        // Clear any pending timeouts for switching animations.
         if (silhouette.switchTimeoutID) {
           clearTimeout(silhouette.switchTimeoutID);
           delete silhouette.switchTimeoutID;
         }
-        // Remove any running or walking classes.
         silhouette.classList.remove("run-male", "run-female", "walk-male", "walk-female");
-        // Set default sprite image based on global gender state.
         if (isFemale) {
-          // Use female running sprite as the default still image.
           silhouette.style.backgroundImage = "url('sprites_female_run.png')";
         } else {
           silhouette.style.backgroundImage = "url('sprites_male_run.png')";
@@ -325,7 +333,6 @@ document.addEventListener("DOMContentLoaded", () => {
         silhouette.style.backgroundPosition = "-24px -12px";
       }
   
-      // Reset the energy bar.
       const energyBar = contestant.querySelector(".energy-bar");
       if (energyBar) {
         if (energyBar.energyIntervalID) {
@@ -334,18 +341,14 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         energyBar.style.height = "100%";
       }
-
-      // Reset bar charts
+  
       svg.remove();
       createBarPlots();
     });
     
-  
-    // Clear any leaderboard timeouts.
     leaderboardTimeouts.forEach(timeoutID => clearTimeout(timeoutID));
     leaderboardTimeouts = [];
-  
-    // Clear any pending leaderboard timeouts on the list items.
+    
     const checkedContestantsList = document.getElementById("checked-contestants");
     checkedContestantsList.querySelectorAll("li").forEach(li => {
       if (li.runningTimeoutID) {
@@ -353,45 +356,42 @@ document.addEventListener("DOMContentLoaded", () => {
         delete li.runningTimeoutID;
       }
     });
-    // Clear the leaderboard.
     checkedContestantsList.innerHTML = "";
-    // Re-enable the start button.
+    leaderboardData = [];
+    const leaderboardContainer = document.getElementById("leaderboard");
+    if (leaderboardContainer) {
+      leaderboardContainer.remove();
+    }
     startButton.disabled = false;
-  }  
-
-  // Reset button handler calls resetEverything
+  }
+  
   resetButton.addEventListener("click", () => {
     console.log("Reset button clicked");
     resetEverything();
   });
-
-  // Global gender toggle now acts as a full reset.
+  
   globalToggle.addEventListener("change", function() {
     console.log("Global gender toggled to:", this.checked ? "female" : "male");
     resetEverything();
-    loadData(); // Reload data based on the current gender.
+    loadData();
   });
-
-  // Attach event listeners for all customize buttons
+  
   document.querySelectorAll(".customize-btn").forEach((button, index) => {
     button.addEventListener("click", () => {
       console.log("Customize button clicked for contestant", index);
       openCustomizationModal(index);
     });
   });
-
-  // Function to open the modal
+  
   function openCustomizationModal(index) {
     const modal = document.getElementById("customize-modal");
     if (modal) {
-      // Optionally, update modal content based on the contestant's index
       modal.hidden = false;
     } else {
       console.error("Modal element not found");
     }
   }
-
-  // Close modal when the close button is clicked
+  
   document.getElementById("close-modal").addEventListener("click", () => {
     const modal = document.getElementById("customize-modal");
     if (modal) {
@@ -406,15 +406,15 @@ function createBarPlots(filteredData) {
   const separation = 60;
   const chartWidth = (width - margin.left - margin.right - 2 * separation) / 3;
   const chartHeight = height - margin.top - margin.bottom;
-
+  
   if (svg) svg.remove();
-
+  
   svg = d3.select("#graphs")
     .append("svg")
     .attr("viewBox", `0 0 ${width} ${height * 2}`)
     .style("width", "100%")
     .style("height", "auto");
-
+  
   const datasets = [
     { data: hrData, yKey: "HR", color: "steelblue", title: "Heart Rate", ytitle: "HR (bpm)" },
     { data: o2Data, yKey: "VO2", color: "plum", title: "Oxygen Consumption", ytitle: "VO₂ (mL/min)" },
@@ -423,29 +423,26 @@ function createBarPlots(filteredData) {
     { data: rrData, yKey: "RR", color: "red", title: "Respiratory Rate", ytitle: "RR (respiration/min)" },
     { data: veData, yKey: "VE", color: "purple", title: "Pulmonary Ventilation", ytitle: "VE (L/min)" }
   ];
-
+  
   datasets.forEach((dataset, i) => {
     const row = Math.floor(i / 3), col = i % 3;
     const group = svg.append("g")
       .attr("transform", `translate(${margin.left + col * (chartWidth + separation)}, ${margin.top + row * height})`);
-
-    // Build scales using the full dataset for consistent axes.
+  
     const xScale = d3.scaleBand()
       .domain(dataset.data.map(d => d.age_grp))
       .range([0, chartWidth])
       .padding(0.1);
-
+  
     const yScale = d3.scaleLinear()
       .domain([0, d3.max(dataset.data, d => d[dataset.yKey])])
       .nice()
       .range([chartHeight, 0]);
-
-    // Determine which bars to show: filter dataset.data based on filteredData.
-    // If filteredData is empty, barsData will be an empty array and no bars are rendered.
+  
     const barsData = (filteredData && filteredData.length > 0)
       ? dataset.data.filter(d => filteredData.includes(d.age_grp))
       : [];
-
+  
     group.selectAll(".bar")
       .data(barsData)
       .enter().append("rect")
@@ -465,26 +462,24 @@ function createBarPlots(filteredData) {
         d3.select(event.currentTarget).style("fill-opacity", 1);
         updateTooltipVisibility(false);
       });
-
-    // Add the x-axis.
+  
     group.append("g")
       .attr("transform", `translate(0, ${chartHeight})`)
       .style("font-size", "8px")
       .call(d3.axisBottom(xScale));
-
+  
     group.append("text")
       .attr("x", chartWidth / 2)
       .attr("y", chartHeight + 40)
       .attr("text-anchor", "middle")
       .style("font-size", "9px")
       .text("Age Group");
-
-    // Add the y-axis.
+  
     group.append("g")
       .attr("transform", `translate(-10, 0)`)
       .style("font-size", "8px")
       .call(d3.axisLeft(yScale));
-
+  
     group.append("text")
       .attr("transform", "rotate(-90)")
       .attr("y", -45)
@@ -492,8 +487,7 @@ function createBarPlots(filteredData) {
       .attr("text-anchor", "middle")
       .style("font-size", "9px")
       .text(dataset.ytitle);
-
-    // Add the chart title.
+  
     group.append("text")
       .attr("x", chartWidth / 2)
       .attr("y", -5)
@@ -518,11 +512,11 @@ function updateTooltipContent(event, data, measurement_name) {
   const measurement_txt = document.getElementById("measurement_name");
   const measurement = document.getElementById("measurement_value");
   const time = document.getElementById("time_value");
-
+  
   if (!data || Object.keys(data).length === 0) return;
-
+  
   agerange.textContent = data.age_grp;
-
+  
   if (measurement_name === "VO2") {
     measurement_txt.textContent = "VO₂";
     measurement.textContent = `${data.VO2.toFixed(3)}`;
@@ -542,40 +536,26 @@ function updateTooltipContent(event, data, measurement_name) {
     measurement_txt.textContent = "VE";
     measurement.textContent = `${data.VE.toFixed(3)}`;
   }
-
+  
   time.textContent = `${data.time.toFixed(3)}`;
 }
 
 function updateTooltipPosition(event) {
   const tooltip = document.getElementById("tooltip");
-
-  const offsetX = 10; // Offset
+  const offsetX = 10;
   const offsetY = 10;
-
-  // Get the current mouse position
   let tooltipX = event.clientX + offsetX;
   let tooltipY = event.clientY + offsetY;
-
-  // Get the window's dimensions
   const windowWidth = window.innerWidth;
   const windowHeight = window.innerHeight;
-
-  // Get the tooltip's width and height
   const tooltipWidth = tooltip.offsetWidth;
   const tooltipHeight = tooltip.offsetHeight;
-
-  // Check if the tooltip exceeds the window's right edge and adjust position
   if (tooltipX + tooltipWidth > windowWidth) {
     tooltipX = windowWidth - tooltipWidth - offsetX;
   }
-
-  // Check if the tooltip exceeds the window's bottom edge and adjust position
   if (tooltipY + tooltipHeight > windowHeight) {
     tooltipY = windowHeight - tooltipHeight - offsetY;
   }
-
-  // Update the tooltip position
   tooltip.style.left = `${tooltipX}px`;
   tooltip.style.top = `${tooltipY}px`;
 }
-
