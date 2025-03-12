@@ -565,3 +565,9 @@ p.desc {
   font-size: 200%;
   color: #2F4F4F;
 }
+
+.desc.disclaimer{
+  color: gray;
+  font-size: 80%;
+  margin: 0px;
+}
