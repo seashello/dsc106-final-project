@@ -8,19 +8,50 @@ let leaderboardTimeouts = [];
 
 
 async function loadData() {
-  // Load CSV data and convert numeric fields as needed
-  const globalToggle = document.getElementById("globalToggleSprite");
-  const dataFile = globalToggle.checked ? "data/f_mean_max_df.csv" : "data/m_mean_max_df.csv";
-
-  meanData = await d3.csv(dataFile);
-  hrData = meanData.map(d => ({ age_grp: d.age_grp, HR: +d.HR, time: +d.time }));
-  o2Data = meanData.map(d => ({ age_grp: d.age_grp, VO2: +d.VO2, time: +d.time }));
-  speedData = meanData.map(d => ({ age_grp: d.age_grp, Speed: +d.Speed, time: +d.time }));
-  co2Data = meanData.map(d => ({ age_grp: d.age_grp, VCO2: +d.VCO2, time: +d.time }));
-  rrData = meanData.map(d => ({ age_grp: d.age_grp, RR: +d.RR, time: +d.time }));
-  veData = meanData.map(d => ({ age_grp: d.age_grp, VE: +d.VE, time: +d.time }));
-  createBarPlots();
-}
+    // Get the global gender toggle element
+    const globalToggle = document.getElementById("globalToggleSprite");
+    // Determine the gender: checked means female, unchecked means male.
+    const gender = globalToggle && globalToggle.checked ? 'female' : 'male';
+    // Choose the appropriate CSV file based on gender.
+    // Make sure these paths are correct relative to your index.html.
+    const csvFile = gender === 'female' ? "data/f_mean_max_df.csv" : "data/m_mean_max_df.csv";
+    
+    // Load CSV data and convert numeric fields.
+    meanData = await d3.csv(csvFile);
+    hrData = meanData.map(d => ({ age_grp: d.age_grp, HR: +d.HR, time: +d.time }));
+    o2Data = meanData.map(d => ({ age_grp: d.age_grp, VO2: +d.VO2, time: +d.time }));
+    speedData = meanData.map(d => ({ age_grp: d.age_grp, Speed: +d.Speed, time: +d.time }));
+    co2Data = meanData.map(d => ({ age_grp: d.age_grp, VCO2: +d.VCO2, time: +d.time }));
+    rrData = meanData.map(d => ({ age_grp: d.age_grp, RR: +d.RR, time: +d.time }));
+    veData = meanData.map(d => ({ age_grp: d.age_grp, VE: +d.VE, time: +d.time }));
+    
+    // Create the bar plots with the new data.
+    createBarPlots();
+    
+    // If using the female dataset, check for missing data for the 60–70 age group.
+    if (gender === 'female') {
+        const has60_70 = meanData.some(d => d.age_grp.includes("60") && d.age_grp.includes("70"));
+        if (!has60_70) {
+          // Target the 6th contestant card (index 5)
+          const contestantCards = document.querySelectorAll(".contestant");
+          if (contestantCards[5]) {
+            // Remove any previous overlay if it exists.
+            const existingOverlay = contestantCards[5].querySelector(".no-data-overlay");
+            if (existingOverlay) existingOverlay.remove();
+            // Find the container where the sprite is rendered.
+            const bodyContainer = contestantCards[5].querySelector(".body-container");
+            if (bodyContainer) {
+              const overlay = document.createElement("div");
+              overlay.classList.add("no-data-overlay");
+              overlay.textContent = "No available data for this age group";
+              // Ensure the container is positioned relatively so that the overlay is absolute inside it.
+              bodyContainer.style.position = "relative";
+              bodyContainer.appendChild(overlay);
+            }
+          }
+        }
+      }      
+  }    
 
 document.addEventListener("DOMContentLoaded", () => {
   const contestants = document.querySelectorAll(".contestant");
@@ -144,9 +175,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Calculate a delay for each checked contestant.
     const delays = checkedContestants.map(({ origIndex }) => {
-      return 14000 - Math.pow(hrData[2].time - hrData[origIndex].time, 1 / 3) * 2000;
-    });
-
+        return 14000 - Math.cbrt(hrData[2].time - hrData[origIndex].time) * 2000;
+      });
     // For each checked contestant, start animations and energy depletion.
     checkedContestants.forEach(({ element, origIndex }, idx) => {
       const silhouette = element.querySelector(".silhouette");
@@ -207,7 +237,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Build leaderboard after all delays finish.
     const leaderboardPromises = Array.from(checkedContestantsList.querySelectorAll("li")).map((listItem) => {
         const idx = parseInt(listItem.getAttribute("data-index"));
-        const delay = 14000 - Math.pow(hrData[2].time - hrData[idx].time, 1 / 3) * 2000;
+        const delay = 14000 - Math.cbrt(hrData[2].time - hrData[idx].time) * 2000;
         return new Promise((resolve) => {
           const timeoutID = setTimeout(resolve, delay);
           leaderboardTimeouts.push(timeoutID);
@@ -257,37 +287,45 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Helper function to reset everything for all contestants
   function resetEverything() {
+    // Remove any "No available data" notes from contestant cards.
+    const contestants = document.querySelectorAll(".contestant");
+    contestants.forEach((contestant) => {
+      const note = contestant.querySelector(".no-data-note");
+      if (note) {
+        note.remove();
+      }
+    });
+  
     const isFemale = globalToggle.checked;
-    // Iterate over each contestant card
+    // Iterate over each contestant card.
     contestants.forEach((contestant, index) => {
-      // Uncheck the running checkbox (class "toggleColor")
+      // Uncheck the running checkbox (class "toggleColor").
       const checkbox = contestant.querySelector("input.toggleColor");
       if (checkbox) {
         checkbox.checked = false;
       }
-
-      // Reset the silhouette
+  
+      // Reset the silhouette.
       const silhouette = contestant.querySelector(".silhouette");
       if (silhouette) {
-        // Clear any pending timeouts for switching animations
+        // Clear any pending timeouts for switching animations.
         if (silhouette.switchTimeoutID) {
           clearTimeout(silhouette.switchTimeoutID);
           delete silhouette.switchTimeoutID;
         }
-        // Remove any running or walking classes
-        silhouette.classList.remove("run-male",  "run-female", "walk-male", "walk-female");
-        // Set default sprite image based on global gender state
+        // Remove any running or walking classes.
+        silhouette.classList.remove("run-male", "run-female", "walk-male", "walk-female");
+        // Set default sprite image based on global gender state.
         if (isFemale) {
-          // Use female running sprite as the default still image
+          // Use female running sprite as the default still image.
           silhouette.style.backgroundImage = "url('sprites_female_run.png')";
         } else {
-          // Use male running sprite
           silhouette.style.backgroundImage = "url('sprites_male_run.png')";
         }
         silhouette.style.backgroundPosition = "-24px -12px";
       }
-
-      // Reset the energy bar
+  
+      // Reset the energy bar.
       const energyBar = contestant.querySelector(".energy-bar");
       if (energyBar) {
         if (energyBar.energyIntervalID) {
@@ -301,22 +339,25 @@ document.addEventListener("DOMContentLoaded", () => {
       svg.remove();
       createBarPlots();
     });
-
+    
+  
+    // Clear any leaderboard timeouts.
     leaderboardTimeouts.forEach(timeoutID => clearTimeout(timeoutID));
     leaderboardTimeouts = [];
-
-    // Clear any pending leaderboard timeouts (if any)
+  
+    // Clear any pending leaderboard timeouts on the list items.
+    const checkedContestantsList = document.getElementById("checked-contestants");
     checkedContestantsList.querySelectorAll("li").forEach(li => {
       if (li.runningTimeoutID) {
         clearTimeout(li.runningTimeoutID);
         delete li.runningTimeoutID;
       }
     });
-    // Clear the leaderboard
+    // Clear the leaderboard.
     checkedContestantsList.innerHTML = "";
-    // Re-enable the start button
+    // Re-enable the start button.
     startButton.disabled = false;
-  }
+  }  
 
   // Reset button handler calls resetEverything
   resetButton.addEventListener("click", () => {
@@ -325,10 +366,10 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // Global gender toggle now acts as a full reset.
-  globalToggle.addEventListener("change", async function() {
+  globalToggle.addEventListener("change", function() {
     console.log("Global gender toggled to:", this.checked ? "female" : "male");
-    await loadData();
     resetEverything();
+    loadData(); // Reload data based on the current gender.
   });
 
   // Attach event listeners for all customize buttons
@@ -537,3 +578,4 @@ function updateTooltipPosition(event) {
   tooltip.style.left = `${tooltipX}px`;
   tooltip.style.top = `${tooltipY}px`;
 }
+
