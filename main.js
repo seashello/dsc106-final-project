@@ -292,6 +292,10 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         energyBar.style.height = "100%";
       }
+
+      // Reset bar charts
+      svg.remove();
+      createBarPlots();
     });
 
     leaderboardTimeouts.forEach(timeoutID => clearTimeout(timeoutID));
