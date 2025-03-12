@@ -560,3 +560,8 @@ p.desc {
 #first{
   margin-bottom: 80px;
 }
+
+#last{
+  font-size: 200%;
+  color: #2F4F4F;
+}
