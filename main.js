@@ -9,7 +9,10 @@ let leaderboardTimeouts = [];
 
 async function loadData() {
   // Load CSV data and convert numeric fields as needed
-  meanData = await d3.csv("data/mean_max_df.csv");
+  const globalToggle = document.getElementById("globalToggleSprite");
+  const dataFile = globalToggle.checked ? "data/f_mean_max_df.csv" : "data/m_mean_max_df.csv";
+
+  meanData = await d3.csv(dataFile);
   hrData = meanData.map(d => ({ age_grp: d.age_grp, HR: +d.HR, time: +d.time }));
   o2Data = meanData.map(d => ({ age_grp: d.age_grp, VO2: +d.VO2, time: +d.time }));
   speedData = meanData.map(d => ({ age_grp: d.age_grp, Speed: +d.Speed, time: +d.time }));
@@ -278,6 +281,7 @@ document.addEventListener("DOMContentLoaded", () => {
           // Use female running sprite as the default still image
           silhouette.style.backgroundImage = "url('sprites_female_run.png')";
         } else {
+          // Use male running sprite
           silhouette.style.backgroundImage = "url('sprites_male_run.png')";
         }
         silhouette.style.backgroundPosition = "-24px -12px";
@@ -321,8 +325,9 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // Global gender toggle now acts as a full reset.
-  globalToggle.addEventListener("change", function() {
+  globalToggle.addEventListener("change", async function() {
     console.log("Global gender toggled to:", this.checked ? "female" : "male");
+    await loadData;
     resetEverything();
   });
 
