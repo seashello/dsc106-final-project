@@ -122,6 +122,63 @@ async function loadData() {
   }
 }    
 
+// Functions to show/hide the scroll indicator.
+function injectBounceStyle() {
+  if (!document.getElementById('bounce-style')) {
+    const style = document.createElement('style');
+    style.id = 'bounce-style';
+    style.innerHTML = `
+      @keyframes bounce {
+        0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
+        40% { transform: translateX(-50%) translateY(-10px); }
+        60% { transform: translateX(-50%) translateY(-5px); }
+      }
+    `;
+    document.head.appendChild(style);
+  }
+}
+
+function showScrollIndicator() {
+  injectBounceStyle();
+  let indicator = document.getElementById('scroll-indicator');
+  if (!indicator) {
+    indicator = document.createElement('div');
+    indicator.id = 'scroll-indicator';
+    indicator.innerHTML = "&#8595; In Depth Statistics &#8595;";
+    // Set inline styles.
+    indicator.style.position = 'fixed';
+    indicator.style.bottom = '20px';
+    indicator.style.left = '50%';
+    indicator.style.transform = 'translateX(-50%)';
+    // Smaller font size now.
+    indicator.style.fontSize = '1.2em';
+    indicator.style.color = '#3d5fa8';
+    indicator.style.cursor = 'pointer';
+    indicator.style.zIndex = '1000';
+    indicator.style.animation = 'bounce 2s infinite';
+    document.body.appendChild(indicator);
+  }
+  indicator.style.display = 'block';
+}
+
+function hideScrollIndicator() {
+  let indicator = document.getElementById('scroll-indicator');
+  if (indicator) {
+    indicator.style.display = 'none';
+  }
+}
+
+// Check scroll position to hide the indicator when graphs are in view.
+function checkScrollForIndicator() {
+  const graphs = document.getElementById("graphs");
+  if (graphs) {
+    // When the bottom of the viewport has reached the top of the graphs (with a small offset), hide the indicator.
+    if (window.scrollY + window.innerHeight >= graphs.offsetTop + 50) {
+      hideScrollIndicator();
+    }
+  }
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   const contestants = document.querySelectorAll(".contestant");
   const checkedContestantsList = document.getElementById("checked-contestants");
@@ -129,6 +186,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const alertMessage = document.getElementById("alert-message");
   const startButton = document.getElementById("startButton");
   const resetButton = document.getElementById("resetButton");
+
+  // Set up a scroll listener for the indicator.
+  window.addEventListener('scroll', checkScrollForIndicator);
 
   // Set up contestant listeners.
   contestants.forEach((contestant, index) => {
@@ -232,13 +292,14 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
     
-    // Now disable the start button as we proceed with the simulation.
+    // Disable the start button as we proceed with the simulation.
     startButton.disabled = true;
     
     const delays = checkedContestants.map(({ origIndex }) => {
       return 14000 - Math.cbrt(hrData[2].time - hrData[origIndex].time) * 2000;
     });
 
+    // Start each simulation.
     checkedContestants.forEach(({ element, origIndex }, idx) => {
       const silhouette = element.querySelector(".silhouette");
       if (globalToggle.checked) {
@@ -267,7 +328,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (listItem) {
         const loadingAnimation = listItem.querySelector(".loading-animation");
         const timeText = listItem.querySelector(".time-text");
-        // Start an interval to animate the dots.
+        // Animate the loading dots.
         let dotCount = 0;
         loadingAnimation.style.color = "#a32a2a";
         const loadingIntervalID = setInterval(() => {
@@ -297,12 +358,21 @@ document.addEventListener("DOMContentLoaded", () => {
         updateLeaderboard({ index: origIndex, time: hrData[origIndex].time, name: contestantName });
       }, delay);
     });
+
+    // After the longest simulation finishes, show the scroll indicator.
+    let maxDelay = Math.max(...delays);
+    setTimeout(() => {
+      showScrollIndicator();
+    }, maxDelay + 500);
   });
 
   const globalToggle = document.getElementById("globalToggleSprite");
 
   // Reset function.
   function resetEverything() {
+    // Hide the scroll indicator.
+    hideScrollIndicator();
+    
     const contestants = document.querySelectorAll(".contestant");
     contestants.forEach((contestant) => {
       const note = contestant.querySelector(".no-data-overlay");
