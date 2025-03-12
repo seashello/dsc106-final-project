@@ -56,7 +56,7 @@ function renderLeaderboard() {
     .transition()
     .duration(500)
     .style("opacity", 1)
-    .style("top", (d, i) => `${i * 30 + headerHeight}px`) // Offset by header height.
+    .style("top", (d, i) => `${i * 30 + headerHeight + 20}px`) // Offset by header height.
     .style("color", (d, i) => {
       if (i === 0) return "#ffbf00";
       else if (i === 1) return "silver";
