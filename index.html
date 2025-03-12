@@ -10,7 +10,7 @@
     <script src="https://d3js.org/d3.v7.min.js"></script>
   </head>
   <body>
-    <h1 id="main-title"><i>How does aging affect our body's ability to perform during exercise?</i></h1>
+    <h1 id="main-title"><i>Which Age Group is the Most Fit?</i></h1>
 
     <h2>Data</h2>
     <section id="dataset-description">
@@ -27,6 +27,12 @@
         Our visualizations group participants into six age groups and aggregate their average measurements across each group.
       </p>
     </section>
+
+    <div class="story">
+      <p>
+        What age group do you think is the most fit? What determines fitness? Let's find out. 
+      </p>
+    </div>
     
     <h2>Contestant Lineup</h2>
     <!-- Global Gender Toggle Switch -->
@@ -239,7 +245,14 @@
         </div>
       </div>
     </div>
-
+    <div class="story">
+      <p>
+        You may think people are more fit in their late 10s to early 30s when it comes to running. 
+        This may be true in terms of speed, but not necessarily endurance. As we saw above, middle 
+        age runners tend to run for a longer duration before reaching exhaustion. However, time 
+        isn't the whole story. Let's take a look at the graphs below and feel free to (hover for definitions).
+      </p>
+    </div>
     <div id="graph-container">
       <h1>Now analyze the data!</h1>
       <div id="graphs"></div>
@@ -254,6 +267,22 @@
     </div>
     <div id="alert-box" class="alert-box" hidden>
       <p id="alert-message"></p>
+    </div>
+
+    <div class="story">
+      <p>As we observe from the graph, running speed generally declines with age, with younger athletes—especially 
+      males—running faster. However, fitness is not solely determined by speed; heart rate and respiratory 
+      efficiency are also key factors.
+      <br><br>
+      While younger athletes achieve greater speed, they do so with higher heart and respiratory rates and lower 
+      ventilation volume. This suggests lower cardiovascular efficiency, an increased demand for oxygen and CO₂ 
+      removal, and limited lung capacity, leading to suboptimal oxygen delivery.
+      <br><br>
+      In contrast, middle-aged groups (30-50 years) exhibit better overall fitness. They have lower heart rates, 
+      moderate to high VO₂, VCO₂, and VE levels, and a more efficient respiratory rate, albeit at the expense of speed.
+      <br><br>
+      Thus, the data suggests that peak endurance and overall fitness are more prominent in the 30-50 age range, where physiological efficiency improves despite a decline in speed.
+      </p>
     </div>
 
     <div id="customize-modal" class="modal" hidden>
