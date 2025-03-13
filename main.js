@@ -9,38 +9,44 @@ let leaderboardTimeouts = [];
 // Global leaderboard data array.
 let leaderboardData = [];
 
+// Global variable to store the currently customizing contestant index.
+let currentContestantIndex = null;
+
+// Hair sprite mapping for hair customization.
+// Update these color codes and file names with your actual asset filenames.
+const hairSpriteMapping = {
+  "#000000": { male: "black-hair-male.png", female: "black-hair-female.png" },
+  "#ff0000": { male: "red-hair-male.png", female: "red-hair-female.png" },
+  "#ffff00": { male: "blonde-hair-male.png", female: "blonde-hair-female.png" },
+  // Add more mappings as needed…
+};
+
 // Update the leaderboard with a new result.
 function updateLeaderboard(newResult) {
   leaderboardData.push(newResult);
-  // For an endurance test, higher time is better.
   leaderboardData.sort((a, b) => b.time - a.time);
   renderLeaderboard();
 }
 
 // Render the leaderboard with D3 transitions.
 function renderLeaderboard() {
-  // Select the leaderboard container if it exists.
   let container = d3.select("#leaderboard");
   if (container.empty()) {
-    // Create it if not present.
     container = d3.select("#chatbox")
       .append("div")
       .attr("id", "leaderboard")
       .style("position", "relative")
       .style("margin-top", "10px")
-      .style("text-align", "center"); // Center content within the container.
+      .style("text-align", "center");
     container.append("h3").text("Leaderboard");
   }
   
-  // Get the height of the header so we can offset items.
   const headerNode = container.select("h3").node();
   const headerHeight = headerNode ? headerNode.getBoundingClientRect().height : 30;
   
-  // Bind leaderboardData to divs with class "leaderboard-item".
   const items = container.selectAll("div.leaderboard-item")
     .data(leaderboardData, d => d.index);
   
-  // For new items, create the div and set initial opacity.
   const itemsEnter = items.enter().append("div")
     .attr("class", "leaderboard-item")
     .style("position", "absolute")
@@ -51,12 +57,11 @@ function renderLeaderboard() {
     .text(d => `${d.name}: ${d.time.toFixed(2)} seconds`)
     .on("click", d => showContestantDetails(d));
   
-  // Merge the enter and update selections and animate positions.
   itemsEnter.merge(items)
     .transition()
     .duration(500)
     .style("opacity", 1)
-    .style("top", (d, i) => `${i * 30 + headerHeight + 20}px`) // Offset by header height.
+    .style("top", (d, i) => `${i * 30 + headerHeight + 20}px`)
     .style("color", (d, i) => {
       if (i === 0) return "#ffbf00";
       else if (i === 1) return "silver";
@@ -64,7 +69,6 @@ function renderLeaderboard() {
       else return "#333";
     });
   
-  // Remove any exiting items with a fade-out.
   items.exit()
     .transition()
     .duration(500)
@@ -77,14 +81,10 @@ function showContestantDetails(item) {
 }
 
 async function loadData() {
-  // Get the global gender toggle element.
   const globalToggle = document.getElementById("globalToggleSprite");
-  // Determine the gender: checked means female, unchecked means male.
   const gender = globalToggle && globalToggle.checked ? 'female' : 'male';
-  // Choose the appropriate CSV file.
   const csvFile = gender === 'female' ? "data/f_mean_max_df.csv" : "data/m_mean_max_df.csv";
   
-  // Load CSV data and convert numeric fields.
   meanData = await d3.csv(csvFile);
   hrData = meanData.map(d => ({ age_grp: d.age_grp, HR: +d.HR, time: +d.time }));
   o2Data = meanData.map(d => ({ age_grp: d.age_grp, VO2: +d.VO2, time: +d.time }));
@@ -101,12 +101,10 @@ async function loadData() {
     if (!has60_70) {
       const contestantCards = document.querySelectorAll(".contestant");
       if (contestantCards[5]) {
-        // Disable the checkbox for the 60-70 representative.
         const checkbox = contestantCards[5].querySelector("input[type='checkbox']");
         if (checkbox) {
           checkbox.disabled = true;
         }
-        // Add an overlay to indicate no data.
         const existingOverlay = contestantCards[5].querySelector(".no-data-overlay");
         if (existingOverlay) existingOverlay.remove();
         const bodyContainer = contestantCards[5].querySelector(".body-container");
@@ -122,7 +120,6 @@ async function loadData() {
   }
 }    
 
-// Functions to show/hide the scroll indicator.
 function injectBounceStyle() {
   if (!document.getElementById('bounce-style')) {
     const style = document.createElement('style');
@@ -145,12 +142,10 @@ function showScrollIndicator() {
     indicator = document.createElement('div');
     indicator.id = 'scroll-indicator';
     indicator.innerHTML = "&#8595; In Depth Statistics &#8595;";
-    // Set inline styles.
     indicator.style.position = 'fixed';
     indicator.style.bottom = '20px';
     indicator.style.left = '50%';
     indicator.style.transform = 'translateX(-50%)';
-    // Smaller font size now.
     indicator.style.fontSize = '1.2em';
     indicator.style.color = '#3d5fa8';
     indicator.style.cursor = 'pointer';
@@ -168,11 +163,9 @@ function hideScrollIndicator() {
   }
 }
 
-// Check scroll position to hide the indicator when graphs are in view.
 function checkScrollForIndicator() {
   const graphs = document.getElementById("graphs");
   if (graphs) {
-    // When the bottom of the viewport has reached the top of the graphs (with a small offset), hide the indicator.
     if (window.scrollY + window.innerHeight >= graphs.offsetTop + 50) {
       hideScrollIndicator();
     }
@@ -187,10 +180,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const startButton = document.getElementById("startButton");
   const resetButton = document.getElementById("resetButton");
 
-  // Set up a scroll listener for the indicator.
+  const globalToggle = document.getElementById("globalToggleSprite");
+
   window.addEventListener('scroll', checkScrollForIndicator);
 
-  // Set up contestant listeners.
   contestants.forEach((contestant, index) => {
     const checkbox = contestant.querySelector("input[type='checkbox']");
     const figureNameInput = contestant.querySelector(".figureName");
@@ -217,7 +210,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // Update active contestants list.
   function updateCheckedContestants() {
     checkedContestantsList.innerHTML = "";
     contestants.forEach((contestant, index) => {
@@ -249,7 +241,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Proxy for chartData.
   const chartDataHandler = {
     set(target, property, value, receiver) {
       target[property] = value;
@@ -272,11 +263,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 2000);
   }
 
-  // Start simulation and update leaderboard.
   startButton.addEventListener("click", () => {
     if (startButton.disabled) return;
     
-    // Clear previous leaderboard.
     leaderboardData = [];
     
     const checkedContestants = [];
@@ -287,19 +276,16 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
 
-    // If no contestants are checked, simply return without disabling the button.
     if (checkedContestants.length === 0) {
       return;
     }
     
-    // Disable the start button as we proceed with the simulation.
     startButton.disabled = true;
     
     const delays = checkedContestants.map(({ origIndex }) => {
       return 14000 - Math.cbrt(hrData[2].time - hrData[origIndex].time) * 2000;
     });
 
-    // Start each simulation.
     checkedContestants.forEach(({ element, origIndex }, idx) => {
       const silhouette = element.querySelector(".silhouette");
       if (globalToggle.checked) {
@@ -328,11 +314,10 @@ document.addEventListener("DOMContentLoaded", () => {
       if (listItem) {
         const loadingAnimation = listItem.querySelector(".loading-animation");
         const timeText = listItem.querySelector(".time-text");
-        // Animate the loading dots.
         let dotCount = 0;
         loadingAnimation.style.color = "#a32a2a";
         const loadingIntervalID = setInterval(() => {
-          dotCount = (dotCount + 1) % 4; // cycles 0-3
+          dotCount = (dotCount + 1) % 4;
           loadingAnimation.textContent = "Currently Running" + ".".repeat(dotCount);
         }, 500);
         listItem.runningTimeoutID = setTimeout(() => {
@@ -342,7 +327,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }, delay);
       }
 
-      // When the simulation for this contestant finishes:
       silhouette.switchTimeoutID = setTimeout(() => {
         silhouette.style.backgroundImage = "";
         if (globalToggle.checked) {
@@ -359,18 +343,13 @@ document.addEventListener("DOMContentLoaded", () => {
       }, delay);
     });
 
-    // After the longest simulation finishes, show the scroll indicator.
     let maxDelay = Math.max(...delays);
     setTimeout(() => {
       showScrollIndicator();
     }, maxDelay + 500);
   });
 
-  const globalToggle = document.getElementById("globalToggleSprite");
-
-  // Reset function.
   function resetEverything() {
-    // Hide the scroll indicator.
     hideScrollIndicator();
     
     const contestants = document.querySelectorAll(".contestant");
@@ -412,7 +391,9 @@ document.addEventListener("DOMContentLoaded", () => {
         energyBar.style.height = "100%";
       }
   
-      svg.remove();
+      if (svg) {
+        svg.remove();
+      }
       createBarPlots();
     });
     
@@ -453,7 +434,26 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
   
+  // Event listener for saving hair customization.
+  document.getElementById("save-customization").addEventListener("click", () => {
+    const hairColor = document.getElementById("hair-color").value;
+    const gender = document.getElementById("globalToggleSprite").checked ? 'female' : 'male';
+    const spriteMapping = hairSpriteMapping[hairColor] || hairSpriteMapping["#000000"];
+    const hairSprite = spriteMapping[gender];
+    
+    const contestant = document.querySelectorAll(".contestant")[currentContestantIndex];
+    if (contestant) {
+      const hairElement = contestant.querySelector(".hair");
+      if (hairElement) {
+        hairElement.style.backgroundImage = `url('${hairSprite}')`;
+      }
+    }
+    document.getElementById("customize-modal").hidden = true;
+  });
+  
+  // Modify openCustomizationModal to store current contestant index.
   function openCustomizationModal(index) {
+    currentContestantIndex = index;
     const modal = document.getElementById("customize-modal");
     if (modal) {
       modal.hidden = false;
@@ -569,7 +569,6 @@ function createBarPlots(filteredData) {
 
 document.addEventListener("DOMContentLoaded", async () => {
   await loadData();
-  //   createBarPlots();
 });
 
 function updateTooltipVisibility(isVisible) {

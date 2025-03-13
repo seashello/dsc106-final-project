@@ -2,262 +2,283 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Multi-Step Fade</title>
+
+    <!-- Your main.js, D3, etc. -->
     <script src="main.js" type="module"></script>
-    <link rel="stylesheet" href="styles.css" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap">
     <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://unpkg.com/scrollama"></script>
+
+    <!-- Link to external CSS -->
+    <link rel="stylesheet" href="styles.css" />
+
+    <!-- Fonts -->
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap"
+    />
   </head>
   <body>
-    <h1 id="main-title"><i>Which Age Group is the Most Fit?</i></h1>
-    <h3 id="first">What determines fitness? Let's find out. </h3>
-
-    <section id="dataset-description">
-      <h2>Data</h2>
-      <p class="desc">
-        Our data was extracted from the <strong>Treadmill Maximal Exercise Tests</strong> conducted by the Exercise Physiology and Human Performance Lab of the University of Malaga, available through PhysioNet's Open Databases.
-      </p>
-      <p class="desc">
-        In these tests, each athlete performed a maximal Graded Exercise Test (GET) on a PowerJog J series treadmill connected to a CPX MedGraphics gas analyzer system. The device recorded breath-by-breath measurements of key cardiac and respiratory parameters, while heart rate was collected using a Mortara 12-lead ECG device.
-      </p>
-      <p class="desc">
-        Athletes ran on the treadmill using either a continuous (ramping) or a step-by-step incremental protocol until exhaustion. Most exercise phases were preceded by a warm-up period of walking at 5 km/h. A test was considered maximal when the participant’s oxygen consumption (VO₂) plateaued.
-      </p>
-      <p class="desc">
-        Our visualizations group participants into six age groups and aggregate their average measurements across each group.
-      </p>
-      <p class="desc disclaimer">
-        <i>The dataset used for these visualizations contains an inproportionate representation of female data and individuals aged 60-70. As a result, 
-        insights derived from these demographics may not be fully reflective of the broader population.</i>
-      </p>
-    </section>
-    
-    <!-- <h2>Contestant Lineup</h2> -->
-    <h2>Run simulation below to see running duration and</h2>
-    <h2>oxygen depletion of each age group.</h2>
-    <!-- Global Gender Toggle Switch -->
-    <div id="global-gender-toggle" style="text-align:center; margin-bottom:20px;">
-      <!-- <p style="margin:5px 0; font-size:12px;">Toggle Gender for All Contestants</p> -->
-      <label class="switch">
-        <input type="checkbox" id="globalToggleSprite" />
-        <span class="slider">
-          <span class="switch-label-left">M</span>
-          <span class="switch-label-right">F</span>
-        </span>
-      </label>
-      <p style="margin:5px 0; font-size:12px;">Toggle Gender for ALL Contestants</p>
-    </div>
-    <div id="container">
-      <div id="contestants">
-        <div class="contestant">
-          <h3 class="rep-name">(10-20] Representative</h3>
-          <div class="contestant-controls">
-            <div class="input-group">
-              <label>
-                <input type="checkbox" class="toggleColor" />
-              </label>
-              <label>
-                <input type="text" class="figureName" placeholder="Enter Contestant Name" maxlength="24" />
-              </label>
-            </div>
-            <button class="customize-btn">Customize Appearance</button>
-          </div>
-          <div class="body-and-bar">
-            <div class="body-container">
-              <div class="silhouette"></div>
-              <!-- <img class="silhouette" src="silhouette.png" alt="Body silhouette" /> -->
-              <!-- <div class="overlay"></div> -->
-            </div>
-            <div class="energy-bar-container">
-              <div class="energy-bar"></div>
-            </div>
-          </div>
-          <p class="nameDisplay">Contestant #1</p>
-        </div>
-      
-        <div class="contestant">
-          <h3 class="rep-name">(20-30] Representative</h3>
-          <div class="contestant-controls">
-            <div class="input-group">
-              <label>
-                <input type="checkbox" class="toggleColor" />
-              </label>
-              <label>
-                <input
-                  type="text"
-                  class="figureName"
-                  placeholder="Enter Contestant Name"
-                  maxlength="24"
-                />
-              </label>
-            </div>
-            <button class="customize-btn">Customize Appearance</button>
-          </div>
-          <div class="body-and-bar">
-            <div class="body-container">
-              <div class="silhouette"></div>
-              <!-- <img class="silhouette" src="silhouette.png" alt="Body silhouette" />
-              <div class="overlay"></div> -->
-            </div>
-            <div class="energy-bar-container">
-              <div class="energy-bar"></div>
-            </div>
-          </div>
-          <p class="nameDisplay">Contestant #2</p>
-        </div>
-
-        <div class="contestant">
-          <h3 class="rep-name">(30-40] Representative</h3>
-          <div class="contestant-controls">
-            <div class="input-group">
-              <label>
-                <input type="checkbox" class="toggleColor" />
-              </label>
-              <label>
-                <input
-                  type="text"
-                  class="figureName"
-                  placeholder="Enter Contestant Name"
-                  maxlength="24"
-                />
-              </label>
-            </div>
-            <button class="customize-btn">Customize Appearance</button>
-          </div>
-          <div class="body-and-bar">
-            <div class="body-container">
-              <div class="silhouette"></div>
-              <!-- <img class="silhouette" src="silhouette.png" alt="Body silhouette" />
-              <div class="overlay"></div> -->
-            </div>
-            <div class="energy-bar-container">
-              <div class="energy-bar"></div>
-            </div>
-          </div>
-          <p class="nameDisplay">Contestant #3</p>
-        </div>
-
-        <div class="contestant">
-          <h3 class="rep-name">(40-50] Representative</h3>
-          <div class="contestant-controls">
-            <div class="input-group">
-              <label>
-                <input type="checkbox" class="toggleColor" />
-              </label>
-              <label>
-                <input
-                  type="text"
-                  class="figureName"
-                  placeholder="Enter Contestant Name"
-                  maxlength="24"
-                />
-              </label>
-            </div>
-            <button class="customize-btn">Customize Appearance</button>
-          </div>
-          <div class="body-and-bar">
-            <div class="body-container">
-              <div class="silhouette"></div>
-              <!-- <img class="silhouette" src="silhouette.png" alt="Body silhouette" />
-              <div class="overlay"></div> -->
-            </div>
-            <div class="energy-bar-container">
-              <div class="energy-bar"></div>
-            </div>
-          </div>
-          <p class="nameDisplay">Contestant #4</p>
-        </div>
-
-        <div class="contestant">
-          <h3 class="rep-name">(50-60] Representative</h3>
-          <div class="contestant-controls">
-            <div class="input-group">
-              <label>
-                <input type="checkbox" class="toggleColor" />
-              </label>
-              <label>
-                <input
-                  type="text"
-                  class="figureName"
-                  placeholder="Enter Contestant Name"
-                  maxlength="24"
-                />
-              </label>
-            </div>
-            <button class="customize-btn">Customize Appearance</button>
-          </div>
-          <div class="body-and-bar">
-            <div class="body-container">
-              <div class="silhouette"></div>
-              <!-- <img class="silhouette" src="silhouette.png" alt="Body silhouette" />
-              <div class="overlay"></div> -->
-            </div>
-            <div class="energy-bar-container">
-              <div class="energy-bar"></div>
-            </div>
-          </div>
-          <p class="nameDisplay">Contestant #5</p>
-        </div>
-
-        <div class="contestant">
-          <h3 class="rep-name">(60-70] Representative</h3>
-          <div class="contestant-controls">
-            <div class="input-group">
-              <label>
-                <input type="checkbox" class="toggleColor" />
-              </label>
-              <label>
-                <input
-                  type="text"
-                  class="figureName"
-                  placeholder="Enter Contestant Name"
-                  maxlength="24"
-                />
-              </label>
-            </div>
-            <button class="customize-btn">Customize Appearance</button>
-          </div>
-          <div class="body-and-bar">
-            <div class="body-container">
-              <div class="silhouette"></div>
-              <!-- <img class="silhouette" src="silhouette.png" alt="Body silhouette" />
-              <div class="overlay"></div> -->
-            </div>
-            <div class="energy-bar-container">
-              <div class="energy-bar"></div>
-            </div>
-          </div>
-          <p class="nameDisplay">Contestant #6</p>
-        </div>
-
-      </div>
-      <div id="comp-controls">
-        <!-- The box for active contestants -->
-        <div id="chatbox">
-          <h3>Active Contestants</h3>
-          <ul id="checked-contestants"></ul>
-        </div>
-    
-        <!-- The box for the Start button and future buttons -->
-        <div id="buttons-container">
-          <button id="startButton">Start</button>
-          <button id="resetButton">Reset</button>
-          <!-- You can add more buttons or elements here -->
-        </div>
+    <!-- 1) TITLE SCREEN (Highest Z-Index) -->
+    <div id="title-screen">
+      <!-- Inner container that is exactly 100vh, centered vertically/horizontally -->
+      <div class="inner">
+        <h1 id="main-title"><i>Which Age Group is the Most Fit?</i></h1>
+        <h3 id="first">What determines fitness? Let's find out.</h3>
       </div>
     </div>
-    <div class="story">
-      <p>
-        You may think people are more fit in their late 10s to early 30s when it comes to running. 
-        This may be true in terms of speed, but not necessarily endurance. As we saw above, middle 
-        age runners tend to run for a longer duration before reaching exhaustion. However, time 
-        isn't the whole story. Let's take a look at the graphs below and feel free to (hover for definitions).
-      </p>
+
+    <!-- 2) DATA SCREEN (Second Highest Z-Index) -->
+    <div id="data-screen">
+      <div class="inner">
+        <section id="dataset-description">
+          <h2>Data</h2>
+          <p class="desc">
+            Our data was extracted from the <strong>Treadmill Maximal Exercise Tests</strong> conducted by the Exercise Physiology and Human Performance Lab of the University of Malaga, available through PhysioNet's Open Databases.
+          </p>
+          <p class="desc">
+            In these tests, each athlete performed a maximal Graded Exercise Test (GET) on a PowerJog J series treadmill connected to a CPX MedGraphics gas analyzer system. The device recorded breath-by-breath measurements of key cardiac and respiratory parameters, while heart rate was collected using a Mortara 12-lead ECG device.
+          </p>
+          <p class="desc">
+            Athletes ran on the treadmill using either a continuous (ramping) or a step-by-step incremental protocol until exhaustion. Most exercise phases were preceded by a warm-up period of walking at 5 km/h. A test was considered maximal when the participant’s oxygen consumption (VO₂) plateaued.
+          </p>
+          <p class="desc">
+            Our visualizations group participants into six age groups and aggregate their average measurements across each group.
+          </p>
+          <p class="desc disclaimer">
+            <i>The dataset used for these visualizations contains an inproportionate representation of female data and individuals aged 60-70. As a result, 
+            insights derived from these demographics may not be fully reflective of the broader population.</i>
+          </p>
+        </section>
+      </div>
     </div>
-    <div id="graph-container">
-      <h1>Now analyze the data!</h1>
-      <div id="graphs"></div>
+
+    <!-- 3) MAIN CONTENT (Below Both Pinned Screens) -->
+    <div id="main-content">
+      <h2>Run simulation below to see running duration and</h2>
+      <h2>oxygen depletion of each age group.</h2>
+
+      <!-- Global Gender Toggle Switch -->
+      <div id="global-gender-toggle" style="text-align:center; margin-bottom:20px;">
+        <label class="switch">
+          <input type="checkbox" id="globalToggleSprite" />
+          <span class="slider">
+            <span class="switch-label-left">M</span>
+            <span class="switch-label-right">F</span>
+          </span>
+        </label>
+        <p style="margin:5px 0; font-size:12px;">Toggle Gender for ALL Contestants</p>
+      </div>
+
+      <div id="container">
+        <div id="contestants">
+          <!-- Contestant 1 -->
+          <div class="contestant">
+            <h3 class="rep-name">(10-20] Representative</h3>
+            <div class="contestant-controls">
+              <div class="input-group">
+                <label>
+                  <input type="checkbox" class="toggleColor" />
+                </label>
+                <label>
+                  <input
+                    type="text"
+                    class="figureName"
+                    placeholder="Enter Contestant Name"
+                    maxlength="24"
+                  />
+                </label>
+              </div>
+              <button class="customize-btn">Customize Appearance</button>
+            </div>
+            <div class="body-and-bar">
+              <div class="body-container">
+                <div class="silhouette"></div>
+                <div class="hair"></div>
+              </div>
+              <div class="energy-bar-container">
+                <div class="energy-bar"></div>
+              </div>
+            </div>
+            <p class="nameDisplay">Contestant #1</p>
+          </div>
+
+          <!-- Contestant 2 -->
+          <div class="contestant">
+            <h3 class="rep-name">(20-30] Representative</h3>
+            <div class="contestant-controls">
+              <div class="input-group">
+                <label>
+                  <input type="checkbox" class="toggleColor" />
+                </label>
+                <label>
+                  <input
+                    type="text"
+                    class="figureName"
+                    placeholder="Enter Contestant Name"
+                    maxlength="24"
+                  />
+                </label>
+              </div>
+              <button class="customize-btn">Customize Appearance</button>
+            </div>
+            <div class="body-and-bar">
+              <div class="body-container">
+                <div class="silhouette"></div>
+              </div>
+              <div class="energy-bar-container">
+                <div class="energy-bar"></div>
+              </div>
+            </div>
+            <p class="nameDisplay">Contestant #2</p>
+          </div>
+
+          <!-- Contestant 3 -->
+          <div class="contestant">
+            <h3 class="rep-name">(30-40] Representative</h3>
+            <div class="contestant-controls">
+              <div class="input-group">
+                <label>
+                  <input type="checkbox" class="toggleColor" />
+                </label>
+                <label>
+                  <input
+                    type="text"
+                    class="figureName"
+                    placeholder="Enter Contestant Name"
+                    maxlength="24"
+                  />
+                </label>
+              </div>
+              <button class="customize-btn">Customize Appearance</button>
+            </div>
+            <div class="body-and-bar">
+              <div class="body-container">
+                <div class="silhouette"></div>
+              </div>
+              <div class="energy-bar-container">
+                <div class="energy-bar"></div>
+              </div>
+            </div>
+            <p class="nameDisplay">Contestant #3</p>
+          </div>
+
+          <!-- Contestant 4 -->
+          <div class="contestant">
+            <h3 class="rep-name">(40-50] Representative</h3>
+            <div class="contestant-controls">
+              <div class="input-group">
+                <label>
+                  <input type="checkbox" class="toggleColor" />
+                </label>
+                <label>
+                  <input
+                    type="text"
+                    class="figureName"
+                    placeholder="Enter Contestant Name"
+                    maxlength="24"
+                  />
+                </label>
+              </div>
+              <button class="customize-btn">Customize Appearance</button>
+            </div>
+            <div class="body-and-bar">
+              <div class="body-container">
+                <div class="silhouette"></div>
+              </div>
+              <div class="energy-bar-container">
+                <div class="energy-bar"></div>
+              </div>
+            </div>
+            <p class="nameDisplay">Contestant #4</p>
+          </div>
+
+          <!-- Contestant 5 -->
+          <div class="contestant">
+            <h3 class="rep-name">(50-60] Representative</h3>
+            <div class="contestant-controls">
+              <div class="input-group">
+                <label>
+                  <input type="checkbox" class="toggleColor" />
+                </label>
+                <label>
+                  <input
+                    type="text"
+                    class="figureName"
+                    placeholder="Enter Contestant Name"
+                    maxlength="24"
+                  />
+                </label>
+              </div>
+              <button class="customize-btn">Customize Appearance</button>
+            </div>
+            <div class="body-and-bar">
+              <div class="body-container">
+                <div class="silhouette"></div>
+              </div>
+              <div class="energy-bar-container">
+                <div class="energy-bar"></div>
+              </div>
+            </div>
+            <p class="nameDisplay">Contestant #5</p>
+          </div>
+
+          <!-- Contestant 6 -->
+          <div class="contestant">
+            <h3 class="rep-name">(60-70] Representative</h3>
+            <div class="contestant-controls">
+              <div class="input-group">
+                <label>
+                  <input type="checkbox" class="toggleColor" />
+                </label>
+                <label>
+                  <input
+                    type="text"
+                    class="figureName"
+                    placeholder="Enter Contestant Name"
+                    maxlength="24"
+                  />
+                </label>
+              </div>
+              <button class="customize-btn">Customize Appearance</button>
+            </div>
+            <div class="body-and-bar">
+              <div class="body-container">
+                <div class="silhouette"></div>
+              </div>
+              <div class="energy-bar-container">
+                <div class="energy-bar"></div>
+              </div>
+            </div>
+            <p class="nameDisplay">Contestant #6</p>
+          </div>
+        </div>
+
+        <div id="comp-controls">
+          <div id="chatbox">
+            <h3>Active Contestants</h3>
+            <ul id="checked-contestants"></ul>
+          </div>
+          <div id="buttons-container">
+            <button id="startButton">Start</button>
+            <button id="resetButton">Reset</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="story">
+        <p>
+          You may think people are more fit in their late 10s to early 30s when it comes to running. 
+          This may be true in terms of speed, but not necessarily endurance. As we saw above, middle 
+          age runners tend to run for a longer duration before reaching exhaustion. However, time 
+          isn't the whole story. Let's take a look at the graphs below and feel free to (hover for definitions).
+        </p>
+      </div>
+
+      <div id="graph-container">
+        <h1 class="stats">Now analyze the data!</h1>
+        <div id="graphs"></div>
         <dl id="tooltip" class="info tooltip" hidden>
           <dt id="agerange">Age Range</dt>
           <dd id="agerange_value"></dd>
@@ -266,37 +287,79 @@
           <dt id="time">Time to Completion</dt>
           <dd id="time_value"></dd>
         </dl>
-    </div>
-    <div id="alert-box" class="alert-box" hidden>
-      <p id="alert-message"></p>
-    </div>
+      </div>
 
-    <div class="story">
-      <p>As we observe from the graph, running speed generally declines with age, with younger athletes running faster (more obvious with male data). However, fitness is not solely determined by speed; heart rate and respiratory 
-      efficiency are also key factors.
-      <br><br>
-      While younger athletes achieve greater speed, they do so with higher heart and respiratory rates and lower 
-      ventilation volume. This suggests lower cardiovascular efficiency, an increased demand for oxygen and CO₂ 
-      removal, and limited lung capacity, leading to suboptimal oxygen delivery.
-      <br><br>
-      In contrast, middle-aged groups (30-50 years) exhibit better overall fitness. They have lower heart rates, 
-      moderate to high VO₂, VCO₂, and VE levels, and a more efficient respiratory rate, albeit at the expense of speed.
-      <br><br>
-      Thus, the data suggests that peak endurance and overall fitness are more prominent in the 30-50 age range, where physiological efficiency improves despite a decline in speed.
-      </p>
-      <h3 id="last">It's never too late to be fit!!</h3>
-    </div>
+      <div id="alert-box" class="alert-box" hidden>
+        <p id="alert-message"></p>
+      </div>
 
-    <div id="customize-modal" class="modal" hidden>
-      <div class="modal-content">
-        <span id="close-modal" class="close">&times;</span>
-        <h2>Customize Contestant</h2>
-        <label for="body-color">Body Color:</label>
-        <input type="color" id="body-color" name="body-color">
-        <!-- Additional customization fields here -->
-        <button id="save-customization">Save</button>
+      <div class="story">
+        <p>
+          As we observe from the graph, running speed generally declines with age, with younger athletes running faster (more obvious with male data). However, fitness is not solely determined by speed; heart rate and respiratory 
+          efficiency are also key factors.
+          <br><br>
+          While younger athletes achieve greater speed, they do so with higher heart and respiratory rates and lower 
+          ventilation volume. This suggests lower cardiovascular efficiency, an increased demand for oxygen and CO₂ 
+          removal, and limited lung capacity, leading to suboptimal oxygen delivery.
+          <br><br>
+          In contrast, middle-aged groups (30-50 years) exhibit better overall fitness. They have lower heart rates, 
+          moderate to high VO₂, VCO₂, and VE levels, and a more efficient respiratory rate, albeit at the expense of speed.
+          <br><br>
+          Thus, the data suggests that peak endurance and overall fitness are more prominent in the 30-50 age range, where physiological efficiency improves despite a decline in speed.
+        </p>
+        <h3 id="last">It's never too late to be fit!!</h3>
+      </div>
+
+      <!-- Modal for customizing appearance -->
+      <div id="customize-modal" class="modal" hidden>
+        <div class="modal-content">
+          <span id="close-modal" class="close">&times;</span>
+          <h2>Customize Contestant</h2>
+          <label for="hair-color">Hair Color:</label>
+          <input type="color" id="hair-color" name="hair-color"/>
+          <button id="save-customization">Save</button>
+        </div>
       </div>
     </div>
 
+    <!-- Multi-Step Fade Logic -->
+    <script>
+      document.addEventListener("DOMContentLoaded", function() {
+        const titleScreen = document.getElementById("title-screen");
+        const dataScreen = document.getElementById("data-screen");
+
+        // Distances for each fade:
+        // Increase these so each screen stays longer on scroll.
+        const fadeDistanceTitle = 1600;       // Title fades from scroll=0..1600
+        const fadeDistanceDataStart = 1600;   // Data is fully visible until scroll=1600
+        const fadeDistanceDataEnd = 3200;     // Data fades out from 1600..3200
+
+        window.addEventListener("scroll", () => {
+          const scrollY = window.scrollY;
+
+          // 1) Fade out Title from 0..1600
+          let titleOpacity = 1 - (scrollY / fadeDistanceTitle);
+          if (titleOpacity < 0) titleOpacity = 0;
+          if (titleOpacity > 1) titleOpacity = 1;
+          titleScreen.style.opacity = titleOpacity;
+          titleScreen.style.pointerEvents = (titleOpacity === 0) ? "none" : "auto";
+
+          // 2) Data is fully visible from 0..1600, then fades from 1600..3200
+          if (scrollY < fadeDistanceDataStart) {
+            dataScreen.style.opacity = 1;
+            dataScreen.style.pointerEvents = "auto";
+          } else {
+            let dataOpacity = 1 - (
+              (scrollY - fadeDistanceDataStart) / 
+              (fadeDistanceDataEnd - fadeDistanceDataStart)
+            );
+            if (dataOpacity < 0) dataOpacity = 0;
+            if (dataOpacity > 1) dataOpacity = 1;
+            dataScreen.style.opacity = dataOpacity;
+            dataScreen.style.pointerEvents = (dataOpacity === 0) ? "none" : "auto";
+          }
+        });
+      });
+    </script>
   </body>
 </html>
