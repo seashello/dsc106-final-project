@@ -86,6 +86,14 @@ async function loadData() {
   const csvFile = gender === 'female' ? "data/f_mean_max_df.csv" : "data/m_mean_max_df.csv";
   
   meanData = await d3.csv(csvFile);
+
+  // Sort the meanData array by the lower age bound so the data matches the contestant order.
+  meanData.sort((a, b) => {
+    const ageA = parseInt(a.age_grp.match(/\d+/)[0]);
+    const ageB = parseInt(b.age_grp.match(/\d+/)[0]);
+    return ageA - ageB;
+  });
+
   hrData = meanData.map(d => ({ age_grp: d.age_grp, HR: +d.HR, time: +d.time }));
   o2Data = meanData.map(d => ({ age_grp: d.age_grp, VO2: +d.VO2, time: +d.time }));
   speedData = meanData.map(d => ({ age_grp: d.age_grp, Speed: +d.Speed, time: +d.time }));
@@ -95,7 +103,7 @@ async function loadData() {
   
   createBarPlots();
   
-  // For female data, check for missing 60–70 age group.
+  // Disable the 60-70 checkbox for females if the data is missing
   if (gender === 'female') {
     const has60_70 = meanData.some(d => d.age_grp.includes("60") && d.age_grp.includes("70"));
     if (!has60_70) {

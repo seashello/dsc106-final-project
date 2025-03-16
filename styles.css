@@ -602,13 +602,13 @@ p.desc {
   top: 0; 
   left: 0;
   width: 100%;
-  min-height: 200vh; /* 2x the viewport so user scrolls more */
+  min-height: 300vh; 
   z-index: 9999;
   background: linear-gradient(135deg, #f0f4f8, #d9e2ec);
   opacity: 1;
   transition: opacity 0.5s ease;
-  /* No direct display: flex here, we'll center via .inner */
 }
+
 #title-screen .inner {
   width: 100%;
   height: 100vh; /* Exactly one viewport tall, so the text is in the center of the initial screen */
@@ -651,12 +651,13 @@ p.desc {
   top: 0;
   left: 0;
   width: 100%;
-  min-height: 200vh;
+  min-height: 300vh;
   z-index: 9998;
   background: #fff;
   opacity: 1;
   transition: opacity 0.5s ease;
 }
+
 #data-screen .inner {
   width: 100%;
   height: 100vh; /* Center the data content in the first viewport */
@@ -667,10 +668,12 @@ p.desc {
   box-sizing: border-box;
   padding: 0 2em; /* horizontal padding if needed */
 }
+
 #dataset-description {
   max-width: 800px; /* narrower text block */
   margin: 0 auto;
 }
+
 #dataset-description h2 {
   margin-top: 0.5em;
   font-size: 2em;
@@ -679,7 +682,7 @@ p.desc {
 
 /* 3) MAIN CONTENT: starts below pinned screens => 200vh + 200vh = 400vh */
 #main-content {
-  margin-top: 400vh;
+  margin-top: 600vh;
   padding: 0 5em 5em;
   box-sizing: border-box;
 }
