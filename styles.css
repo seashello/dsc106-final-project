@@ -73,7 +73,7 @@ h3 {
   border-radius: 8px;
   padding: 1em;
   transition: opacity 0.5s ease, visibility 0.5s ease;
-  width: fit-content;
+  width: 70%;
 }
 
 .tooltip {

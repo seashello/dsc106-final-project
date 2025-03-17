@@ -814,10 +814,43 @@ document.addEventListener("DOMContentLoaded", function() {
   hoverWord.addEventListener("mouseenter", (event) => {
       const tooltipDef = document.getElementById("tooltip-def");
 
-      const content = hoverWord.getAttribute('data-tooltip') || `<strong>Introduction:</strong> This is the first paragraph providing an overview.<br><br>
-                          <strong>Details:</strong> This paragraph expands on the topic, giving more in-depth information.<br><br>
-                          <strong>Conclusion:</strong> A final summary to wrap up the explanation.`;
-      
+      const content = hoverWord.getAttribute('data-tooltip') || 
+                        `<strong><u>Heart Rate</u>:</strong> The number of heartbeats per minute. 
+                        In endurance tests, HR is used to assess cardiovascular fitness and 
+                        effort level. Highly trained individuals may have lower HR at a given 
+                        intensity due to better cardiovascular efficiency.<br><br>
+
+                        <strong><u>Oxygen Consumption</u>:</strong> VO2 max, or maximal oxygen 
+                        consumption, is the maximum amount of oxygen that a person can use 
+                        during intense exercise. It is a measure of aerobic fitness, or the 
+                        body's ability to deliver and utilize oxygen. Higher VO₂ values indicate 
+                        better aerobic capacity. VO₂ max (maximum oxygen uptake) is a key measure 
+                        of endurance fitness, representing how efficiently the body can use oxygen 
+                        during exercise. Elite endurance athletes typically have very high VO₂ max 
+                        values.<br><br>
+
+                        <strong><u>Carbon Dioxide Production</u>:</strong> The amount of carbon 
+                        dioxide exhaled per minute. A high VCO₂ indicates increased metabolic 
+                        activity and energy expenditure. The balance between VO₂ and VCO₂ 
+                        (respiratory exchange ratio) helps assess the type of fuel 
+                        (carbohydrates or fats) being used for energy during exercise.<br><br>
+                        
+                        <strong><u>Speed</u>:</strong> The pace at which an individual moves during 
+                        the endurance test.Higher speed indicates greater endurance performance and 
+                        fitness level. Well-trained endurance athletes can sustain high speeds for 
+                        longer durations.<br><br>
+
+                        <strong><u>Respiratory Rate</u>:</strong> The number of breaths taken per minute.
+                        A higher respiratory rate reflects an increased demand for oxygen and 
+                        removal of CO₂. Trained individuals may have a lower RR at submaximal exercise 
+                        intensities due to more efficient breathing mechanics.<br><br>
+
+                        <strong><u>Pulmonary Ventilation</u>:</strong> The total volume of air inhaled 
+                        and exhaled per minute. A higher VE indicates greater lung capacity and efficiency 
+                        in oxygen delivery. Endurance-trained individuals can achieve high VE values without 
+                        excessive breathing effort.
+                        `;
+                        
       tooltipDef.innerHTML = content;
       tooltipDef.style.display = 'block';
       
