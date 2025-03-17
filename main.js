@@ -18,13 +18,13 @@ const hairSpriteMapping = {
   "gray": { male: "customization/gray-hair-male.png", female: "customization/gray-hair-female.png" },
   "black": { male: "customization/black-hair-male.png", female: "customization/black-hair-female.png" },
   "blonde":{ male: "customization/blonde-hair-male.png",female: "customization/blonde-hair-female.png" },
-  "brown":   { male: "customization/red-hair-male.png",   female: "customization/red-hair-female.png" },
+  "brown":   { male: "customization/brown-hair-male.png",   female: "customization/brown-hair-female.png" },
   "red":   { male: "customization/red-hair-male.png",   female: "customization/red-hair-female.png" },
-  "blue":   { male: "customization/red-hair-male.png",   female: "customization/red-hair-female.png" },
-  "green":   { male: "customization/red-hair-male.png",   female: "customization/red-hair-female.png" },
-  "orange":   { male: "customization/red-hair-male.png",   female: "customization/red-hair-female.png" },
-  "pink":   { male: "customization/red-hair-male.png",   female: "customization/red-hair-female.png" },
-  "purple":   { male: "customization/red-hair-male.png",   female: "customization/red-hair-female.png" }
+  "blue":   { male: "customization/blue-hair-male.png",   female: "customization/blue-hair-female.png" },
+  "green":   { male: "customization/green-hair-male.png",   female: "customization/green-hair-female.png" },
+  "orange":   { male: "customization/orange-hair-male.png",   female: "customization/orange-hair-female.png" },
+  "pink":   { male: "customization/pink-hair-male.png",   female: "customization/pink-hair-female.png" },
+  "purple":   { male: "customization/purple-hair-male.png",   female: "customization/purple-hair-female.png" }
 };
 
 const clothingSpriteMapping = {
@@ -239,6 +239,17 @@ document.addEventListener("DOMContentLoaded", () => {
     const silhouette = contestant.querySelector(".silhouette");
     const hairElement = contestant.querySelector(".hair");
 
+    figureNameInput.addEventListener("input", () => {
+      if (figureNameInput.value.length == 24) {
+        showAlert("Name cannot exceed 24 characters.");
+        figureNameInput.value = figureNameInput.value.substring(0, 24);
+      }
+      // Update the name display below the contestant.
+      nameDisplay.textContent = figureNameInput.value || `Contestant #${index + 1}`;
+      // And update the chatbox for active contestants.
+      updateCheckedContestants();
+    });
+
     checkbox.addEventListener("change", () => {
       const clothingElement = contestant.querySelector(".clothing");
       if (!checkbox.checked) {
@@ -436,58 +447,73 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function resetEverything() {
     hideScrollIndicator();
-    
+  
     const contestants = document.querySelectorAll(".contestant");
+    // Remove any no-data overlay from each contestant.
     contestants.forEach((contestant) => {
-      const note = contestant.querySelector(".no-data-overlay");
-      if (note) {
-        note.remove();
-      }
+      const overlay = contestant.querySelector(".no-data-overlay");
+      if (overlay) overlay.remove();
     });
   
-    const isFemale = globalToggle.checked;
+    // Determine current gender.
+    const isFemale = document.getElementById("globalToggleSprite").checked;
+  
     contestants.forEach((contestant, index) => {
+      // Reset checkbox but DO NOT clear name input or display.
       const checkbox = contestant.querySelector("input.toggleColor");
       if (checkbox) {
         checkbox.checked = false;
       }
-
+  
+      // Get the visual elements.
       const silhouette = contestant.querySelector(".silhouette");
       const hairElement = contestant.querySelector(".hair");
-      // ADD THIS LINE:
       const clothingElement = contestant.querySelector(".clothing");
-
+  
+      // Reset silhouette.
       if (silhouette) {
         if (silhouette.switchTimeoutID) {
           clearTimeout(silhouette.switchTimeoutID);
           delete silhouette.switchTimeoutID;
         }
         silhouette.classList.remove("run-male", "run-female", "walk-male", "walk-female");
-        if (hairElement)
-          hairElement.classList.remove("run-male", "run-female", "walk-male", "walk-female");
-        if (clothingElement)
-          clothingElement.classList.remove("run-male", "run-female", "walk-male", "walk-female");
-
-        if (globalToggle.checked) {
-          silhouette.style.backgroundImage = "url('sprites_female_run.png')";
-          if (hairElement)
-            hairElement.style.backgroundImage = "url('customization/gray-hair-female.png')";
-          if (clothingElement)
-            clothingElement.style.backgroundImage = "url('customization/gray-clothing-female.png')";
-        } else {
-          silhouette.style.backgroundImage = "url('sprites_male_run.png')";
-          if (hairElement)
-            hairElement.style.backgroundImage = "url('customization/gray-hair-male.png')";
-          if (clothingElement)
-            clothingElement.style.backgroundImage = "url('customization/gray-clothing-male.png')";
-        }
+        silhouette.style.backgroundImage = isFemale
+          ? "url('sprites_female_run.png')"
+          : "url('sprites_male_run.png')";
         silhouette.style.backgroundPosition = "-24px -12px";
-        if (hairElement)
-          hairElement.style.backgroundPosition = "-24px -12px";
-        if (clothingElement)
-          clothingElement.style.backgroundPosition = "-24px -12px";
       }
   
+      // Reset hair sprite while preserving saved customization.
+      if (hairElement) {
+        hairElement.classList.remove("run-male", "run-female", "walk-male", "walk-female");
+        const customHairColor = contestant.dataset.hairColor;
+        if (customHairColor) {
+          const mapping = hairSpriteMapping[customHairColor] || hairSpriteMapping["gray"];
+          hairElement.style.backgroundImage = `url('${mapping[isFemale ? "female" : "male"]}')`;
+        } else {
+          hairElement.style.backgroundImage = isFemale
+            ? "url('customization/gray-hair-female.png')"
+            : "url('customization/gray-hair-male.png')";
+        }
+        hairElement.style.backgroundPosition = "-24px -12px";
+      }
+  
+      // Reset clothing sprite while preserving saved customization.
+      if (clothingElement) {
+        clothingElement.classList.remove("run-male", "run-female", "walk-male", "walk-female");
+        const customClothingColor = contestant.dataset.clothingColor;
+        if (customClothingColor) {
+          const mapping = clothingSpriteMapping[customClothingColor] || clothingSpriteMapping["gray"];
+          clothingElement.style.backgroundImage = `url('${mapping[isFemale ? "female" : "male"]}')`;
+        } else {
+          clothingElement.style.backgroundImage = isFemale
+            ? "url('customization/gray-clothing-female.png')"
+            : "url('customization/gray-clothing-male.png')";
+        }
+        clothingElement.style.backgroundPosition = "-24px -12px";
+      }
+  
+      // Reset energy bar.
       const energyBar = contestant.querySelector(".energy-bar");
       if (energyBar) {
         if (energyBar.energyIntervalID) {
@@ -497,15 +523,18 @@ document.addEventListener("DOMContentLoaded", () => {
         energyBar.style.height = "100%";
       }
   
+      // Do not touch the .figureName input or .nameDisplay element—this preserves the custom name.
+  
+      // Recreate bar plots if applicable.
       if (svg) {
         svg.remove();
       }
       createBarPlots();
     });
-    
+  
+    // Clear leaderboard timeouts and leaderboard display.
     leaderboardTimeouts.forEach(timeoutID => clearTimeout(timeoutID));
     leaderboardTimeouts = [];
-    
     const checkedContestantsList = document.getElementById("checked-contestants");
     checkedContestantsList.querySelectorAll("li").forEach(li => {
       if (li.runningTimeoutID) {
@@ -519,8 +548,9 @@ document.addEventListener("DOMContentLoaded", () => {
     if (leaderboardContainer) {
       leaderboardContainer.remove();
     }
+  
     startButton.disabled = false;
-  }
+  }  
   
   resetButton.addEventListener("click", () => {
     console.log("Reset button clicked");
