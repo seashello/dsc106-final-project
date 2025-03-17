@@ -448,6 +448,9 @@ document.addEventListener("DOMContentLoaded", () => {
   function resetEverything() {
     hideScrollIndicator();
   
+    // Clear chartData in place so the Proxy remains intact.
+    chartData.length = 0;
+  
     const contestants = document.querySelectorAll(".contestant");
     // Remove any no-data overlay from each contestant.
     contestants.forEach((contestant) => {
@@ -459,7 +462,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const isFemale = document.getElementById("globalToggleSprite").checked;
   
     contestants.forEach((contestant, index) => {
-      // Reset checkbox but DO NOT clear name input or display.
+      // Reset the checkbox but do not clear the name input.
       const checkbox = contestant.querySelector("input.toggleColor");
       if (checkbox) {
         checkbox.checked = false;
@@ -523,16 +526,16 @@ document.addEventListener("DOMContentLoaded", () => {
         energyBar.style.height = "100%";
       }
   
-      // Do not touch the .figureName input or .nameDisplay element—this preserves the custom name.
-  
-      // Recreate bar plots if applicable.
-      if (svg) {
-        svg.remove();
-      }
-      createBarPlots();
+      // Do not alter the .figureName input or .nameDisplay element—this preserves the custom name.
     });
   
-    // Clear leaderboard timeouts and leaderboard display.
+    // Recreate the bar plots once after processing all contestants.
+    if (svg) {
+      svg.remove();
+    }
+    createBarPlots();
+  
+    // Clear leaderboard timeouts and display.
     leaderboardTimeouts.forEach(timeoutID => clearTimeout(timeoutID));
     leaderboardTimeouts = [];
     const checkedContestantsList = document.getElementById("checked-contestants");
@@ -550,7 +553,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   
     startButton.disabled = false;
-  }  
+  }      
   
   resetButton.addEventListener("click", () => {
     console.log("Reset button clicked");
