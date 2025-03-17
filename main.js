@@ -15,10 +15,17 @@ let currentContestantIndex = null;
 // Hair sprite mapping for hair customization.
 // Update these color codes and file names with your actual asset filenames.
 const hairSpriteMapping = {
-  "#000000": { male: "black-hair-male.png", female: "black-hair-female.png" },
-  "#ff0000": { male: "red-hair-male.png", female: "red-hair-female.png" },
-  "#ffff00": { male: "blonde-hair-male.png", female: "blonde-hair-female.png" },
-  // Add more mappings as needed…
+  "gray": { male: "customization/gray-hair-male.png", female: "customization/gray-hair-female.png" },
+  "black": { male: "customization/black-hair-male.png", female: "customization/black-hair-female.png" },
+  "blonde":{ male: "customization/blonde-hair-male.png",female: "customization/blonde-hair-female.png" },
+  "brown":   { male: "customization/red-hair-male.png",   female: "customization/red-hair-female.png" },
+  "red":   { male: "customization/red-hair-male.png",   female: "customization/red-hair-female.png" },
+  "blue":   { male: "customization/red-hair-male.png",   female: "customization/red-hair-female.png" },
+  "green":   { male: "customization/red-hair-male.png",   female: "customization/red-hair-female.png" },
+  "orange":   { male: "customization/red-hair-male.png",   female: "customization/red-hair-female.png" },
+  "pink":   { male: "customization/red-hair-male.png",   female: "customization/red-hair-female.png" },
+  "purple":   { male: "customization/red-hair-male.png",   female: "customization/red-hair-female.png" }
+  // Add more mappings as needed.
 };
 
 // Update the leaderboard with a new result.
@@ -192,18 +199,26 @@ document.addEventListener("DOMContentLoaded", () => {
 
   window.addEventListener('scroll', checkScrollForIndicator);
 
+  document.querySelectorAll('.hair').forEach(hair => {
+    hair.style.backgroundImage = "url('customization/gray-hair-male.png')";
+  });
+
   contestants.forEach((contestant, index) => {
     const checkbox = contestant.querySelector("input[type='checkbox']");
     const figureNameInput = contestant.querySelector(".figureName");
     const nameDisplay = contestant.querySelector(".nameDisplay");
     const silhouette = contestant.querySelector(".silhouette");
+    const hairElement = contestant.querySelector(".hair");
 
     checkbox.addEventListener("change", () => {
       if (!checkbox.checked) {
         silhouette.classList.remove("run-male", "run-female", "walk-male", "walk-female");
         silhouette.style.backgroundPosition = "-24px -12px";
+        hairElement.classList.remove("run-male", "run-female", "walk-male", "walk-female");
+        hairElement.style.backgroundPosition = "-24px -12px";
       } else {
         silhouette.style.backgroundPosition = "-215px -14px";
+        hairElement.style.backgroundPosition = "-215px -14px";
       }
       updateCheckedContestants();
     });
@@ -296,10 +311,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
     checkedContestants.forEach(({ element, origIndex }, idx) => {
       const silhouette = element.querySelector(".silhouette");
+      const hairElement = element.querySelector(".hair");
       if (globalToggle.checked) {
         silhouette.classList.add("run-female");
+        if (hairElement) {
+          // Remove any previous animation classes if needed
+          hairElement.className = "hair run-female";
+        }
       } else {
         silhouette.classList.add("run-male");
+        if (hairElement) {
+          hairElement.className = "hair run-male";
+        }
       }
       const delay = delays[idx];
 
@@ -340,10 +363,14 @@ document.addEventListener("DOMContentLoaded", () => {
         if (globalToggle.checked) {
           silhouette.classList.remove("run-female");
           silhouette.classList.add("walk-female");
+          hairElement.classList.remove("run-female");
+          hairElement.classList.add("walk-female");
         } else {
           silhouette.classList.remove("run-male");
           silhouette.classList.add("walk-male");
-        }
+          hairElement.classList.remove("run-male");
+          hairElement.classList.add("walk-male");
+        }   
         chartData.push(hrData[origIndex].age_grp);
         const nameDisplay = element.querySelector(".nameDisplay");
         const contestantName = nameDisplay ? nameDisplay.textContent : `Contestant #${origIndex + 1}`;
@@ -376,18 +403,23 @@ document.addEventListener("DOMContentLoaded", () => {
       }
   
       const silhouette = contestant.querySelector(".silhouette");
+      const hairElement = contestant.querySelector(".hair");
       if (silhouette) {
         if (silhouette.switchTimeoutID) {
           clearTimeout(silhouette.switchTimeoutID);
           delete silhouette.switchTimeoutID;
         }
         silhouette.classList.remove("run-male", "run-female", "walk-male", "walk-female");
+        hairElement.classList.remove("run-male", "run-female", "walk-male", "walk-female");
         if (isFemale) {
           silhouette.style.backgroundImage = "url('sprites_female_run.png')";
+          hairElement.style.backgroundImage = "url('customization/gray-hair-female.png')";
         } else {
           silhouette.style.backgroundImage = "url('sprites_male_run.png')";
+          hairElement.style.backgroundImage = "url('customization/gray-hair-male.png')";
         }
         silhouette.style.backgroundPosition = "-24px -12px";
+        hairElement.style.backgroundPosition = "-24px -12px";
       }
   
       const energyBar = contestant.querySelector(".energy-bar");
@@ -444,9 +476,9 @@ document.addEventListener("DOMContentLoaded", () => {
   
   // Event listener for saving hair customization.
   document.getElementById("save-customization").addEventListener("click", () => {
-    const hairColor = document.getElementById("hair-color").value;
+    const hairColor = document.getElementById("hair-color").value;  // updated id reference
     const gender = document.getElementById("globalToggleSprite").checked ? 'female' : 'male';
-    const spriteMapping = hairSpriteMapping[hairColor] || hairSpriteMapping["#000000"];
+    const spriteMapping = hairSpriteMapping[hairColor] || hairSpriteMapping["gray"];
     const hairSprite = spriteMapping[gender];
     
     const contestant = document.querySelectorAll(".contestant")[currentContestantIndex];
@@ -457,7 +489,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
     document.getElementById("customize-modal").hidden = true;
-  });
+  });  
   
   // Modify openCustomizationModal to store current contestant index.
   function openCustomizationModal(index) {
