@@ -292,6 +292,16 @@ button:hover {
   top: -65px;
   right: 5px;
 }
+.clothing.run-male {
+  width: 18px;
+  height: 40px;
+  background-image: url('customization/black-clothing-male.png') no-repeat;
+  animation: runAnim 0.6s infinite steps(1, end) !important;
+  background-position: 0 -256px;
+  position: relative;
+  top: -105px;
+  right: 5px;
+}
 
 .silhouette.run-female {
   width: 18px;
@@ -309,11 +319,21 @@ button:hover {
 .hair.run-female {
   width: 18px;
   height: 40px;
-  background-image: url('customization/gray-hair-male.png') no-repeat;
+  background-image: url('customization/gray-hair-female.png') no-repeat;
   animation: runAnim 0.6s infinite steps(1, end) !important;
   background-position: 0 -256px;
   position: relative;
-  top: -37px;
+  top: -65px;
+  right: 5px;
+}
+.clothing.run-female {
+  width: 18px;
+  height: 40px;
+  background-image: url('customization/black-clothing-female.png') no-repeat;
+  animation: runAnim 0.6s infinite steps(1, end) !important;
+  background-position: 0 -256px;
+  position: relative;
+  top: -105px;
   right: 5px;
 }
 
@@ -378,6 +398,16 @@ button:hover {
   top: -65px;
   right: 5px;
 }
+.clothing.walk-male {
+  width: 18px;
+  height: 40px;
+  background-image: url('customization/black-clothing-male.png') no-repeat;
+  animation: walkAnim 1.5s infinite steps(1, end) !important;
+  background-position: 0 -256px;
+  position: relative;
+  top: -105px;
+  right: 5px;
+}
 
 .silhouette.walk-female {
   width: 18px;
@@ -395,11 +425,21 @@ button:hover {
 .hair.walk-female {
   width: 18px;
   height: 40px;
-  background-image: url('customization/gray-hair-male.png') no-repeat;
+  background-image: url('customization/gray-hair-female.png') no-repeat;
   animation: walkAnim 1.5s infinite steps(1, end) !important;
   background-position: 0 -256px;
   position: relative;
-  top: -37px;
+  top: -65px;
+  right: 5px;
+}
+.clothing.walk-female {
+  width: 18px;
+  height: 40px;
+  background-image: url('customization/black-clothing-female.png') no-repeat;
+  animation: walkAnim 1.5s infinite steps(1, end) !important;
+  background-position: 0 -256px;
+  position: relative;
+  top: -105px;
   right: 5px;
 }
 
@@ -425,6 +465,18 @@ button:hover {
   top: -37px;
 }
 
+.clothing:not(.run-male):not(.run-female):not(.walk-male):not(.walk-female) {
+  width: 16px;
+  height: 32px;
+  background-position: -24px -12px;
+  background-image: url('customization/black-clothing-male.png') no-repeat;
+  transform-origin: top left;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  position: relative;
+  top: -69px;
+}
+
 .silhouette:not(.run-male):not(.run-female):not(.walk-male):not(.walk-female) {
   width: 16px;
   height: 32px;
@@ -438,6 +490,14 @@ button:hover {
 }
 
 .hair, .hair.walk-male, .hair.walk-female, .hair.run-male, .hair.run-female {
+  transform: scale(5);
+  transform-origin: top left;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  -ms-interpolation-mode: nearest-neighbor; /* for older IE */
+}
+
+.clothing, .clothing.walk-male, .clothing.walk-female, .clothing.run-male, .clothing.run-female {
   transform: scale(5);
   transform-origin: top left;
   image-rendering: pixelated;

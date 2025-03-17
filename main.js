@@ -25,7 +25,19 @@ const hairSpriteMapping = {
   "orange":   { male: "customization/red-hair-male.png",   female: "customization/red-hair-female.png" },
   "pink":   { male: "customization/red-hair-male.png",   female: "customization/red-hair-female.png" },
   "purple":   { male: "customization/red-hair-male.png",   female: "customization/red-hair-female.png" }
-  // Add more mappings as needed.
+};
+
+const clothingSpriteMapping = {
+  "gray":   { male: "customization/gray-clothing-male.png",   female: "customization/gray-clothing-female.png" },
+  "black":  { male: "customization/black-clothing-male.png",  female: "customization/black-clothing-female.png" },
+  "yellow": { male: "customization/yellow-clothing-male.png", female: "customization/yellow-clothing-female.png" },
+  "brown":  { male: "customization/brown-clothing-male.png",  female: "customization/brown-clothing-female.png" },
+  "red":    { male: "customization/red-clothing-male.png",    female: "customization/red-clothing-female.png" },
+  "blue":   { male: "customization/blue-clothing-male.png",   female: "customization/blue-clothing-female.png" },
+  "green":  { male: "customization/green-clothing-male.png",  female: "customization/green-clothing-female.png" },
+  "orange": { male: "customization/orange-clothing-male.png", female: "customization/orange-clothing-female.png" },
+  "pink":   { male: "customization/pink-clothing-male.png",   female: "customization/pink-clothing-female.png" },
+  "purple": { male: "customization/purple-clothing-male.png", female: "customization/purple-clothing-female.png" }
 };
 
 // Update the leaderboard with a new result.
@@ -203,6 +215,10 @@ document.addEventListener("DOMContentLoaded", () => {
     hair.style.backgroundImage = "url('customization/gray-hair-male.png')";
   });
 
+  document.querySelectorAll('.clothing').forEach(clothing => {
+    clothing.style.backgroundImage = "url('customization/black-clothing-male.png')";
+  });
+
   contestants.forEach((contestant, index) => {
     const checkbox = contestant.querySelector("input[type='checkbox']");
     const figureNameInput = contestant.querySelector(".figureName");
@@ -211,26 +227,21 @@ document.addEventListener("DOMContentLoaded", () => {
     const hairElement = contestant.querySelector(".hair");
 
     checkbox.addEventListener("change", () => {
+      const clothingElement = contestant.querySelector(".clothing");
       if (!checkbox.checked) {
         silhouette.classList.remove("run-male", "run-female", "walk-male", "walk-female");
         silhouette.style.backgroundPosition = "-24px -12px";
         hairElement.classList.remove("run-male", "run-female", "walk-male", "walk-female");
         hairElement.style.backgroundPosition = "-24px -12px";
+        clothingElement.classList.remove("run-male", "run-female", "walk-male", "walk-female");
+        clothingElement.style.backgroundPosition = "-24px -12px";
       } else {
         silhouette.style.backgroundPosition = "-215px -14px";
         hairElement.style.backgroundPosition = "-215px -14px";
+        clothingElement.style.backgroundPosition = "-215px -14px";
       }
       updateCheckedContestants();
-    });
-
-    figureNameInput.addEventListener("input", () => {
-      if (figureNameInput.value.length == 24) {
-        showAlert("Name cannot exceed 24 characters.");
-        figureNameInput.value = figureNameInput.value.substring(0, 24);
-      }
-      nameDisplay.textContent = figureNameInput.value || `Contestant #${index + 1}`;
-      updateCheckedContestants();
-    });
+    });    
   });
 
   function updateCheckedContestants() {
@@ -312,18 +323,40 @@ document.addEventListener("DOMContentLoaded", () => {
     checkedContestants.forEach(({ element, origIndex }, idx) => {
       const silhouette = element.querySelector(".silhouette");
       const hairElement = element.querySelector(".hair");
+      const clothingElement = element.querySelector(".clothing");
+  
       if (globalToggle.checked) {
         silhouette.classList.add("run-female");
         if (hairElement) {
-          // Remove any previous animation classes if needed
           hairElement.className = "hair run-female";
+        }
+        if (clothingElement) {
+          clothingElement.className = "clothing run-female";
         }
       } else {
         silhouette.classList.add("run-male");
         if (hairElement) {
           hairElement.className = "hair run-male";
         }
+        if (clothingElement) {
+          clothingElement.className = "clothing run-male";
+        }
       }
+
+      // if (clothingElement) {
+      //   clothingElement.classList.remove("run-male", "run-female", "walk-male", "walk-female");
+      //   const customClothingColor = contestant.dataset.clothingColor;
+      //   if (customClothingColor) {
+      //     const mapping = clothingSpriteMapping[customClothingColor] || clothingSpriteMapping["gray"];
+      //     clothingElement.style.backgroundImage = `url('${mapping[isFemale ? "female" : "male"]}')`;
+      //   } else {
+      //     clothingElement.style.backgroundImage = isFemale
+      //       ? "url('customization/gray-clothing-female.png')"
+      //       : "url('customization/gray-clothing-male.png')";
+      //   }
+      //   clothingElement.style.backgroundPosition = "-24px -12px";
+      // }
+
       const delay = delays[idx];
 
       const energyBar = element.querySelector(".energy-bar");
@@ -365,17 +398,21 @@ document.addEventListener("DOMContentLoaded", () => {
           silhouette.classList.add("walk-female");
           hairElement.classList.remove("run-female");
           hairElement.classList.add("walk-female");
+          clothingElement.classList.remove("run-female");
+          clothingElement.classList.add("walk-female");
         } else {
           silhouette.classList.remove("run-male");
           silhouette.classList.add("walk-male");
           hairElement.classList.remove("run-male");
           hairElement.classList.add("walk-male");
+          clothingElement.classList.remove("run-male");
+          clothingElement.classList.add("walk-male");
         }   
         chartData.push(hrData[origIndex].age_grp);
         const nameDisplay = element.querySelector(".nameDisplay");
         const contestantName = nameDisplay ? nameDisplay.textContent : `Contestant #${origIndex + 1}`;
         updateLeaderboard({ index: origIndex, time: hrData[origIndex].time, name: contestantName });
-      }, delay);
+      }, delay);  
     });
 
     let maxDelay = Math.max(...delays);
@@ -401,25 +438,41 @@ document.addEventListener("DOMContentLoaded", () => {
       if (checkbox) {
         checkbox.checked = false;
       }
-  
+
       const silhouette = contestant.querySelector(".silhouette");
       const hairElement = contestant.querySelector(".hair");
+      // ADD THIS LINE:
+      const clothingElement = contestant.querySelector(".clothing");
+
       if (silhouette) {
         if (silhouette.switchTimeoutID) {
           clearTimeout(silhouette.switchTimeoutID);
           delete silhouette.switchTimeoutID;
         }
         silhouette.classList.remove("run-male", "run-female", "walk-male", "walk-female");
-        hairElement.classList.remove("run-male", "run-female", "walk-male", "walk-female");
-        if (isFemale) {
+        if (hairElement)
+          hairElement.classList.remove("run-male", "run-female", "walk-male", "walk-female");
+        if (clothingElement)
+          clothingElement.classList.remove("run-male", "run-female", "walk-male", "walk-female");
+
+        if (globalToggle.checked) {
           silhouette.style.backgroundImage = "url('sprites_female_run.png')";
-          hairElement.style.backgroundImage = "url('customization/gray-hair-female.png')";
+          if (hairElement)
+            hairElement.style.backgroundImage = "url('customization/gray-hair-female.png')";
+          if (clothingElement)
+            clothingElement.style.backgroundImage = "url('customization/gray-clothing-female.png')";
         } else {
           silhouette.style.backgroundImage = "url('sprites_male_run.png')";
-          hairElement.style.backgroundImage = "url('customization/gray-hair-male.png')";
+          if (hairElement)
+            hairElement.style.backgroundImage = "url('customization/gray-hair-male.png')";
+          if (clothingElement)
+            clothingElement.style.backgroundImage = "url('customization/gray-clothing-male.png')";
         }
         silhouette.style.backgroundPosition = "-24px -12px";
-        hairElement.style.backgroundPosition = "-24px -12px";
+        if (hairElement)
+          hairElement.style.backgroundPosition = "-24px -12px";
+        if (clothingElement)
+          clothingElement.style.backgroundPosition = "-24px -12px";
       }
   
       const energyBar = contestant.querySelector(".energy-bar");
@@ -467,6 +520,7 @@ document.addEventListener("DOMContentLoaded", () => {
     loadData();
   });
   
+  
   document.querySelectorAll(".customize-btn").forEach((button, index) => {
     button.addEventListener("click", () => {
       console.log("Customize button clicked for contestant", index);
@@ -476,20 +530,40 @@ document.addEventListener("DOMContentLoaded", () => {
   
   // Event listener for saving hair customization.
   document.getElementById("save-customization").addEventListener("click", () => {
-    const hairColor = document.getElementById("hair-color").value;  // updated id reference
+    const hairColor = document.getElementById("hair-color").value;
+    const clothingColor = document.getElementById("clothing-color").value;
     const gender = document.getElementById("globalToggleSprite").checked ? 'female' : 'male';
-    const spriteMapping = hairSpriteMapping[hairColor] || hairSpriteMapping["gray"];
-    const hairSprite = spriteMapping[gender];
+    
+    const hairMapping = hairSpriteMapping[hairColor] || hairSpriteMapping["gray"];
+    const hairSprite = hairMapping[gender];
+    
+    const clothingMapping = clothingSpriteMapping[clothingColor] || clothingSpriteMapping["gray"];
+    const clothingSprite = clothingMapping[gender];
     
     const contestant = document.querySelectorAll(".contestant")[currentContestantIndex];
     if (contestant) {
+      // Save the customizations so they persist (for example, on reset)
+      contestant.dataset.hairColor = hairColor;
+      contestant.dataset.clothingColor = clothingColor;
+      
+      // Update hair element
       const hairElement = contestant.querySelector(".hair");
       if (hairElement) {
         hairElement.style.backgroundImage = `url('${hairSprite}')`;
       }
+      
+      // Update clothing element
+      const clothingElement = contestant.querySelector(".clothing");
+      if (clothingElement) {
+        clothingElement.style.backgroundImage = `url('${clothingSprite}')`;
+      }
+      
+      console.log(`Saved customization for contestant ${currentContestantIndex}: hair=${hairColor}, clothing=${clothingColor}`);
     }
+    
     document.getElementById("customize-modal").hidden = true;
-  });  
+  });
+  
   
   // Modify openCustomizationModal to store current contestant index.
   function openCustomizationModal(index) {
