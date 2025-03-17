@@ -367,20 +367,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       }
 
-      // if (clothingElement) {
-      //   clothingElement.classList.remove("run-male", "run-female", "walk-male", "walk-female");
-      //   const customClothingColor = contestant.dataset.clothingColor;
-      //   if (customClothingColor) {
-      //     const mapping = clothingSpriteMapping[customClothingColor] || clothingSpriteMapping["gray"];
-      //     clothingElement.style.backgroundImage = `url('${mapping[isFemale ? "female" : "male"]}')`;
-      //   } else {
-      //     clothingElement.style.backgroundImage = isFemale
-      //       ? "url('customization/gray-clothing-female.png')"
-      //       : "url('customization/gray-clothing-male.png')";
-      //   }
-      //   clothingElement.style.backgroundPosition = "-24px -12px";
-      // }
-
       const delay = delays[idx];
 
       const energyBar = element.querySelector(".energy-bar");
@@ -558,7 +544,10 @@ document.addEventListener("DOMContentLoaded", () => {
   resetButton.addEventListener("click", () => {
     console.log("Reset button clicked");
     resetEverything();
-  });
+      
+      // Reset chartData
+      chartData = [];
+  }); 
   
   globalToggle.addEventListener("change", function() {
     console.log("Global gender toggled to:", this.checked ? "female" : "male");
