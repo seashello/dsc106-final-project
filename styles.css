@@ -836,3 +836,34 @@ p.desc {
 #main-content.visible {
   opacity: 1;
 }
+
+.modal-content {
+  display: flex;
+  flex-direction: column;   /* Stack items vertically */
+  align-items: center;  /* Left-align them */
+  gap: 1em;                 /* Spacing between each block */
+}
+
+#customize-modal .modal-content {
+  font-style: normal;
+}
+
+/* Each label–select pair is stacked in a column */
+.field-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+select#hair-color {
+  width: 100px;
+  margin-top: 5px;
+  font-family: 'Roboto Mono', monospace;
+}
+
+select#clothing-color {
+  width: 100px;
+  margin-top: 5px;
+  margin-bottom: 10px;
+  font-family: 'Roboto Mono', monospace;
+}
