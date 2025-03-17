@@ -122,7 +122,7 @@ async function loadData() {
   
   createBarPlots();
   
-  // Disable the 60-70 checkbox for females if the data is missing
+  // For females, disable the 60-70 checkbox if data is missing.
   if (gender === 'female') {
     const has60_70 = meanData.some(d => d.age_grp.includes("60") && d.age_grp.includes("70"));
     if (!has60_70) {
@@ -144,8 +144,21 @@ async function loadData() {
         }
       }
     }
+  } else {
+    // For males, ensure the 60-70 checkbox is enabled and remove any overlay.
+    const contestantCards = document.querySelectorAll(".contestant");
+    if (contestantCards[5]) {
+      const checkbox = contestantCards[5].querySelector("input[type='checkbox']");
+      if (checkbox) {
+        checkbox.disabled = false;
+      }
+      const existingOverlay = contestantCards[5].querySelector(".no-data-overlay");
+      if (existingOverlay) {
+        existingOverlay.remove();
+      }
+    }
   }
-}    
+} 
 
 function injectBounceStyle() {
   if (!document.getElementById('bounce-style')) {
@@ -216,7 +229,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   document.querySelectorAll('.clothing').forEach(clothing => {
-    clothing.style.backgroundImage = "url('customization/black-clothing-male.png')";
+    clothing.style.backgroundImage = "url('customization/gray-clothing-male.png')";
   });
 
   contestants.forEach((contestant, index) => {
