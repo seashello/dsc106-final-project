@@ -63,7 +63,17 @@ h3 {
   text-align: center;
 }
 
-
+#tooltip-def{
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 10px;
+  background-color: #fff;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  border-radius: 8px;
+  padding: 1em;
+  transition: opacity 0.5s ease, visibility 0.5s ease;
+  width: fit-content;
+}
 
 .tooltip {
   position: fixed;

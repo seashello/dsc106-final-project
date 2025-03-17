@@ -636,3 +636,63 @@ function updateTooltipPosition(event) {
   tooltip.style.left = `${tooltipX}px`;
   tooltip.style.top = `${tooltipY}px`;
 }
+
+document.addEventListener("DOMContentLoaded", function() {
+  const tooltipDef = document.getElementById("tooltip-def");
+  
+  // If tooltip doesn't exist, create it with styles that match the other tooltip
+  if (!tooltipDef) {
+    const newTooltip = document.createElement('div');
+    newTooltip.id = 'tooltip-def';
+    newTooltip.style.position = 'fixed'; // Use fixed positioning for floating appearance
+    newTooltip.style.background = 'white';
+    newTooltip.style.border = '1px solid #ccc';
+    newTooltip.style.padding = '10px';
+    newTooltip.style.borderRadius = '4px';
+    newTooltip.style.boxShadow = '0 2px 5px rgba(0,0,0,0.2)';
+    newTooltip.style.zIndex = '1000';
+    newTooltip.style.maxWidth = '300px';
+    newTooltip.style.display = 'none';
+    newTooltip.style.pointerEvents = 'none'; // Prevents tooltip from interfering with mouse events
+    document.body.appendChild(newTooltip);
+  }
+  
+  const hoverWord = document.querySelector(".hover-word");
+  tooltipDef.style.display = 'none';
+  hoverWord.addEventListener("mouseenter", (event) => {
+      const tooltipDef = document.getElementById("tooltip-def");
+
+      const content = hoverWord.getAttribute('data-tooltip') || `<strong>Introduction:</strong> This is the first paragraph providing an overview.<br><br>
+                          <strong>Details:</strong> This paragraph expands on the topic, giving more in-depth information.<br><br>
+                          <strong>Conclusion:</strong> A final summary to wrap up the explanation.`;
+      
+      tooltipDef.innerHTML = content;
+      tooltipDef.style.display = 'block';
+      
+      const rect = hoverWord.getBoundingClientRect();
+      const tooltipHeight = tooltipDef.offsetHeight;
+      const tooltipWidth = tooltipDef.offsetWidth;
+      
+      let top = rect.top - tooltipHeight - 10;
+      let left = rect.left + (rect.width - tooltipWidth) / 2;
+      
+      if (top < 10) {
+          top = rect.bottom + 10;
+      }
+      
+      if (left < 200) {
+          left = 200;
+      } else if (left + tooltipWidth > window.innerWidth - 200) {
+          left = window.innerWidth - tooltipWidth - 200;
+      }
+      
+      tooltipDef.style.position = 'fixed';
+      tooltipDef.style.left = `${left}px`;
+      tooltipDef.style.top = `${top}px`;
+  });
+
+  hoverWord.addEventListener("mouseleave", () => {
+      const tooltipDef = document.getElementById("tooltip-def");
+      tooltipDef.style.display = 'none';
+  })
+});
