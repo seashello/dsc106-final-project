@@ -612,12 +612,23 @@ document.addEventListener("DOMContentLoaded", () => {
   function openCustomizationModal(index) {
     currentContestantIndex = index;
     const modal = document.getElementById("customize-modal");
+    const contestant = document.querySelectorAll(".contestant")[index];
+    if (contestant) {
+      // Set the hair color input to the contestant's saved hair color (default to "gray" if none)
+      const hairColor = contestant.dataset.hairColor || "gray";
+      document.getElementById("hair-color").value = hairColor;
+  
+      // Set the clothing color input to the contestant's saved clothing color (default to "gray" if none)
+      const clothingColor = contestant.dataset.clothingColor || "gray";
+      document.getElementById("clothing-color").value = clothingColor;
+    }
     if (modal) {
       modal.hidden = false;
     } else {
       console.error("Modal element not found");
     }
   }
+  
   
   document.getElementById("close-modal").addEventListener("click", () => {
     const modal = document.getElementById("customize-modal");
