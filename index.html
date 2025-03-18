@@ -406,33 +406,47 @@
         const dataScreen = document.getElementById("data-screen");
         const videoScreen = document.getElementById("video-screen");
         const mainContent = document.getElementById("main-content");
-    
+
         // Define scroll thresholds:
         const fadeDistanceTitle = 1600;         // Title fades out from 0 to 1600
         const fadeDistanceDataStart = 1600;       // Data fully visible until 1600
         const fadeDistanceDataEnd = 3200;         // Data fades out from 1600 to 3200
         const fadeDistanceVideoStart = 3200;      // Video fades in from 3200 to 4800
-        const fadeDistanceVideoEnd = 4800;        // Video is fully visible at 4800
-        const fadeDistanceCrossEnd = 6400;        // Video fades out & main fades in from 4800 to 5600
-    
+        const fadeDistanceVideoEnd = 4800;        // Video fully visible at 4800
+        const fadeDistanceCrossEnd = 6400;        // Video fades out & main fades in from 4800 to 6400
+
         window.addEventListener("scroll", () => {
           const scrollY = window.scrollY;
-    
-          // Title Screen: Fade out from 0 to 1600
+
+          // Title Screen: Fade out from 0 to 1600, and lower its z-index when invisible
           let titleOpacity = 1 - (scrollY / fadeDistanceTitle);
-          titleScreen.style.opacity = Math.max(0, Math.min(1, titleOpacity));
-          titleScreen.style.pointerEvents = (titleOpacity === 0) ? "none" : "auto";
-    
-          // Data Screen: Fully visible until 1600, then fade out until 3200
-          if (scrollY < fadeDistanceDataStart) {
-            dataScreen.style.opacity = 1;
-            dataScreen.style.pointerEvents = "auto";
+          titleOpacity = Math.max(0, Math.min(1, titleOpacity));
+          titleScreen.style.opacity = titleOpacity;
+          if (titleOpacity === 0) {
+            titleScreen.style.pointerEvents = "none";
+            titleScreen.style.zIndex = "-1";
           } else {
-            let dataOpacity = 1 - ((scrollY - fadeDistanceDataStart) / (fadeDistanceDataEnd - fadeDistanceDataStart));
-            dataScreen.style.opacity = Math.max(0, Math.min(1, dataOpacity));
-            dataScreen.style.pointerEvents = (dataOpacity === 0) ? "none" : "auto";
+            titleScreen.style.pointerEvents = "auto";
+            titleScreen.style.zIndex = "9999";
           }
-    
+
+          // Data Screen: Fully visible until 1600, then fade out until 3200, then lower its z-index
+          let dataOpacity = 1;
+          if (scrollY < fadeDistanceDataStart) {
+            dataOpacity = 1;
+          } else {
+            dataOpacity = 1 - ((scrollY - fadeDistanceDataStart) / (fadeDistanceDataEnd - fadeDistanceDataStart));
+            dataOpacity = Math.max(0, Math.min(1, dataOpacity));
+          }
+          dataScreen.style.opacity = dataOpacity;
+          if (dataOpacity === 0) {
+            dataScreen.style.pointerEvents = "none";
+            dataScreen.style.zIndex = "-1";
+          } else {
+            dataScreen.style.pointerEvents = "auto";
+            dataScreen.style.zIndex = "9998";
+          }
+
           // Video Screen:
           if (scrollY < fadeDistanceVideoStart) {
             videoScreen.style.opacity = 0;
@@ -443,21 +457,21 @@
             videoScreen.style.opacity = Math.max(0, Math.min(1, videoOpacity));
             videoScreen.style.pointerEvents = "auto";
           } else if (scrollY < fadeDistanceCrossEnd) {
-            // Crossfade: video fades out from 4800 to 5600
+            // Crossfade: video fades out from 4800 to 6400
             let videoFadeOut = 1 - ((scrollY - fadeDistanceVideoEnd) / (fadeDistanceCrossEnd - fadeDistanceVideoEnd));
             videoScreen.style.opacity = Math.max(0, Math.min(1, videoFadeOut));
-            videoScreen.style.pointerEvents = "none";
+            // Always allow pointer events on video screen so users can interact with it
+            videoScreen.style.pointerEvents = "auto";
           } else {
             videoScreen.style.opacity = 0;
             videoScreen.style.pointerEvents = "none";
           }
-    
-          // Main Content:
+
+          // Main Content: Fade in concurrently from 4800 to 6400
           if (scrollY < fadeDistanceVideoEnd) {
             mainContent.style.opacity = 0;
             mainContent.style.pointerEvents = "none";
           } else if (scrollY < fadeDistanceCrossEnd) {
-            // Fade in main content concurrently from 4800 to 5600
             let mainFadeIn = (scrollY - fadeDistanceVideoEnd) / (fadeDistanceCrossEnd - fadeDistanceVideoEnd);
             mainContent.style.opacity = Math.max(0, Math.min(1, mainFadeIn));
             mainContent.style.pointerEvents = "auto";
