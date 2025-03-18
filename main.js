@@ -344,6 +344,20 @@ document.addEventListener("DOMContentLoaded", () => {
       const energyBar = element.querySelector(".energy-bar");
       element.style.opacity = "50%";
       energyBar.style.backgroundColor = "Gray";
+
+      //disable checkbox
+      const checkbox = element.querySelector("input[type='checkbox']");
+      checkbox.disabled = true;
+      element.classList.add("no-hover");
+
+      //disable name inputter
+      const input = element.querySelector(".figureName");
+      input.disabled = true;
+
+      //disable customize
+      const button = element.querySelector(".customize-btn");
+      button.disabled = true;
+      button.classList.add("no-color");
     });
 
     if (checkedContestants.length === 0) {
@@ -526,6 +540,18 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       contestant.style.opacity = "100%";
+      contestant.classList.remove('no-hover');
+
+      //undisable everything
+      const check = contestant.querySelector("input[type='checkbox']");
+      check.disabled = false;
+
+      const input = contestant.querySelector(".figureName");
+      input.disabled = false;
+
+      const button = contestant.querySelector(".customize-btn");
+      button.disabled = false;
+      button.classList.remove("no-color");
   
       // Do not alter the .figureName input or .nameDisplay element—this preserves the custom name.
     });
