@@ -455,6 +455,23 @@ document.addEventListener("DOMContentLoaded", () => {
     setTimeout(() => {
       showScrollIndicator();
     }, maxDelay + 500);
+
+    checkedContestants.forEach(({ element, origIndex }, idx) => {
+
+      //disable checkbox
+      const checkbox = element.querySelector("input[type='checkbox']");
+      checkbox.disabled = true;
+      element.classList.add("no-hover");  
+
+      //disable name inputter
+      const input = element.querySelector(".figureName");
+      input.disabled = true;
+
+      //disable customize
+      const button = element.querySelector(".customize-btn");
+      button.disabled = true;
+      button.classList.add("no-color");
+    });
   });
 
   function resetEverything() {
