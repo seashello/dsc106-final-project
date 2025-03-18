@@ -605,9 +605,6 @@ document.addEventListener("DOMContentLoaded", () => {
   resetButton.addEventListener("click", () => {
     console.log("Reset button clicked");
     resetEverything();
-      
-      // Reset chartData
-      chartData = [];
   }); 
   
   globalToggle.addEventListener("change", function() {
