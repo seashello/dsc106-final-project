@@ -54,7 +54,23 @@
       </div>
     </div>
 
-    <!-- 3) MAIN CONTENT (Below Both Pinned Screens) -->
+    <!-- 3) VIDEO SCREEN (New Screen) -->
+    <div id="video-screen">
+      <div class="inner">
+        <h2 class="intro-vid">Watch Our Introduction Video</h2>
+        <video width="960" height="540" controls>
+          <source src="106-demo-vid.mp4" type="video/mp4">
+        </video>
+        <!-- <iframe width="560" height="315" 
+          src="https://www.youtube.com/embed/uB1zuuM_sMI" 
+          title="YouTube video player" frameborder="0" 
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+          allowfullscreen>
+        </iframe> -->
+      </div>
+    </div>
+
+    <!-- 4) MAIN CONTENT (Below Both Pinned Screens) -->
     <div id="main-content">
       <h2>Run simulation below to see running duration and</h2>
       <h2>oxygen depletion of each age group.</h2>
@@ -388,39 +404,69 @@
       document.addEventListener("DOMContentLoaded", function() {
         const titleScreen = document.getElementById("title-screen");
         const dataScreen = document.getElementById("data-screen");
-
-        // Distances for each fade:
-        // Increase these so each screen stays longer on scroll.
-        const fadeDistanceTitle = 1600;       // Title fades from scroll=0..1600
-        const fadeDistanceDataStart = 1600;   // Data is fully visible until scroll=1600
-        const fadeDistanceDataEnd = 3200;     // Data fades out from 1600..3200
-
+        const videoScreen = document.getElementById("video-screen");
+        const mainContent = document.getElementById("main-content");
+    
+        // Define scroll thresholds:
+        const fadeDistanceTitle = 1600;         // Title fades out from 0 to 1600
+        const fadeDistanceDataStart = 1600;       // Data fully visible until 1600
+        const fadeDistanceDataEnd = 3200;         // Data fades out from 1600 to 3200
+        const fadeDistanceVideoStart = 3200;      // Video fades in from 3200 to 4800
+        const fadeDistanceVideoEnd = 4800;        // Video is fully visible at 4800
+        const fadeDistanceCrossEnd = 6400;        // Video fades out & main fades in from 4800 to 5600
+    
         window.addEventListener("scroll", () => {
           const scrollY = window.scrollY;
-
-          // 1) Fade out Title from 0..1600
+    
+          // Title Screen: Fade out from 0 to 1600
           let titleOpacity = 1 - (scrollY / fadeDistanceTitle);
-          if (titleOpacity < 0) titleOpacity = 0;
-          if (titleOpacity > 1) titleOpacity = 1;
-          titleScreen.style.opacity = titleOpacity;
+          titleScreen.style.opacity = Math.max(0, Math.min(1, titleOpacity));
           titleScreen.style.pointerEvents = (titleOpacity === 0) ? "none" : "auto";
-
-          // 2) Data is fully visible from 0..1600, then fades from 1600..3200
+    
+          // Data Screen: Fully visible until 1600, then fade out until 3200
           if (scrollY < fadeDistanceDataStart) {
             dataScreen.style.opacity = 1;
             dataScreen.style.pointerEvents = "auto";
           } else {
-            let dataOpacity = 1 - (
-              (scrollY - fadeDistanceDataStart) / 
-              (fadeDistanceDataEnd - fadeDistanceDataStart)
-            );
-            if (dataOpacity < 0) dataOpacity = 0;
-            if (dataOpacity > 1) dataOpacity = 1;
-            dataScreen.style.opacity = dataOpacity;
+            let dataOpacity = 1 - ((scrollY - fadeDistanceDataStart) / (fadeDistanceDataEnd - fadeDistanceDataStart));
+            dataScreen.style.opacity = Math.max(0, Math.min(1, dataOpacity));
             dataScreen.style.pointerEvents = (dataOpacity === 0) ? "none" : "auto";
+          }
+    
+          // Video Screen:
+          if (scrollY < fadeDistanceVideoStart) {
+            videoScreen.style.opacity = 0;
+            videoScreen.style.pointerEvents = "none";
+          } else if (scrollY < fadeDistanceVideoEnd) {
+            // Fade in video screen between 3200 and 4800
+            let videoOpacity = (scrollY - fadeDistanceVideoStart) / (fadeDistanceVideoEnd - fadeDistanceVideoStart);
+            videoScreen.style.opacity = Math.max(0, Math.min(1, videoOpacity));
+            videoScreen.style.pointerEvents = "auto";
+          } else if (scrollY < fadeDistanceCrossEnd) {
+            // Crossfade: video fades out from 4800 to 5600
+            let videoFadeOut = 1 - ((scrollY - fadeDistanceVideoEnd) / (fadeDistanceCrossEnd - fadeDistanceVideoEnd));
+            videoScreen.style.opacity = Math.max(0, Math.min(1, videoFadeOut));
+            videoScreen.style.pointerEvents = "none";
+          } else {
+            videoScreen.style.opacity = 0;
+            videoScreen.style.pointerEvents = "none";
+          }
+    
+          // Main Content:
+          if (scrollY < fadeDistanceVideoEnd) {
+            mainContent.style.opacity = 0;
+            mainContent.style.pointerEvents = "none";
+          } else if (scrollY < fadeDistanceCrossEnd) {
+            // Fade in main content concurrently from 4800 to 5600
+            let mainFadeIn = (scrollY - fadeDistanceVideoEnd) / (fadeDistanceCrossEnd - fadeDistanceVideoEnd);
+            mainContent.style.opacity = Math.max(0, Math.min(1, mainFadeIn));
+            mainContent.style.pointerEvents = "auto";
+          } else {
+            mainContent.style.opacity = 1;
+            mainContent.style.pointerEvents = "auto";
           }
         });
       });
-    </script>
+    </script>        
   </body>
 </html>
