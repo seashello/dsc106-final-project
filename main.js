@@ -471,6 +471,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const button = element.querySelector(".customize-btn");
       button.disabled = true;
       button.classList.add("no-color");
+      button.style.opacity = "50%";
     });
   });
 
@@ -569,6 +570,8 @@ document.addEventListener("DOMContentLoaded", () => {
       const button = contestant.querySelector(".customize-btn");
       button.disabled = false;
       button.classList.remove("no-color");
+      button.style.opacity = "100%";
+
   
       // Do not alter the .figureName input or .nameDisplay element—this preserves the custom name.
     });
