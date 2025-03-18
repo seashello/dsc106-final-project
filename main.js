@@ -232,6 +232,99 @@ document.addEventListener("DOMContentLoaded", () => {
     clothing.style.backgroundImage = "url('customization/gray-clothing-male.png')";
   });
 
+  let isNavScrolling = false;
+
+  const titleScreen = document.getElementById("title-screen");
+  const dataScreen = document.getElementById("data-screen");
+
+  // Navigation click handler
+  document.querySelectorAll('nav a').forEach(link => {
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
+      const targetID = this.getAttribute('href');
+      let targetPosition = 0;
+      const targetElement = document.querySelector(targetID);
+      
+      // Remove any temporary nav-target classes from all sections
+      document.querySelectorAll('.section, #main-content').forEach(sec => {
+        sec.classList.remove('nav-target');
+      });
+      targetElement.classList.add('nav-target');
+
+      if (targetID === '#title-screen') {
+        // When Home is clicked: scroll to top and force title visible, data hidden.
+        targetPosition = 0;
+        titleScreen.style.opacity = 1;
+        titleScreen.style.pointerEvents = "auto";
+        titleScreen.style.zIndex = "300";
+        dataScreen.style.opacity = 0;
+        dataScreen.style.pointerEvents = "none";
+        dataScreen.style.zIndex = "100";
+      } else if (targetID === '#data-screen') {
+        // When Data is clicked: force Data visible and scroll to its natural position.
+        dataScreen.style.opacity = 1;
+        dataScreen.style.pointerEvents = "auto";
+        dataScreen.style.zIndex = "300";
+        targetPosition = dataScreen.getBoundingClientRect().top + window.pageYOffset;
+      } else {
+        // For other sections, scroll normally.
+        targetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset;
+        targetElement.style.opacity = 1;
+        targetElement.style.pointerEvents = "auto";
+        targetElement.style.zIndex = "300";
+      }
+      
+      window.scrollTo({ top: targetPosition, behavior: 'smooth' });
+      
+      // Remove the temporary nav-target class after the scroll
+      setTimeout(() => {
+        targetElement.classList.remove('nav-target');
+      }, 1500);
+    });
+  });
+
+  window.addEventListener("scroll", () => {
+    const scrollY = window.scrollY;
+    const fadeDistanceTitle = 1600;         // Title fades out from 0 to 1600px.
+    const fadeDistanceDataStart = 1600;       // Data section becomes fully visible at 1600px.
+    const fadeDistanceDataEnd = 3200;         // Data fades out to 0 opacity by 3200px.
+  
+    // Title Screen fade logic:
+    if (titleScreen) {
+      let titleOpacity = 1 - (scrollY / fadeDistanceTitle);
+      titleOpacity = Math.max(0, Math.min(1, titleOpacity));
+      titleScreen.style.opacity = titleOpacity;
+      if (titleOpacity === 0) {
+        titleScreen.style.pointerEvents = "none";
+        titleScreen.style.zIndex = "-1";
+      } else {
+        titleScreen.style.pointerEvents = "auto";
+        titleScreen.style.zIndex = "300";
+      }
+    }
+  
+    // Data Screen fade logic:
+    if (dataScreen) {
+      let dataOpacity = 0;
+      if (scrollY < fadeDistanceDataStart) {
+        dataOpacity = 0;
+      } else if (scrollY >= fadeDistanceDataStart && scrollY <= fadeDistanceDataEnd) {
+        // Fade out from opacity 1 at 1600px to 0 at 3200px.
+        dataOpacity = 1 - ((scrollY - fadeDistanceDataStart) / (fadeDistanceDataEnd - fadeDistanceDataStart));
+      } else {
+        dataOpacity = 0;
+      }
+      dataScreen.style.opacity = dataOpacity;
+      if (dataOpacity === 0) {
+        dataScreen.style.pointerEvents = "none";
+        dataScreen.style.zIndex = "-1";  // Ensure Data is layered behind other screens.
+      } else {
+        dataScreen.style.pointerEvents = "auto";
+        dataScreen.style.zIndex = "300";
+      }
+    }
+  });
+
   contestants.forEach((contestant, index) => {
     const checkbox = contestant.querySelector("input[type='checkbox']");
     const figureNameInput = contestant.querySelector(".figureName");
@@ -901,4 +994,3 @@ function updateTooltipPosition(event) {
   tooltip.style.left = `${tooltipX}px`;
   tooltip.style.top = `${tooltipY}px`;
 }
-
