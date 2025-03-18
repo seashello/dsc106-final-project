@@ -18,6 +18,7 @@
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap"
     />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet" />
   </head>
   <body>
     <!-- 1) TITLE SCREEN (Highest Z-Index) -->
@@ -57,7 +58,7 @@
     <!-- 3) VIDEO SCREEN (New Screen) -->
     <div id="video-screen">
       <div class="inner">
-        <h2 class="intro-vid">Watch Our Introduction Video</h2>
+        <h2 class="intro-vid">Introduction Video</h2>
         <video width="960" height="540" controls>
           <source src="106-demo-vid.mp4" type="video/mp4">
         </video>
@@ -71,7 +72,7 @@
     </div>
 
     <!-- 4) MAIN CONTENT (Below Both Pinned Screens) -->
-    <div id="main-content">
+    <div id="main-content" class="container">
       <h2>Run simulation below to see running duration and</h2>
       <h2>oxygen consumption of each age group.</h2>
 
@@ -378,7 +379,6 @@
               <option value="purple">Purple</option>
             </select>
           </div>
-      
           <div class="field-group">
             <label for="clothing-color">Clothing Colour:</label>
             <select id="clothing-color">
