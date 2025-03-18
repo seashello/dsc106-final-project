@@ -236,6 +236,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const titleScreen = document.getElementById("title-screen");
   const dataScreen = document.getElementById("data-screen");
+  const fadeDistanceTitle = 1600;       // Title fades out from 0 to 1600px.
+  const fadeDistanceDataStart = 1600;     // Data screen should be fully visible at 1600px.
+  const fadeDistanceDataEnd = 3200;       // Data screen fades out by 3200px.
 
   // Navigation click handler
   document.querySelectorAll('nav a').forEach(link => {
@@ -244,16 +247,17 @@ document.addEventListener("DOMContentLoaded", () => {
       const targetID = this.getAttribute('href');
       let targetPosition = 0;
       const targetElement = document.querySelector(targetID);
-      
-      // Remove any temporary nav-target classes from all sections
+
+      // Remove any temporary classes
       document.querySelectorAll('.section, #main-content').forEach(sec => {
         sec.classList.remove('nav-target');
       });
       targetElement.classList.add('nav-target');
 
       if (targetID === '#title-screen') {
-        // When Home is clicked: scroll to top and force title visible, data hidden.
+        // For Home, scroll to the top.
         targetPosition = 0;
+        // Force Title visible and Data hidden.
         titleScreen.style.opacity = 1;
         titleScreen.style.pointerEvents = "auto";
         titleScreen.style.zIndex = "300";
@@ -261,13 +265,13 @@ document.addEventListener("DOMContentLoaded", () => {
         dataScreen.style.pointerEvents = "none";
         dataScreen.style.zIndex = "100";
       } else if (targetID === '#data-screen') {
-        // When Data is clicked: force Data visible and scroll to its natural position.
+        // For Data, force scroll to 1600px (the threshold for full Data visibility).
+        targetPosition = fadeDistanceDataStart;
         dataScreen.style.opacity = 1;
         dataScreen.style.pointerEvents = "auto";
         dataScreen.style.zIndex = "300";
-        targetPosition = dataScreen.getBoundingClientRect().top + window.pageYOffset;
       } else {
-        // For other sections, scroll normally.
+        // For other sections, calculate normally.
         targetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset;
         targetElement.style.opacity = 1;
         targetElement.style.pointerEvents = "auto";
@@ -276,19 +280,17 @@ document.addEventListener("DOMContentLoaded", () => {
       
       window.scrollTo({ top: targetPosition, behavior: 'smooth' });
       
-      // Remove the temporary nav-target class after the scroll
+      // Remove temporary class after scrolling.
       setTimeout(() => {
         targetElement.classList.remove('nav-target');
       }, 1500);
     });
   });
 
+  // Fade logic on scroll
   window.addEventListener("scroll", () => {
     const scrollY = window.scrollY;
-    const fadeDistanceTitle = 1600;         // Title fades out from 0 to 1600px.
-    const fadeDistanceDataStart = 1600;       // Data section becomes fully visible at 1600px.
-    const fadeDistanceDataEnd = 3200;         // Data fades out to 0 opacity by 3200px.
-  
+    
     // Title Screen fade logic:
     if (titleScreen) {
       let titleOpacity = 1 - (scrollY / fadeDistanceTitle);
@@ -302,14 +304,14 @@ document.addEventListener("DOMContentLoaded", () => {
         titleScreen.style.zIndex = "300";
       }
     }
-  
+    
     // Data Screen fade logic:
     if (dataScreen) {
       let dataOpacity = 0;
       if (scrollY < fadeDistanceDataStart) {
         dataOpacity = 0;
       } else if (scrollY >= fadeDistanceDataStart && scrollY <= fadeDistanceDataEnd) {
-        // Fade out from opacity 1 at 1600px to 0 at 3200px.
+        // Fade from full opacity at 1600px to 0 at 3200px.
         dataOpacity = 1 - ((scrollY - fadeDistanceDataStart) / (fadeDistanceDataEnd - fadeDistanceDataStart));
       } else {
         dataOpacity = 0;
@@ -317,7 +319,7 @@ document.addEventListener("DOMContentLoaded", () => {
       dataScreen.style.opacity = dataOpacity;
       if (dataOpacity === 0) {
         dataScreen.style.pointerEvents = "none";
-        dataScreen.style.zIndex = "-1";  // Ensure Data is layered behind other screens.
+        dataScreen.style.zIndex = "-1";
       } else {
         dataScreen.style.pointerEvents = "auto";
         dataScreen.style.zIndex = "300";
