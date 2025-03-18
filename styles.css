@@ -175,7 +175,7 @@ button {
   transition: background-color 0.3s ease;
 }
 
-button:hover {
+.no-color, button:hover {
   background-color: #2e8b57;
 }
 
@@ -206,7 +206,7 @@ button:hover {
   transition: transform 0.2s ease;
 }
 
-.contestant:hover {
+.no-hover,.contestant:hover {
   transform: translateY(-5px);
 }
 
