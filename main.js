@@ -686,13 +686,13 @@ function createBarPlots(filteredData) {
     .style("width", "100%")
     .style("height", "auto");
   
-  const datasets = [
-    { data: hrData, yKey: "HR", color: "steelblue", title: "Heart Rate", ytitle: "HR (bpm)" },
-    { data: o2Data, yKey: "VO2", color: "plum", title: "Oxygen Consumption", ytitle: "VO₂ (mL/min)" },
-    { data: co2Data, yKey: "VCO2", color: "orange", title: "Carbon Dioxide Production", ytitle: "VCO₂ (mL/min)" },
-    { data: speedData, yKey: "Speed", color: "green", title: "Speed", ytitle: "Speed (km/h)" },
-    { data: rrData, yKey: "RR", color: "red", title: "Respiratory Rate", ytitle: "RR (respiration/min)" },
-    { data: veData, yKey: "VE", color: "purple", title: "Pulmonary Ventilation", ytitle: "VE (L/min)" }
+    const datasets = [
+      { data: hrData, yKey: "HR", color: "steelblue", title: "Heart Rate", ytitle: "HR (bpm)", description: "The number of heartbeats per minute. In endurance tests, HR is used to assess cardiovascular fitness and effort level. \n\n Highly trained individuals may have lower HR at a given intensity due to better cardiovascular efficiency." },
+      { data: o2Data, yKey: "VO2", color: "plum", title: "Oxygen Consumption", ytitle: "VO₂ (mL/min)", description: "VO₂ max, or maximal oxygen consumption, is the maximum amount of oxygen that a person can use during intense exercise. It is a measure of aerobic fitness, or the body's ability to deliver and utilize oxygen. \n\n Higher VO₂ values indicate better aerobic capacity. VO₂ max (maximum oxygen uptake) is a key measure of endurance fitness, representing how efficiently the body can use oxygen during exercise. Elite endurance athletes typically have very high VO₂ max values." },
+      { data: co2Data, yKey: "VCO2", color: "orange", title: "Carbon Dioxide Production", ytitle: "VCO₂ (mL/min)", description: "The amount of carbon dioxide exhaled per minute.  The balance between VO₂ and VCO₂ (respiratory exchange ratio) helps assess the type of fuel (carbohydrates or fats) being used for energy during exercise. \n\n A high VCO₂ indicates increased metabolic activity and energy expenditure." },
+      { data: speedData, yKey: "Speed", color: "green", title: "Speed", ytitle: "Speed (km/h)", description: "The pace at which an individual moves during the endurance test. \n\n Higher speed indicates greater endurance performance and fitness level. Well-trained endurance athletes can sustain high speeds for longer durations." },
+      { data: rrData, yKey: "RR", color: "red", title: "Respiratory Rate", ytitle: "RR (respiration/min)", description: "The number of breaths taken per minute. \n\n A higher respiratory rate reflects an increased demand for oxygen and removal of CO₂. Trained individuals may have a lower RR at submaximal exercise intensities due to more efficient breathing mechanics." },
+      { data: veData, yKey: "VE", color: "purple", title: "Pulmonary Ventilation", ytitle: "VE (L/min)", description: "The total volume of air inhaled and exhaled per minute. \n\n A higher VE indicates greater lung capacity and efficiency in oxygen delivery. Endurance-trained individuals can achieve high VE values without excessive breathing effort." }
   ];
   
   datasets.forEach((dataset, i) => {
@@ -758,13 +758,68 @@ function createBarPlots(filteredData) {
       .attr("text-anchor", "middle")
       .style("font-size", "9px")
       .text(dataset.ytitle);
+
+    let tooltip = d3.select("body")
+            .append("div")
+            .style("position", "absolute")
+            .style("background", "rgb(246, 245, 245)")
+            .style("color", "black")
+            .style("padding", "5px 10px")
+            .style("border-radius", "5px")
+            .style("font-size", "15px")
+            .style("width", "500px") // Fixed width
+            .style("word-wrap", "break-word") // Ensures text wraps inside the box
+            .style("text-align", "left")
+            .style("visibility", "hidden")
+            .style("white-space", "pre-line")
+            .style("pointer-events", "none");
   
     group.append("text")
-      .attr("x", chartWidth / 2)
-      .attr("y", -5)
-      .attr("text-anchor", "middle")
-      .style("font-size", "10px")
-      .text(dataset.title);
+            .attr("x", chartWidth / 2)
+            .attr("y", -5)
+            .attr("text-anchor", "middle")
+            .style("font-size", "10px")
+            .style("text-decoration", "underline")
+            .style("font-weight", "bold")
+            .text(dataset.title)
+            .on("mouseover", function (event) {
+                tooltip.style("visibility", "visible")
+                    .text(dataset.description);
+            })
+            .on("mousemove", function (event) {
+                const offsetX = 10; // Padding from cursor
+                const offsetY = 10;
+                const pageWidth = window.innerWidth;
+                const pageHeight = window.innerHeight;
+                const mouseX = event.pageX;
+                const mouseY = event.pageY;
+
+                // Compute the tooltip's current dimensions.
+                const tooltipWidth = tooltip.node().offsetWidth;
+                const tooltipHeight = tooltip.node().offsetHeight;
+
+                // Default position: below and to the right of the cursor
+                let left = mouseX + offsetX;
+                let top = mouseY + offsetY;
+
+                // If tooltip overflows the right edge, adjust to keep it in frame
+                if (left + tooltipWidth > pageWidth) {
+                    left = pageWidth - tooltipWidth - offsetX;
+                }
+
+                if (left < offsetX) {
+                    left = offsetX;
+                }
+                if (top < offsetY) {
+                    top = offsetY;
+                }
+
+                tooltip.style("top", top + "px")
+                    .style("left", left + "px");
+            })
+            .on("mouseout", function () {
+                tooltip.style("visibility", "hidden");
+            });
   });
 }
 
@@ -830,95 +885,95 @@ function updateTooltipPosition(event) {
   tooltip.style.top = `${tooltipY}px`;
 }
 
-document.addEventListener("DOMContentLoaded", function() {
-  const tooltipDef = document.getElementById("tooltip-def");
+// document.addEventListener("DOMContentLoaded", function() {
+//   const tooltipDef = document.getElementById("tooltip-def");
   
-  // If tooltip doesn't exist, create it with styles that match the other tooltip
-  if (!tooltipDef) {
-    const newTooltip = document.createElement('div');
-    newTooltip.id = 'tooltip-def';
-    newTooltip.style.position = 'fixed'; // Use fixed positioning for floating appearance
-    newTooltip.style.background = 'white';
-    newTooltip.style.border = '1px solid #ccc';
-    newTooltip.style.padding = '10px';
-    newTooltip.style.borderRadius = '4px';
-    newTooltip.style.boxShadow = '0 2px 5px rgba(0,0,0,0.2)';
-    newTooltip.style.zIndex = '1000';
-    newTooltip.style.maxWidth = '300px';
-    newTooltip.style.display = 'none';
-    newTooltip.style.pointerEvents = 'none'; // Prevents tooltip from interfering with mouse events
-    document.body.appendChild(newTooltip);
-  }
+//   // If tooltip doesn't exist, create it with styles that match the other tooltip
+//   if (!tooltipDef) {
+//     const newTooltip = document.createElement('div');
+//     newTooltip.id = 'tooltip-def';
+//     newTooltip.style.position = 'fixed'; // Use fixed positioning for floating appearance
+//     newTooltip.style.background = 'white';
+//     newTooltip.style.border = '1px solid #ccc';
+//     newTooltip.style.padding = '10px';
+//     newTooltip.style.borderRadius = '4px';
+//     newTooltip.style.boxShadow = '0 2px 5px rgba(0,0,0,0.2)';
+//     newTooltip.style.zIndex = '1000';
+//     newTooltip.style.maxWidth = '300px';
+//     newTooltip.style.display = 'none';
+//     newTooltip.style.pointerEvents = 'none'; // Prevents tooltip from interfering with mouse events
+//     document.body.appendChild(newTooltip);
+//   }
   
-  const hoverWord = document.querySelector(".hover-word");
-  tooltipDef.style.display = 'none';
-  hoverWord.addEventListener("mouseenter", (event) => {
-      const tooltipDef = document.getElementById("tooltip-def");
+//   const hoverWord = document.querySelector(".hover-word");
+//   tooltipDef.style.display = 'none';
+//   hoverWord.addEventListener("mouseenter", (event) => {
+//       const tooltipDef = document.getElementById("tooltip-def");
 
-      const content = hoverWord.getAttribute('data-tooltip') || 
-                        `<strong><u>Heart Rate</u>:</strong> The number of heartbeats per minute. 
-                        In endurance tests, HR is used to assess cardiovascular fitness and 
-                        effort level. Highly trained individuals may have lower HR at a given 
-                        intensity due to better cardiovascular efficiency.<br><br>
+//       const content = hoverWord.getAttribute('data-tooltip') || 
+//                         `<strong><u>Heart Rate</u>:</strong> The number of heartbeats per minute. 
+//                         In endurance tests, HR is used to assess cardiovascular fitness and 
+//                         effort level. Highly trained individuals may have lower HR at a given 
+//                         intensity due to better cardiovascular efficiency.<br><br>
 
-                        <strong><u>Oxygen Consumption</u>:</strong> VO2 max, or maximal oxygen 
-                        consumption, is the maximum amount of oxygen that a person can use 
-                        during intense exercise. It is a measure of aerobic fitness, or the 
-                        body's ability to deliver and utilize oxygen. Higher VO₂ values indicate 
-                        better aerobic capacity. VO₂ max (maximum oxygen uptake) is a key measure 
-                        of endurance fitness, representing how efficiently the body can use oxygen 
-                        during exercise. Elite endurance athletes typically have very high VO₂ max 
-                        values.<br><br>
+//                         <strong><u>Oxygen Consumption</u>:</strong> VO2 max, or maximal oxygen 
+//                         consumption, is the maximum amount of oxygen that a person can use 
+//                         during intense exercise. It is a measure of aerobic fitness, or the 
+//                         body's ability to deliver and utilize oxygen. Higher VO₂ values indicate 
+//                         better aerobic capacity. VO₂ max (maximum oxygen uptake) is a key measure 
+//                         of endurance fitness, representing how efficiently the body can use oxygen 
+//                         during exercise. Elite endurance athletes typically have very high VO₂ max 
+//                         values.<br><br>
 
-                        <strong><u>Carbon Dioxide Production</u>:</strong> The amount of carbon 
-                        dioxide exhaled per minute. A high VCO₂ indicates increased metabolic 
-                        activity and energy expenditure. The balance between VO₂ and VCO₂ 
-                        (respiratory exchange ratio) helps assess the type of fuel 
-                        (carbohydrates or fats) being used for energy during exercise.<br><br>
+//                         <strong><u>Carbon Dioxide Production</u>:</strong> The amount of carbon 
+//                         dioxide exhaled per minute. A high VCO₂ indicates increased metabolic 
+//                         activity and energy expenditure. The balance between VO₂ and VCO₂ 
+//                         (respiratory exchange ratio) helps assess the type of fuel 
+//                         (carbohydrates or fats) being used for energy during exercise.<br><br>
                         
-                        <strong><u>Speed</u>:</strong> The pace at which an individual moves during 
-                        the endurance test.Higher speed indicates greater endurance performance and 
-                        fitness level. Well-trained endurance athletes can sustain high speeds for 
-                        longer durations.<br><br>
+//                         <strong><u>Speed</u>:</strong> The pace at which an individual moves during 
+//                         the endurance test.Higher speed indicates greater endurance performance and 
+//                         fitness level. Well-trained endurance athletes can sustain high speeds for 
+//                         longer durations.<br><br>
 
-                        <strong><u>Respiratory Rate</u>:</strong> The number of breaths taken per minute.
-                        A higher respiratory rate reflects an increased demand for oxygen and 
-                        removal of CO₂. Trained individuals may have a lower RR at submaximal exercise 
-                        intensities due to more efficient breathing mechanics.<br><br>
+//                         <strong><u>Respiratory Rate</u>:</strong> The number of breaths taken per minute.
+//                         A higher respiratory rate reflects an increased demand for oxygen and 
+//                         removal of CO₂. Trained individuals may have a lower RR at submaximal exercise 
+//                         intensities due to more efficient breathing mechanics.<br><br>
 
-                        <strong><u>Pulmonary Ventilation</u>:</strong> The total volume of air inhaled 
-                        and exhaled per minute. A higher VE indicates greater lung capacity and efficiency 
-                        in oxygen delivery. Endurance-trained individuals can achieve high VE values without 
-                        excessive breathing effort.
-                        `;
+//                         <strong><u>Pulmonary Ventilation</u>:</strong> The total volume of air inhaled 
+//                         and exhaled per minute. A higher VE indicates greater lung capacity and efficiency 
+//                         in oxygen delivery. Endurance-trained individuals can achieve high VE values without 
+//                         excessive breathing effort.
+//                         `;
                         
-      tooltipDef.innerHTML = content;
-      tooltipDef.style.display = 'block';
+//       tooltipDef.innerHTML = content;
+//       tooltipDef.style.display = 'block';
       
-      const rect = hoverWord.getBoundingClientRect();
-      const tooltipHeight = tooltipDef.offsetHeight;
-      const tooltipWidth = tooltipDef.offsetWidth;
+//       const rect = hoverWord.getBoundingClientRect();
+//       const tooltipHeight = tooltipDef.offsetHeight;
+//       const tooltipWidth = tooltipDef.offsetWidth;
       
-      let top = rect.top - tooltipHeight - 10;
-      let left = rect.left + (rect.width - tooltipWidth) / 2;
+//       let top = rect.top - tooltipHeight - 10;
+//       let left = rect.left + (rect.width - tooltipWidth) / 2;
       
-      if (top < 10) {
-          top = rect.bottom + 10;
-      }
+//       if (top < 10) {
+//           top = rect.bottom + 10;
+//       }
       
-      if (left < 200) {
-          left = 200;
-      } else if (left + tooltipWidth > window.innerWidth - 200) {
-          left = window.innerWidth - tooltipWidth - 200;
-      }
+//       if (left < 200) {
+//           left = 200;
+//       } else if (left + tooltipWidth > window.innerWidth - 200) {
+//           left = window.innerWidth - tooltipWidth - 200;
+//       }
       
-      tooltipDef.style.position = 'fixed';
-      tooltipDef.style.left = `${left}px`;
-      tooltipDef.style.top = `${top}px`;
-  });
+//       tooltipDef.style.position = 'fixed';
+//       tooltipDef.style.left = `${left}px`;
+//       tooltipDef.style.top = `${top}px`;
+//   });
 
-  hoverWord.addEventListener("mouseleave", () => {
-      const tooltipDef = document.getElementById("tooltip-def");
-      tooltipDef.style.display = 'none';
-  })
-});
+//   hoverWord.addEventListener("mouseleave", () => {
+//       const tooltipDef = document.getElementById("tooltip-def");
+//       tooltipDef.style.display = 'none';
+//   })
+// });
