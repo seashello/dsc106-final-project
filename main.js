@@ -313,6 +313,7 @@ document.addEventListener("DOMContentLoaded", () => {
     createBarPlots(chartData);
   });
 
+  //this doesn't work anymore but it's not really necessary
   function showAlert(message) {
     alertMessage.textContent = message;
     alertBox.style.display = "block";
@@ -327,11 +328,22 @@ document.addEventListener("DOMContentLoaded", () => {
     leaderboardData = [];
     
     const checkedContestants = [];
+    const unChecked = [];
+
     contestants.forEach((contestant, index) => {
       const checkbox = contestant.querySelector("input[type='checkbox']");
       if (checkbox.checked) {
         checkedContestants.push({ element: contestant, origIndex: index });
       }
+      else {
+        unChecked.push({ element: contestant, origIndex: index });
+      }
+    });
+
+    unChecked.forEach(({ element, origIndex }, idx) => {
+      const energyBar = element.querySelector(".energy-bar");
+      element.style.opacity = "50%";
+      energyBar.style.backgroundColor = "Gray";
     });
 
     if (checkedContestants.length === 0) {
@@ -343,7 +355,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const delays = checkedContestants.map(({ origIndex }) => {
       return 14000 - Math.cbrt(hrData[2].time - hrData[origIndex].time) * 2000;
     });
-
+  
     checkedContestants.forEach(({ element, origIndex }, idx) => {
       const silhouette = element.querySelector(".silhouette");
       const hairElement = element.querySelector(".hair");
@@ -510,7 +522,10 @@ document.addEventListener("DOMContentLoaded", () => {
           delete energyBar.energyIntervalID;
         }
         energyBar.style.height = "100%";
+        energyBar.style.backgroundColor ="#3cb371";
       }
+
+      contestant.style.opacity = "100%";
   
       // Do not alter the .figureName input or .nameDisplay element—this preserves the custom name.
     });

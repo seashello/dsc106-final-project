@@ -196,7 +196,7 @@ button:hover {
 }
 
 .contestant {
-  background-color: #fff;
+  background-color: #ffffff;
   border-radius: 12px;
   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
   padding: 15px;
@@ -523,7 +523,7 @@ button:hover {
   position: fixed;
   top: 20px;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translateX(-50%);  
   background-color: #a0504b;
   color: white;
   padding: 6px;
@@ -866,4 +866,9 @@ select#clothing-color {
   margin-top: 5px;
   margin-bottom: 10px;
   font-family: 'Roboto Mono', monospace;
+}
+
+.greyed-out {
+  opacity: 0.5;
+  pointer-events: none;
 }
